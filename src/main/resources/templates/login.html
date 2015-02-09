@@ -1,0 +1,27 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org">
+  <head>
+    <title tiles:fragment="title">Messages : Create</title>
+  </head>
+  <body>
+    <div tiles:fragment="content">
+        <form name="f" th:action="@{/login}" method="post">               
+            <fieldset>
+                <legend>Proszę podać Login</legend>
+                <div th:if="${param.error}" class="alert alert-error">    
+                    Nieprawidłowe hasło.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success"> 
+                    Zosałeś wylogowany.
+                </div>
+                <label for="username">Nazwa:</label>
+                <input type="text" id="username" name="username"/>        
+                <label for="password">Hasło</label>
+                <input type="password" id="password" name="password"/>    
+                <div class="form-actions">
+                    <button type="submit" class="btn">Zaloguj</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+  </body>
+</html>

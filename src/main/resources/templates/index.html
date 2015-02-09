@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>AngularChart</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+	th:href="@{webjars/bootstrap/3.3.2/css/bootstrap.min.css}"></link>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../static/css/main.css" th:href="@{css/main.css}"></link>
+
+</head>
+<body >
+
+
+
+
+	<div class="container " data-ng-app="myApp" >
+		<header class="navbar navbar-default" >This is a header</header>
+		 <div th:attr="ui-view='home'" ></div> <!--data-ui-view="home"  -->
+		<footer data-ng-include="" src="'/home.html'" ></footer>
+	</div>
+
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+var URLS = {};
+URLS.home = /*[[@{/home}]]*/ '/tempaltes/home';
+URLS.header = /*[[@{/header}]]*/ '/tempaltes/header';
+URLS.footer = /*[[@{/footer}]]*/ '/tempaltes/footer';
+/*]]>*/
+</script>
+
+
+
+	<!-- load scripts -->
+	<script type="text/javascript"
+		th:src="@{webjars/angular-ui-router/0.2.13/angular-ui-router.min.js}"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"
+		th:src="@{webjars/angularjs/1.3.10/angular.min.js}"></script>
+	<script type="text/javascript" th:src="@{webjars/angular-ui-router/0.2.13/angular-ui-router.min.js}"
+		src="../static/js/vendors/angular-ui-router.js"
+		></script>
+	<script type="text/javascript" th:src="@{js/myApp.js}" src="../static/js/myApp.js"></script>
+	
+</body>
+</html>
