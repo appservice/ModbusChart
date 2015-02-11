@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AngularChart</title>
 <link rel="stylesheet" type="text/css" href="bootstrap-3.3.2-dist/css/bootstrap.min.css"></link>
+<link rel="stylesheet" type="text/css" href="bootstrap-3.3.2-dist/css/bootstrap-theme.min.css"></link>
 <link rel="stylesheet" type="text/css" media="all" href="css/main.css"></link>
 
 </head>
@@ -11,13 +14,56 @@
 
 
 
-
+    <!-- ==========  </header> ============ -->
   <div class="container " data-ng-app="myApp">
-    <header class="navbar navbar-default">This is a header</header>
-    <div data-ui-view=""></div> 
-    <!-- 	<footer data-ng-include="" src="'/home.html'" ></footer> -->
-    
-    <footer class="container">Created by ItemService</footer>
+
+
+    <!--   <header class="navbar navbar-default "> -->
+    <div class="navbar navbar-inverse navbar-static-top">
+      <!--                         <div class = "container">
+ -->
+      <span class="navbar-brand">Wykresy z modbus</span>
+
+      <button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+        <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+      </button>
+
+      <div class="collapse navbar-collapse navHeaderCollapse">
+
+        <ul class="nav navbar-nav navbar-right margin_right_10">
+
+          <li class="active"><a href="#/"><span class="glyphicon glyphicon-home"></span> Strona domowa</a></li>
+          <li><a href="#/chart-online">Wykres online</a></li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Wykresy <b
+              class="caret"></b></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#/chart">Wykres całościowy</a></li>
+			    <li class="divider"></li>
+              <li><a href="#">Wykres 1-dniowy</a></li>
+              <li><a href="#">Wykres 7-dniowy</a></li>
+              <li><a href="#">Wykres 30-dniowy</a></li>
+			  <li class="divider"></li>
+			  <li><a href="#">Wykres n-dniowy</a></li>
+            </ul></li>
+          <li><a href="#/settings">Ustawienia</a></li>
+          <li><a href="#/help">Pomoc</a></li>
+
+        </ul>
+
+      </div>
+
+      <!--  </div> -->
+    </div>
+
+
+
+    <!-- ======main content view====== -->
+    <div data-ui-view=""></div>
+
+    <!-- ==========footer=========== -->
+    <div data-ng-include="" src="'view/footer.html'"></div>
+    <!--  src="'view/footer.html'"-->
+
   </div>
 
 
@@ -26,13 +72,30 @@
 
 
   <!-- load scripts -->
+   <script type="text/javascript" src="js/vendors/jquery-2.1.3.min.js"></script>
+
+  <script type="text/javascript" src="bootstrap-3.3.2-dist/js/bootstrap.min.js"></script> 
+
+
   <script type="text/javascript" src="js/vendors/angular.min.js"></script>
   <script type="text/javascript" src="js/vendors/angular-ui-router.js"></script>
   <script type="text/javascript" src="js/vendors/angular-resource.min.js"></script>
+
+  <script type="text/javascript" src="js/angular/controllers.js"></script>
+  <script type="text/javascript" src="js/angular/services.js"></script>
+  <script type="text/javascript" src="js/angular/directives.js"></script>
   <script type="text/javascript" src="js/myApp.js"></script>
-    <script type="text/javascript" src="js/angular/controllers.js"></script>
-    <script type="text/javascript" src="js/angular/services.js"></script>
   
+
+
+  <!--  amCharts javascript sources -->
+   <script src="view/amcharts/amcharts.js" type="text/javascript"></script>
+  <script src="view/amcharts/serial.js" type="text/javascript"></script>
+  <script src="view/amcharts/themes/dark.js" type="text/javascript"></script>
+  <script src="view/amcharts/exporting/amexport.js" type="text/javascript"></script>
+  <script src="view/amcharts/exporting/canvg.js" type="text/javascript"></script>
+  <script src="view/amcharts/exporting/rgbcolor.js" type="text/javascript"></script>
+  <script src="view/amcharts/exporting/filesaver.js" type="text/javascript"></script>
 
 
 

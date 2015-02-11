@@ -2,3 +2,20 @@
 .myLink{
 	background-color: blue;
 }
+
+ footer {
+	
+	
+	padding-top: 10px; 
+	padding-bottom: 10px;
+	margin-top:70px;
+	text-align: center;
+	border-top: 1px solid #7f7f7f;
+	border-bottom: 1px solid #7f7f7f;
+	background-color: #e5e5e5;
+}
+
+.margin_right_10{
+	margin-right:10px;
+
+		}
