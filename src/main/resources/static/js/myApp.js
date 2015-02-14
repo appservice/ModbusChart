@@ -1,7 +1,7 @@
 /**
  * 
  */
-var myApp = angular.module('myApp', [ 'ui.router','ngResource','myApp.directives',
+var myApp = angular.module('myApp', [ 'ui.router','restangular','myApp.directives',
                                       'myApp.controllers','myApp.services']);
 myApp.config(function($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise('/');
@@ -37,3 +37,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 
 	
 });
+myApp.config(['RestangularProvider',function(RestangularProvider){
+    RestangularProvider.setBaseUrl('/ModbusChart/rest');
+	
+}]);

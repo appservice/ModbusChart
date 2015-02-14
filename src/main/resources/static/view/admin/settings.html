@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+</head>
+<body>
+
+
+  <div class="page-header">
+    <h3>Ustawienia</h3>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="jumbotron">
+        <h2>Serwer</h2>
+
+        <table class="table">
+          <tr>
+            <th>LP</th>
+            <th>Nazwa</th>
+            <th>IP:</th>
+            <th>Port</th>
+            <th>Interwał</th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+
+          <tr data-ng-repeat="server in serversList">
+            <td>{{$index+1}}</td>
+            <td>{{server.name}}</td>
+            <td>{{server.ip}}</td>
+            <td>{{server.port}}</td>
+            <td>{{server.timeInterval}}</td>
+            <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td>
+            <td><a href="#" data-ng-click="removeServer(server)">Usuń </a></td>
+            <td><a href="#" data-ng-click="runServer(server)">Włącz </a></td>
+            <td><a href="#" data-ng-click="stopServer(server)">Wyłącz </a></td>
+
+          </tr>
+
+
+        </table>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog">Dodaj nowy:</button>
+
+      </div>
+    </div>
+    <div class="col-md-4 ">
+      <div class="jumbotron">Przykładowy tekst</div>
+    </div>
+
+  </div>
+
+
+  <!-- ==================modal dialog add new server =========================== -->
+  <!-- Modal -->
+  <div class="modal fade" id="newServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Dodaj</h4>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="input_name" class="control-label">Nazwa:</label>
+            <input type="text" class="form-control" id="input_name" data-ng-model="newServer.name">
+            <label for="input_ip" class="control-label">IP:</label>
+            <input type="text" class="form-control" id="input_ip" data-ng-model="newServer.ip">
+            <label for="input_port" class="control-label">Port:</label>
+            <input type="text" class="form-control" id="input_port" data-ng-model="newServer.port">
+            <label for="input_time" class="control-label">Interwał:</label>
+            <input type="text" class="form-control" id="input_time" data-ng-model="newServer.timeInterval">
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+          <button type="button" class="btn btn-primary" data-ng-click="addNewServer(newServer)" data-dismiss="modal">Zapisz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================modal dialog edit server =========================== -->
+  <!-- Modal -->
+  <div class="modal fade" id="editServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">Edytuj</h4>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="input_name" class="control-label">Nazwa:</label>
+            <input type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name">
+            <label for="input_ip" class="control-label">IP:</label>
+            <input type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip">
+            <label for="input_port" class="control-label">Port:</label>
+            <input type="text" class="form-control" id="input_port" data-ng-model="updatedServer.port">
+            <label for="input_time" class="control-label">Interwał:</label>
+            <input type="text" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval">
+          </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+          <button type="button" class="btn btn-primary" data-ng-click="updateServer(updatedServer)" data-dismiss="modal">Zapisz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- =========================================================================== -->
+</body>
+</html>

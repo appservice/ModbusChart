@@ -2,6 +2,7 @@ package eu.luckyApp.settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,9 +22,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth)
 			throws Exception {
-		auth.inMemoryAuthentication().withUser("user").password("start123")
-				.roles("USER").and().withUser("admin").password("admin123")
-				.roles("USER", "ADMIN");
+		auth.inMemoryAuthentication()
+				.withUser("user").password("start123").roles("USER")
+				.and()
+				.withUser("admin").password("admin123").roles("ADMIN","USER"); //"USER", 
 	}
 
 	@Override
@@ -34,14 +36,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 				.authorizeRequests()
 				//.anyRequest().permitAll()
-				.antMatchers("/**")
-				/*.anyRequest()*/.hasRole("USER")
+				//.antMatchers("/**").hasRole("USER")
+			//	.antMatchers("/ModbusChart/main.html#/settings").hasRole("ADMIN")
+			//	.antMatchers(HttpMethod.DELETE,"/ModbusChart/rest/servers/**").hasRole("ADMIN")
+				.antMatchers(HttpMethod.DELETE,"/**").hasRole("ADMIN")
+				.antMatchers(HttpMethod.POST,"/**").hasRole("ADMIN")
+				.antMatchers(HttpMethod.PUT,"/**").hasRole("ADMIN")
+				.antMatchers(HttpMethod.GET, "/**").hasRole("USER")
+				.anyRequest().authenticated()
 				.and().httpBasic().and()
-			//	.formLogin().loginPage("/login.html").loginProcessingUrl("/j_spring_security_check.action").permitAll()
-			//	.and()
-				.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/")
+			//	.formLogin().loginPage("/login.html").loginProcessingUrl("/j_spring_security_check.action").permitAll().and()
+				.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/");
 				//.and().rememberMe()
-				.and().exceptionHandling().accessDeniedPage("/401");//.
+				//.and().exceptionHandling().accessDeniedPage("/401");//.
 		
 				
 				

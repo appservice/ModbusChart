@@ -60,7 +60,7 @@ public class RegisterReader extends Observable implements Runnable  {
 	try {
 
 			
-			addr = InetAddress.getByName(serverEntity.getIpAddress());
+			addr = InetAddress.getByName(serverEntity.getIp());
 			port=serverEntity.getPort();
 			ref=serverEntity.getReadRegister();
 			count=2;

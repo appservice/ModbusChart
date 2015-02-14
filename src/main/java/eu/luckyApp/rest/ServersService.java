@@ -1,5 +1,6 @@
 package eu.luckyApp.rest;
 
+import java.net.URI;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executors;
@@ -14,9 +15,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +43,7 @@ public class ServersService  implements Observer{
 	private RegisterReader registerReader;
 	
 	private boolean isConnected;
-	private ScheduledExecutorService scheduler=Executors.newScheduledThreadPool(4);
+	private ScheduledExecutorService scheduler;
 	
 	
 
@@ -65,18 +69,22 @@ public class ServersService  implements Observer{
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addServer(ServerEntity server){
+	public Response addServer( ServerEntity server, @Context UriInfo uriInfo){
 		serverRepository.save(server);
+		Long serverId=server.getId();
 	//	URI createdUri=UriBuilder.fromResource(resource)
+	URI createdUri=uriInfo.getAbsolutePathBuilder().path("/"+serverId).build();
+		//return Response.status(Status.CREATED).build();
 	
-		return Response.status(Status.CREATED).build();
+		return Response.created(createdUri).entity(server).build();
 	}
 	
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateServer(ServerEntity server){
-		serverRepository.save(server);		
+		serverRepository.save(server);	
+		LOG.info("zmieniono server"+server);
 		return Response.noContent().build();
 		
 	}
@@ -104,10 +112,10 @@ public class ServersService  implements Observer{
 		registerReader.setServerEntity(server);
 		if(!isConnected){
 			registerReader.addObserver(this);
-			
+			this.scheduler=Executors.newScheduledThreadPool(4);
 			this.scheduler.scheduleAtFixedRate( registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
 			this.isConnected=true;
-			LOG.warn("Odczyt włączony. "+server.getIpAddress()+":"+server.getPort());
+			LOG.warn("Odczyt włączony. "+server.getIp()+":"+server.getPort());
 
 			LOG.warn(this.isConnected);
 			return Response.ok().build();
@@ -126,7 +134,7 @@ public class ServersService  implements Observer{
 		this.scheduler.shutdown();
 		this.isConnected=false;
 		registerReader.deleteObserver(this);
-		LOG.warn("Odczyt z servera zatrzymany! "+server.getIpAddress()+":"+server.getPort());
+		LOG.warn("Odczyt z servera zatrzymany! "+server.getIp()+":"+server.getPort());
 
 		return Response.ok().build();
 	}

@@ -17,11 +17,11 @@ public class ServerEntity {
 	
 	
 	
-	public ServerEntity( String resourceName, String ipAddress,
+	public ServerEntity( String name, String ip,
 			int port, int timeInterval, String description) {
 		//this.id = id;
-		this.resourceName = resourceName;
-		this.ipAddress = ipAddress;
+		this.name = name;
+		this.ip = ip;
 		this.port = port;
 		this.timeInterval = timeInterval;
 		this.description = description;
@@ -33,9 +33,9 @@ public class ServerEntity {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	private String resourceName;
+	private String name;
 	
-	private String ipAddress;
+	private String ip;
 	
 	@Max(value=65535)
 	private int port;
@@ -65,17 +65,17 @@ public class ServerEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getResourceName() {
-		return resourceName;
+	public String getName() {
+		return name;
 	}
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getIpAddress() {
-		return ipAddress;
+	public String getIp() {
+		return ip;
 	}
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 	public int getPort() {
 		return port;
@@ -100,8 +100,8 @@ public class ServerEntity {
 
 	@Override
 	public String toString() {
-		return "ServerEntity [id=" + id + ", resourceName=" + resourceName
-				+ ", ipAddress=" + ipAddress + ", port=" + port
+		return "ServerEntity [id=" + id + ", resourceName=" + name
+				+ ", ipAddress=" + ip + ", port=" + port
 				+ ", timeInterval=" + timeInterval + ", readRegister="
 				+ readRegister + ", description=" + description + "]";
 	}
