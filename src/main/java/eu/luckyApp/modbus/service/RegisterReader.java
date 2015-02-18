@@ -13,16 +13,30 @@ import net.wimpi.modbus.msg.ReadInputRegistersResponse;
 import net.wimpi.modbus.net.TCPMasterConnection;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.luckyApp.model.ServerEntity;
 
 @Component
+@Scope("prototype")
 public class RegisterReader extends Observable implements Runnable  {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	private static final Logger LOG=Logger.getLogger(RegisterReader.class.getName());
 	
+	private boolean isConnected;
 	
+	
+	public boolean isConnected() {
+		return isConnected;
+	}
+
+
+	public void setConnected(boolean isConnected) {
+		this.isConnected = isConnected;
+	}
+
+
 	public RegisterReader() {
 	
 	}
@@ -35,6 +49,11 @@ public class RegisterReader extends Observable implements Runnable  {
 	}
 
 	
+	public ServerEntity getServerEntity() {
+		return serverEntity;
+	}
+
+
 	/* The important instances of the classes mentioned before */
 	private TCPMasterConnection con = null; //the connection
 	private ModbusTCPTransaction trans = null; //the transaction
@@ -62,13 +81,15 @@ public class RegisterReader extends Observable implements Runnable  {
 			
 			addr = InetAddress.getByName(serverEntity.getIp());
 			port=serverEntity.getPort();
-			ref=serverEntity.getReadRegister();
+			//ref=serverEntity.getReadRegister();
+			ref=0;
 			count=2;
 			
 			
 			//2. Open the connection
 			con = new TCPMasterConnection(addr);			
-			con.setPort(port);			
+			con.setPort(port);
+			con.setTimeout(5000);
 			con.connect();
 
 			//3. Prepare the request
@@ -91,13 +112,13 @@ public class RegisterReader extends Observable implements Runnable  {
 		} catch (UnknownHostException e){
 			this.setChanged();
 			this.notifyObservers(e);
-			LOG.error(e);
+			//LOG.error(e);
 		}
 	
 	catch (Exception e ) {
 			this.setChanged();
 			this.notifyObservers(e);
-			LOG.error(e);
+		//	LOG.error(e);
 			//throw e;
 		}
 		

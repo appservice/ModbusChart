@@ -1,6 +1,10 @@
 package eu.luckyApp.rest;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executors;
@@ -18,8 +22,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
@@ -27,25 +29,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.luckyApp.modbus.service.RegisterReader;
+import eu.luckyApp.modbus.service.RegisterReader2;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRepository;
 
 @Component
 @Path("/servers")
-public class ServersService  implements Observer{
-	
-	private static final Logger LOG=Logger.getLogger(ServersService.class.getName());
+public class ServersService implements Observer {
+
+	private static final Logger LOG = Logger.getLogger(ServersService.class
+			.getName());
 
 	@Autowired
 	private ServerRepository serverRepository;
 
 	@Autowired
-	private RegisterReader registerReader;
-	
-	private boolean isConnected;
-	private ScheduledExecutorService scheduler;
-	
-	
+	private RegisterReader2 registerReader;
+
+	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -53,118 +54,144 @@ public class ServersService  implements Observer{
 
 		return serverRepository.findAll();
 	}
-	
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public ServerEntity getServer(@PathParam("id") long id   ){ //Response
-		
-		
-		ServerEntity server= serverRepository.findOne(id);
+	public ServerEntity getServer(@PathParam("id") long id) { // Response
+
+		ServerEntity server = serverRepository.findOne(id);
 
 		return server;
 	}
-	
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addServer( ServerEntity server, @Context UriInfo uriInfo){
+	public Response addServer(ServerEntity server, @Context UriInfo uriInfo) {
+		
 		serverRepository.save(server);
-		Long serverId=server.getId();
-	//	URI createdUri=UriBuilder.fromResource(resource)
-	URI createdUri=uriInfo.getAbsolutePathBuilder().path("/"+serverId).build();
-		//return Response.status(Status.CREATED).build();
-	
+		Long serverId = server.getId();
+		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId)
+				.build();
+
 		return Response.created(createdUri).entity(server).build();
 	}
-	
+
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateServer(ServerEntity server){
-		serverRepository.save(server);	
-		LOG.info("zmieniono server"+server);
+	public Response updateServer(ServerEntity server) {
+		serverRepository.save(server);
+		LOG.info("zmieniono server" + server);
 		return Response.noContent().build();
-		
+
 	}
-	
+
 	@DELETE
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response deleteServer(ServerEntity server){
+	public Response deleteServer(ServerEntity server) {
 		serverRepository.delete(server);
 		return Response.noContent().build();
 	}
 
 	@DELETE
 	@Path("/{id}")
-//	@Consumes(MediaType.APPLICATION_JSON)
-	public Response deleteServerById(@PathParam("id")Long id){
+	// @Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteServerById(@PathParam("id") Long id) {
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}
-	
+
 	@POST
 	@Path("/{id}/executor")
-	public Response runServer(@PathParam("id")long id){
-		ServerEntity server=serverRepository.findOne(id);
+	public Response runServer(@PathParam("id") long id) {
+		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
-		if(!isConnected){
-			registerReader.addObserver(this);
-			this.scheduler=Executors.newScheduledThreadPool(4);
-			this.scheduler.scheduleAtFixedRate( registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
-			this.isConnected=true;
-			LOG.warn("Odczyt włączony. "+server.getIp()+":"+server.getPort());
+		if ((schedulersMap.get(id)) == null) {
 
-			LOG.warn(this.isConnected);
+			registerReader.addObserver(this);
+			ScheduledExecutorService scheduler = Executors
+					.newScheduledThreadPool(4);
+			schedulersMap.put(id, scheduler);
+			scheduler.scheduleAtFixedRate(registerReader, 0,
+					server.getTimeInterval(), TimeUnit.MILLISECONDS);
+
+			LOG.warn("Odczyt włączony. " + server.getIp() + ":"
+					+ server.getPort());
+
 			return Response.ok().build();
 		}
-		return Response.serverError().build();		
-		
-	}
+		return Response.serverError().build();
 
-	
+	}
 
 	@DELETE
 	@Path("/{id}/executor")
-	public Response stopReadFromServer(@PathParam("id") Long id){
-		ServerEntity server=serverRepository.findOne(id);
+	public Response stopReadFromServer(@PathParam("id") Long id) {
+		ServerEntity server = serverRepository.findOne(id);
 
-		this.scheduler.shutdown();
-		this.isConnected=false;
+		ScheduledExecutorService scheduler = schedulersMap.get(id);
+		scheduler.shutdown();
+		schedulersMap.remove(id);
+		//registerReader.setConnected(false);
 		registerReader.deleteObserver(this);
-		LOG.warn("Odczyt z servera zatrzymany! "+server.getIp()+":"+server.getPort());
+		LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":"
+				+ server.getPort());
 
 		return Response.ok().build();
 	}
+
 	
-	
+/**
+ * 
+ * @param id -it is server id
+ * @return true if executor is scheduling task
+ */
 	@GET
 	@Path("/{id}/executor")
-	public boolean isConntectedToServer(){
-		return this.isConnected;
+	public boolean isConntectedToServer(@PathParam("id") Long id) {
+		if ((schedulersMap.get(id)) != null) {
+			return true;
+		}
+
+		return false;
 	}
-	
-	
 
 	@Override
 	public void update(Observable o, Object arg) {
+
+		ServerEntity server=((RegisterReader2) o).getServerEntity();
+		LOG.error("Uwaga błąd połączenia/odczytu z: "+server.getIp()+":"+server.getPort() +" |"+ ((Exception) arg).getMessage());
 		
-		System.out.println("Uwaga błąd: "+((Exception)arg).getMessage());
-		this.scheduler.shutdown();
-		this.isConnected=false;
+		Long id = server.getId();
+
+		ScheduledExecutorService scheduler = schedulersMap.get(id);
+
+		scheduler.shutdown();
+		schedulersMap.remove(id);
+		//registerReader.setConnected(false);
 		registerReader.deleteObserver(this);
-		//throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-		
+
+
 	}
-	
+
 	@GET
 	@Path("add")
-	public String addServer(){
-		ServerEntity server=new ServerEntity("server one","192.168.0.183",1024,3000,null);
+	public String addServer() {
+		/*ServerEntity server = new ServerEntity("server one", "192.168.0.183",
+				1024, 3000, null);*/
+		
+		ServerEntity server=new ServerEntity();
+		server.setName("test 1");
+		server.setIp("192.168.0.183");
+		server.setPort(1024);
+		server.setReadedDataType("Float");
+		server.setFirstRegisterPos(0);
+		server.setReadedDataCount(1);
+
 		serverRepository.save(server);
 		return server.toString();
 	}
-	
+
 }

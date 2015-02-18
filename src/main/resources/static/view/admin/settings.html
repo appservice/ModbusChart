@@ -11,7 +11,7 @@
     <h3>Ustawienia</h3>
   </div>
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <div class="jumbotron">
         <h2>Serwer</h2>
 
@@ -22,6 +22,10 @@
             <th>IP:</th>
             <th>Port</th>
             <th>Interwał</th>
+             <th>Typ danych</th>
+            <th>Ilość odczyt. danych</th>
+            <th>Pierwszy rejestr odczytu</th>
+            
             <th></th>
             <th></th>
             <th></th>
@@ -33,9 +37,12 @@
             <td>{{server.ip}}</td>
             <td>{{server.port}}</td>
             <td>{{server.timeInterval}}</td>
+             <td>{{server.readedDataType}}</td>
+            <td>{{server.readedDataCount}}</td>
+            <td>{{server.firstRegisterPos}}</td>
             <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td>
             <td><a href="#" data-ng-click="removeServer(server)">Usuń </a></td>
-            <td><a href="#" data-ng-click="runServer(server)">Włącz </a></td>
+            <td><a href="#" data-ng-click="runServer(server)" >Włącz </a></td>
             <td><a href="#" data-ng-click="stopServer(server)">Wyłącz </a></td>
 
           </tr>
@@ -45,10 +52,10 @@
         <button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog">Dodaj nowy:</button>
 
       </div>
-    </div>
-    <div class="col-md-4 ">
+<!--     </div>
+    <div class="col-md-1 ">
       <div class="jumbotron">Przykładowy tekst</div>
-    </div>
+    </div> -->
 
   </div>
 
@@ -76,6 +83,13 @@
             <input type="text" class="form-control" id="input_port" data-ng-model="newServer.port">
             <label for="input_time" class="control-label">Interwał:</label>
             <input type="text" class="form-control" id="input_time" data-ng-model="newServer.timeInterval">
+            
+            <label for="input_type" class="control-label">Typ danych:</label>
+            <input type="text" class="form-control" id="input_type" data-ng-model="newServer.readedDataType">
+            <label for="input_count" class="control-label">Ilość odczyt. danych:</label>
+            <input type="text" class="form-control" id="input_count" data-ng-model="newServer.readedDataCount">
+            <label for="input_pos" class="control-label">Pierwszy rejestr odczyt:</label>
+            <input type="text" class="form-control" id="nput_pos"" data-ng-model="newServer.firstRegisterPos">
           </div>
 
 

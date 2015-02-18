@@ -100,8 +100,8 @@ angular
 						'$scope',
 						'Restangular',
 						function($scope, Restangular) {
-
-							if ($scope.serversList == undefined) {
+							$scope.serversList=[];
+						/*	if ($scope.serversList == undefined) {
 								$scope.serversList = [ {
 									'id' : 1,
 									'name' : 'Server 1',
@@ -115,7 +115,7 @@ angular
 									'port' : 1024,
 									'description' : 'something'
 								} ];
-							}
+							}*/
 
 							// ---------get all servers-------------------
 							var errorResponseFunctoin = function(response) {
@@ -173,6 +173,8 @@ angular
 							$scope.runServer = function(server) {
 								server.post('executor').then(function() {
 									console.log("run");
+									alert("Zapis do bazy danych włączony");
+									//angular.element()
 								}, errorResponseFunctoin
 
 								);

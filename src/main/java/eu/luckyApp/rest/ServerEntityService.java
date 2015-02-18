@@ -84,12 +84,12 @@ public class ServerEntityService implements Observer{
 	
 	
 	
-	@RequestMapping(value="/testAdd",method=RequestMethod.GET)
+/*	@RequestMapping(value="/testAdd",method=RequestMethod.GET)
 	public String addServer(){
-		ServerEntity server=new ServerEntity("server one","1920182d",1024,3000,null);
-		serverRepository.save(server);
-		return server.toString();
-	}
+		//ServerEntity server=new ServerEntity("server one","1920182d",1024,3000,null);
+		//serverRepository.save(server);
+		//return server.toString();
+	}*/
 	
 	
 	@RequestMapping(value="/{id}/run",method=RequestMethod.GET)
