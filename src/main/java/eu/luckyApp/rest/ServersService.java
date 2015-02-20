@@ -1,9 +1,7 @@
 package eu.luckyApp.rest;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -28,9 +26,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.modbus.service.RegisterReader2;
-import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRepository;
@@ -39,12 +35,11 @@ import eu.luckyApp.model.ServerRepository;
 @Path("/servers")
 public class ServersService implements Observer {
 
-	private static final Logger LOG = Logger.getLogger(ServersService.class
-			.getName());
+	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
 
 	@Autowired
 	private ServerRepository serverRepository;
-	
+
 	@Autowired
 	MeasurementRepository mesasurementRepo;
 
@@ -63,7 +58,7 @@ public class ServersService implements Observer {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public ServerEntity getServer(@PathParam("id") long id) { // Response
+	public ServerEntity getServer(@PathParam("id") long id) { 
 
 		ServerEntity server = serverRepository.findOne(id);
 
@@ -73,11 +68,10 @@ public class ServersService implements Observer {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addServer(ServerEntity server, @Context UriInfo uriInfo) {
-		
+
 		serverRepository.save(server);
 		Long serverId = server.getId();
-		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId)
-				.build();
+		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId).build();
 
 		return Response.created(createdUri).entity(server).build();
 	}
@@ -116,14 +110,11 @@ public class ServersService implements Observer {
 		if ((schedulersMap.get(id)) == null) {
 
 			registerReader.addObserver(this);
-			ScheduledExecutorService scheduler = Executors
-					.newScheduledThreadPool(4);
+			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 			schedulersMap.put(id, scheduler);
-			scheduler.scheduleAtFixedRate(registerReader, 0,
-					server.getTimeInterval(), TimeUnit.MILLISECONDS);
+			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
 
-			LOG.warn("Odczyt włączony. " + server.getIp() + ":"
-					+ server.getPort());
+			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
 			return Response.ok().build();
 		}
@@ -133,26 +124,26 @@ public class ServersService implements Observer {
 
 	@DELETE
 	@Path("/{id}/executor")
-	public Response stopReadFromServer(@PathParam("id") Long id) {
+	public Response stopServer(@PathParam("id") Long id) {
 		ServerEntity server = serverRepository.findOne(id);
 
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
 		scheduler.shutdown();
 		schedulersMap.remove(id);
-		//registerReader.setConnected(false);
+		// registerReader.setConnected(false);
 		registerReader.deleteObserver(this);
-		LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":"
-				+ server.getPort());
+		LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
 
 		return Response.ok().build();
 	}
 
 	
-/**
- * 
- * @param id -it is server id
- * @return true if executor is scheduling task
- */
+	/**
+	 * 
+	 * @param id
+	 *            -it is server id
+	 * @return true if executor is scheduling task
+	 */
 	@GET
 	@Path("/{id}/executor")
 	public boolean isConntectedToServer(@PathParam("id") Long id) {
@@ -166,45 +157,20 @@ public class ServersService implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 
-		ServerEntity server=((RegisterReader2) o).getServerEntity();
-		LOG.error("Uwaga błąd połączenia/odczytu z: "+server.getIp()+":"+server.getPort() +" |"+ ((Exception) arg).getMessage());
-		
+		ServerEntity server = ((RegisterReader2) o).getServerEntity();
+		LOG.error("Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |" + ((Exception) arg).getMessage());
+
 		Long id = server.getId();
 
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
 
 		scheduler.shutdown();
 		schedulersMap.remove(id);
-		//registerReader.setConnected(false);
+		// registerReader.setConnected(false);
 		registerReader.deleteObserver(this);
 
-
 	}
-	
-	@GET
-	@Path("/{id}/measurements")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Iterable<Measurement> getMeasurementsAll(){
-		return mesasurementRepo.findAll();
-	}
-	
-/*
-	@GET
-	@Path("add")
-	public String addServer() {
-		ServerEntity server = new ServerEntity("server one", "192.168.0.183",
-				1024, 3000, null);
-		
-		ServerEntity server=new ServerEntity();
-		server.setName("test 1");
-		server.setIp("192.168.0.183");
-		server.setPort(1024);
-		server.setReadedDataType("Float");
-		server.setFirstRegisterPos(0);
-		server.setReadedDataCount(1);
 
-		serverRepository.save(server);
-		return server.toString();
-	}*/
+	
 
 }

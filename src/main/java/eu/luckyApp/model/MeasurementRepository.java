@@ -9,11 +9,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeasurementRepository extends CrudRepository<Measurement, Long> {
-	
-	
-	@Query("SELECT m FROM Measurement m WHERE m.date BETWEEN :beginDate AND :endDate")
-	public Iterable<Measurement> findAll(@Param("beginDate")Date beginDate, @Param("endDate") Date endDate);
-	
-	//public Iterable<>
+
+	@Query("SELECT m FROM Measurement m WHERE m.serverId=:serverId AND m.date BETWEEN :startDate AND :endDate")
+	public Iterable<Measurement> findAllFromServerByDates(@Param("serverId") Long serverId, @Param("startDate") Date startDate,
+			@Param("endDate") Date endDate);
+
+	@Query("SELECT m FROM Measurement m WHERE m.serverId=:serverId AND m.date >=:startDate")
+	public Iterable<Measurement> findAllFromServerByStartDate(@Param("serverId") Long serverId, @Param("startDate") Date startDate);
+
+	// public Iterable<>
+	@Query("SELECT m FROM Measurement m WHERE m.serverId=:serverId")
+	public Iterable<Measurement> findAllFromServer(@Param("serverId") Long serverId);
 
 }

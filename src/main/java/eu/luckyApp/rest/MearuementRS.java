@@ -11,42 +11,47 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.MeasurementRepository;
 
-@Path("/measurements")
+@Path("/servers/{id}/measurements")
 public class MearuementRS {
+	private static final Logger LOG = Logger.getLogger(MearuementRS.class);
 
 	@Autowired
-	MeasurementRepository mesasurementRepo;
-/*
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Iterable<Measurement> getAll() {
-		return mesasurementRepo.findAll();
-
-	}*/
+	MeasurementRepository measurementRepository;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllByDate(@QueryParam("beginDate") Date beginDate,
-			@QueryParam("endDate") Date endDate) {
+	public Response getAllFromServer(@PathParam("id") Long serverId, @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate) {
 
-		if (beginDate.compareTo(endDate) < 0) {
-			return Response.ok(mesasurementRepo.findAll(beginDate, endDate))
-					.build();
-		} else {
-			return Response.status(Status.BAD_REQUEST).build();
+		try {
+
+			// without parameters
+			if (startDate == 0 && endDate == 0) {
+				LOG.info("function findAllFromServer is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
+
+				return Response.ok(measurementRepository.findAllFromServer(serverId)).build();
+			} else
+
+			// with startDate parameter
+			if (startDate != 0 && endDate == 0) {
+				LOG.info("function findAllFromServerByStartDate is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
+				return Response.ok(measurementRepository.findAllFromServerByStartDate(serverId, new Date(startDate))).build();
+
+			} else
+			// with startDate and endDate parameters
+			if (startDate < endDate) {
+
+				LOG.info("function getAllByDate is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
+				return Response.ok(measurementRepository.findAllFromServerByDates(serverId, new Date(startDate), new Date(endDate))).build();
+			}
+		} catch (Exception ex) {
+			LOG.error(ex.getMessage());
 		}
-	}
+		return Response.status(Status.BAD_REQUEST).build();
 
-	@GET
-	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Measurement getOne(@PathParam("id") Long id) {
-		return mesasurementRepo.findOne(id);
 	}
-
 }

@@ -1,6 +1,6 @@
 package eu.luckyApp.model;
 
-public enum DataType {
+public enum ModbusDataType {
 	FLOAT,
 	DOUBLE,
 	INTEGER,
