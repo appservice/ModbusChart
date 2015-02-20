@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.jpamodelgen.xml.jaxb.FetchType;
+
 @Entity
 @Table(name="MEASUREMENT")
 public class Measurement {
@@ -27,23 +29,34 @@ public class Measurement {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
-	@ManyToOne
+	/*@ManyToOne//(fetch=javax.persistence.FetchType.LAZY)
 	@JoinColumn(name="server_id", referencedColumnName="id")
-	private ServerEntity server;
+	private ServerEntity server;*/
 	
-	@ElementCollection
+	private long serverId ;
+	
+	@ElementCollection(fetch=javax.persistence.FetchType.EAGER)
 	@CollectionTable(name="VALUE", 
 						joinColumns={@JoinColumn(name="ID",referencedColumnName="id")})
+	
 	private List<Float> measuredValue=new ArrayList<>();
 
 	
 	
-	public ServerEntity getServer() {
+	/*public ServerEntity getServer() {
 		return server;
 	}
 
 	public void setServer(ServerEntity server) {
 		this.server = server;
+	}*/
+
+	public long getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(long serverId) {
+		this.serverId = serverId;
 	}
 
 	public Long getId() {

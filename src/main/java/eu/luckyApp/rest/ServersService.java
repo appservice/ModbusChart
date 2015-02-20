@@ -30,6 +30,8 @@ import org.springframework.stereotype.Component;
 
 import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.modbus.service.RegisterReader2;
+import eu.luckyApp.model.Measurement;
+import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRepository;
 
@@ -42,6 +44,9 @@ public class ServersService implements Observer {
 
 	@Autowired
 	private ServerRepository serverRepository;
+	
+	@Autowired
+	MeasurementRepository mesasurementRepo;
 
 	@Autowired
 	private RegisterReader2 registerReader;
@@ -175,12 +180,20 @@ public class ServersService implements Observer {
 
 
 	}
-
+	
+	@GET
+	@Path("/{id}/measurements")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Iterable<Measurement> getMeasurementsAll(){
+		return mesasurementRepo.findAll();
+	}
+	
+/*
 	@GET
 	@Path("add")
 	public String addServer() {
-		/*ServerEntity server = new ServerEntity("server one", "192.168.0.183",
-				1024, 3000, null);*/
+		ServerEntity server = new ServerEntity("server one", "192.168.0.183",
+				1024, 3000, null);
 		
 		ServerEntity server=new ServerEntity();
 		server.setName("test 1");
@@ -192,6 +205,6 @@ public class ServersService implements Observer {
 
 		serverRepository.save(server);
 		return server.toString();
-	}
+	}*/
 
 }

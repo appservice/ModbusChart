@@ -61,7 +61,8 @@ public class RegisterReader2 extends Observable implements Runnable {
 				
 			      Measurement measurement=new Measurement();
 	              measurement.setDate(new Date());
-	              measurement.setServer(serverEntity);
+	              measurement.setServerId(serverEntity.getId());
+	            //  measurement.setServer(serverEntity);
 	              
 	           
 				
