@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.jpamodelgen.xml.jaxb.FetchType;
+
 
 @Entity
 @Table(name="MEASUREMENT")
