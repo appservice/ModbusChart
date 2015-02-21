@@ -11,8 +11,8 @@ angular
 						restrict : 'E',
 						replace : true,
 						scope : {
-							chartData : '=data',
-							chartType : '@?'
+							chartData : '=',
+						// chartType : '@?'
 						},
 
 						template : '<div id="chartdiv" style="min-width: 310px; height: 500px; margin: 0 auto"></div>',
@@ -20,115 +20,117 @@ angular
 
 							var chart = false;
 
-							/*				*/
+							scope
+									.$watchCollection(
+											'chartData',
+											function(newChartData, oldChartData) {
 
-							/*
-							 * chartData.push( { "year" : "2006", "value" : 0.37
-							 * }); // var initChart = function() {
-							 */
+												var chart = AmCharts
+														.makeChart(
+																"chartdiv",
+																{
+																	"type" : "serial",// scope.chartType,//
+																						// serial
+																	"theme" : "none",
+																	"marginLeft" : 20,
+																	"pathToImages" : "http://www.amcharts.com/lib/3/images/",
+																	"decimalSeparator" : ",",
+																	"thousandsSeparator" : ".",
+																	"dataProvider" : scope.chartData,// scope.chartData,
+																	"valueAxes" : [ {
+																		"axisAlpha" : 0,
+																		"inside" : true,
+																		"position" : "left",
+																		"ignoreAxisWidth" : true
+																	} ],
 
-							if (chart)
-								chart.destroy();
-							var config = scope.config || {};
-							var chart = AmCharts
-									.makeChart(
-											"chartdiv",
-											{
-												"type" : scope.chartType,// serial
-												"theme" : "none",
-												"marginLeft" : 20,
-												"pathToImages" : "http://www.amcharts.com/lib/3/images/",
-												"decimalSeparator" : ",",
-												"thousandsSeparator" : ".",
-												"dataProvider" : scope.chartData,
-												"valueAxes" : [ {
-													"axisAlpha" : 0,
-													"inside" : true,
-													"position" : "left",
-													"ignoreAxisWidth" : true
-												} ],
-												/*
-												 * "graphs" : [ { "balloonText" :
-												 * "[[category]]<br><b><span
-												 * style='font-size:14px;'>[[value]]</span></b>",
-												 * "bullet" : "round",
-												 * "bulletSize" : 6, "lineColor" :
-												 * "#d1655d", "lineThickness" :
-												 * 2, "negativeLineColor" :
-												 * "#637bb6", "type" :
-												 * "smoothedLine", "valueField" :
-												 * "value" } ],
-												 */
+																	"graphs" :
 
-												"graphs" : [
-												            
-												            
-												           
-														{
-															"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+																	[
 
-															// "bullet" :
-															// "round",
-															// "bulletSize":1,
-															"id" : "AmGraph-1",
-															"title" : "Czujnik 1",
-															"valueField" : "column-1"
-														},
-														{
-															"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+																			{
+																				"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
 
-															// "bullet" :
-															// "square",
-															// "bulletSize":1,
-															"id" : "AmGraph-2",
-															"title" : "Czujnik 2",
-															"valueField" : "column-2"
-														} ],
+																				"id" : "AmGraph-1",
+																				"title" : "Czujnik 1",
+																				"valueField" : "column-1"
+																			},
+																			{
+																				"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
 
-												"chartScrollbar" : {},
-												"chartCursor" : {
-													"categoryBalloonDateFormat" : "YYYY",
-													"cursorAlpha" : 0,
-													"cursorPosition" : "mouse"
-												},
-												/*
-												 * "dataDateFormat" : "YYYY",
-												 * "categoryField" : "year",
-												 */
+																				"id" : "AmGraph-3",
+																				"title" : "Czujnik 3",
+																				"valueField" : "column-3"
+																			},
+																			{
+																				"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
 
-												"categoryField" : "date",
-												"dataDateFormat" : "YYYY-MM-DD HH:NN:SS",
-												"categoryAxis" : {
-													"minPeriod" : "ss",
-													"parseDates" : true,
-													"minorGridAlpha" : 0.1,
-													"minorGridEnabled" : true
-												},
-												"chartCursor" : {
-													"categoryBalloonDateFormat" : "JJ:NN:SS"
-												},
-												"legend" : {
-													"useGraphSettings" : true,
-													"spacing" : 32,
-													"valueWidth" : 150,
-													"valueAlign" : "left"
-												},
-												"amExport" : {
-													"exportPNG" : true,
-													"imageFileName" : "wykres",
-													"buttonTitle" : "Zapisz wykres jako obraz .png"
-												}
+																				"id" : "AmGraph-4",
+																				"title" : "Czujnik 4",
+																				"valueField" : "column-4"
+																			},
+																			{
+																				"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
 
-											/*
-											 * "categoryAxis" : { "minPeriod" :
-											 * "YYYY", "parseDates" : true,
-											 * "minorGridAlpha" : 0.1,
-											 * "minorGridEnabled" : true }
-											 */
+																				"id" : "AmGraph-5",
+																				"title" : "Czujnik 5",
+																				"valueField" : "column-5"
+																			},
+																			{
+																				"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+
+																				"id" : "AmGraph-6",
+																				"title" : "Czujnik 6",
+																				"valueField" : "column-6"
+																			},
+																			{
+																				"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+
+																				// "bullet"
+																				// :
+																				// "square",
+																				// "bulletSize":1,
+																				"id" : "AmGraph-2",
+																				"title" : "Czujnik 2",
+																				"valueField" : "column-2"
+																			} ],
+
+																	"chartScrollbar" : {},
+																	"chartCursor" : {
+																		"categoryBalloonDateFormat" : "YYYY",
+																		"cursorAlpha" : 0,
+																		"cursorPosition" : "mouse"
+																	},
+
+																	"categoryField" : "date",
+																	"dataDateFormat" : "YYYY-MM-DD HH:NN:SS",
+																	"categoryAxis" : {
+																		"minPeriod" : "ss",
+																		"parseDates" : true,
+																		"minorGridAlpha" : 0.1,
+																		"minorGridEnabled" : true
+																	},
+																	"chartCursor" : {
+																		"categoryBalloonDateFormat" : "JJ:NN:SS"
+																	},
+																	"legend" : {
+																		"useGraphSettings" : true,
+																		"spacing" : 32,
+																		"valueWidth" : 150,
+																		"valueAlign" : "left"
+																	},
+																	"amExport" : {
+																		"exportPNG" : true,
+																		"imageFileName" : "wykres",
+																		"buttonTitle" : "Zapisz wykres jako obraz .png"
+																	}
+
+																});
+												// }
 											});
 
-							var now = new Date().toISOString();
-							chart.amExport.imageFileName = "wykres_" + now;
+							// var now = new Date().toISOString();
+							// chart.amExport.imageFileName = "wykres_" + now;
 
 						},
 						controller : function($scope) {

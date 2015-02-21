@@ -31,77 +31,47 @@ angular
 			} ];
 
 		} ])
-		.controller(
-				'ChartOnlineController',
-				[
-						'$scope',
-						function($scope) {
-							$scope.someData = [];
 
-							for (k = 0; k < 24; k++) {
-								for (i = 0; i < 60; i++) {
-									if (k < 10) {
+		// ------------------------------------------------------------------------------------------
+		.controller('ChartOnlineController',['$scope','$filter','Restangular', function($scope,$filter,Restangular) {
+			$scope.myData = [];
 
-										if (i < 10) {
-											$scope.someData.push({
-												"column-1" : Math.random() * 2
-														+ Math.cos(i / 12) * 15
-														+ 5,
-												"column-2" : Math.random() * 2
-														+ 10 - i * 0.3,
-												"date" : "2014-03-02 0" + k
-														+ ":0" + i + ":00"
-											});
-										} else {
 
-											$scope.someData.push({
-												"column-1" : Math.random() * 2
-														+ Math.cos(i / 12) * 15
-														+ 5,
-												"column-2" : Math.random() * 2
-														+ 10 - i * 0.3,
-												"date" : "2014-03-02 0" + k
-														+ ":" + i + ":00"
-											});
-										}
+			 var baseMeasurements = Restangular.all('servers/2/measurements');
+			 
+			 baseMeasurements.getList().then(function(measurements){
+				// $scope.measurements=measurements;
+				 
+			
+				for(var i=0;i<measurements.length;i++){
+					
+					var myDate=new Date(measurements[i].date);
+					var myStringDate=$filter('date')(myDate,"yyyy-MM-dd HH:mm:ss");
 
-									} else {
+					var dataToDisplay={};
+				 
+				 //dynamically create object with measured value
+				 for(var j=0;j<measurements[i].measuredValue.length;j++){
+					 console.log("jvalue: "+j);
+					 dataToDisplay["column-"+(j+1)]=measurements[i].measuredValue[j];
+				 };
+				 dataToDisplay["date"]=myStringDate;
+					
+					$scope.myData.push(dataToDisplay);
+				}
+		
+				 
+			 });
+			 
 
-										if (i < 10) {
-											$scope.someData.push({
-												"column-1" : Math.random() * 2
-														+ Math.cos(i / 12) * 15
-														+ 5,
-												"column-2" : Math.random() * 2
-														+ 10 - i * 0.3,
-												"date" : "2014-03-02 " + k
-														+ ":0" + i + ":00"
-											});
-										} else {
-
-											$scope.someData.push({
-												"column-1" : Math.random() * 2
-														+ Math.cos(i / 12) * 15
-														+ 5,
-												"column-2" : Math.random() * 2
-														+ 10 - i * 0.3,
-												"date" : "2014-03-02 " + k
-														+ ":" + i + ":00"
-											});
-										}
-
-									}
-								}
-							}
-						} ])
+		}])
 		.controller(
 				'SettingsController',
 				[
 						'$scope',
 						'Restangular',
 						function($scope, Restangular) {
-							$scope.serversList=[];
-
+							$scope.serversList = [];
 
 							// ---------get all servers-------------------
 							var errorResponseFunctoin = function(response) {
@@ -132,27 +102,33 @@ angular
 							}
 
 							// --------add new server------------------
-							
-							$scope.addNewServer=function(newServer){
-								baseServers.post(newServer).then(function(response){
-									$scope.serversList.push(response);
-									console.log("added id:"+response.id+"+ name: "+response.name+" ip: "+response.ip+" port: "+response.port+" timeInterval: "+response.timeInterval);
 
-								},errorResponseFunctoin);
+							$scope.addNewServer = function(newServer) {
+								baseServers.post(newServer).then(
+										function(response) {
+											$scope.serversList.push(response);
+											console.log("added id:"
+													+ response.id + "+ name: "
+													+ response.name + " ip: "
+													+ response.ip + " port: "
+													+ response.port
+													+ " timeInterval: "
+													+ response.timeInterval);
+
+										}, errorResponseFunctoin);
 							}
 
 							// --------update server-----------------
-							$scope.preEditServer=function(server){
-								$scope.updatedServer=server;
+							$scope.preEditServer = function(server) {
+								$scope.updatedServer = server;
 							}
-							
-							$scope.updateServer=function(server){
-							//	var editedServer=Restangular.copy(server);
-								
-								//$scope.updateServer=server;
+
+							$scope.updateServer = function(server) {
+								// var editedServer=Restangular.copy(server);
+
+								// $scope.updateServer=server;
 								server.put();
-								
-								
+
 							}
 
 							// ---------run server (run excecutor)----
@@ -160,7 +136,7 @@ angular
 								server.post('executor').then(function() {
 									console.log("run");
 									alert("Zapis do bazy danych włączony");
-									//angular.element()
+									// angular.element()
 								}, errorResponseFunctoin
 
 								);
@@ -169,8 +145,9 @@ angular
 							// ---------stop server (run excecutor)----
 							$scope.stopServer = function(server) {
 								var id = server.id;
-								baseServers.customDELETE(id + "/executor").then(function(){
-									
-								},errorResponseFunctoin);
+								baseServers.customDELETE(id + "/executor")
+										.then(function() {
+
+										}, errorResponseFunctoin);
 							}
 						} ]);
