@@ -61,6 +61,9 @@ angular
 												 */
 
 												"graphs" : [
+												            
+												            
+												           
 														{
 															"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
 

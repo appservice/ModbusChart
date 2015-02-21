@@ -101,21 +101,7 @@ angular
 						'Restangular',
 						function($scope, Restangular) {
 							$scope.serversList=[];
-						/*	if ($scope.serversList == undefined) {
-								$scope.serversList = [ {
-									'id' : 1,
-									'name' : 'Server 1',
-									'ip' : '192.168.0.183',
-									'port' : 1024,
-									'description' : 'something'
-								}, {
-									'id' : 2,
-									'name' : 'Server 2',
-									'ip' : '192.168.0.200',
-									'port' : 1024,
-									'description' : 'something'
-								} ];
-							}*/
+
 
 							// ---------get all servers-------------------
 							var errorResponseFunctoin = function(response) {
