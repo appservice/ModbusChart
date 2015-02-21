@@ -5,12 +5,8 @@ angular
 		.module('myApp.controllers', [])
 		.controller('ChartController', [ '$scope', function($scope) {
 
-			/*
-			 * $scope.someData = [ { "year" : "1920", "value" : -0.307 }, {
-			 * "year" : "1970", "value" : -0.068 }, { "year" : "2000", "value" :
-			 * 0.267 }, { "year" : "2001", "value" : 0.411 }, { "year" : "2004",
-			 * "value" : 0.445 }, { "year" : "2005", "value" : 0.47 } ];
-			 */
+
+			$scope.height='500px';
 
 			$scope.someData = [ {
 				"column-1" : 1,
@@ -52,7 +48,7 @@ angular
 				 
 				 //dynamically create object with measured value
 				 for(var j=0;j<measurements[i].measuredValue.length;j++){
-					 console.log("jvalue: "+j);
+					// console.log("jvalue: "+j);
 					 dataToDisplay["column-"+(j+1)]=measurements[i].measuredValue[j];
 				 };
 				 dataToDisplay["date"]=myStringDate;
