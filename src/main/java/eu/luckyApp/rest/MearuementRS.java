@@ -2,6 +2,7 @@ package eu.luckyApp.rest;
 
 import java.util.Date;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -14,9 +15,10 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.MeasurementRepository;
 
-@Path("/servers/{id}/measurements")
+@Path("/servers/{serverId}/measurements")
 public class MearuementRS {
 	private static final Logger LOG = Logger.getLogger(MearuementRS.class);
 
@@ -25,7 +27,7 @@ public class MearuementRS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllFromServer(@PathParam("id") Long serverId, @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate) {
+	public Response getAllFromServer(@PathParam("serverId") Long serverId, @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate) {
 
 		try {
 
@@ -54,4 +56,16 @@ public class MearuementRS {
 		return Response.status(Status.BAD_REQUEST).build();
 
 	}
+	
+	@GET
+	@Path("/last")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getLastMeasurements(@PathParam("serverId")Long serverId,@DefaultValue("0") @QueryParam("timePeriod")Long timePeriod){
+		Date lastMeasurementDate=measurementRepository.findLastMeasurementDate(serverId);
+			Date startDate=new Date(lastMeasurementDate.getTime()-timePeriod);
+			LOG.info(startDate.getTime());
+			
+			Iterable<Measurement>measurements=measurementRepository.findAllFromServerByStartDate(serverId, startDate);
+			return Response.ok(measurements).build();
+	/**/}
 }

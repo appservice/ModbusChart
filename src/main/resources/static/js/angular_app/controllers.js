@@ -69,14 +69,14 @@ angular
 						function($scope, Restangular) {
 							$scope.serversList = [];
 
-							// ---------get all servers-------------------
+							
 							var errorResponseFunctoin = function(response) {
 								console.log(response.status);
 								if (response.status == 405)
 									alert("Do tej operacji ma uprawnienia tylko administrator!");
 
 							}
-
+							// ---------get all servers-------------------
 							var baseServers = Restangular.all('servers');
 							// callback
 							baseServers.getList().then(function(servers) {
@@ -84,6 +84,11 @@ angular
 
 							});
 
+							
+							/*$scope.getOneServer=function(){
+								
+							}*/
+							
 							// ----------remove server----------------
 							$scope.removeServer = function(server) {
 								// $scope.serversList.splice(id, 1);
@@ -129,9 +134,23 @@ angular
 
 							// ---------run server (run excecutor)----
 							$scope.runServer = function(server) {
+								var id=server.id;
 								server.post('executor').then(function() {
 									console.log("run");
-									alert("Zapis do bazy danych włączony");
+									
+									//-----------checking if the server is running or occurred error
+									baseServers.customGET(id+"/executor").then(function(response){
+										console.log(response);
+										if(response=="true"){
+											alert("Zapis do bazy danych z serwera: "+server.name+ " włączony!");
+
+										}else{
+											alert("Wystąpił błąd podczas połączenia z serwerem: "+ server.name+"\nSprawdź połączenie!");	
+
+										}
+									
+									});
+									
 									// angular.element()
 								}, errorResponseFunctoin
 
@@ -143,6 +162,7 @@ angular
 								var id = server.id;
 								baseServers.customDELETE(id + "/executor")
 										.then(function() {
+											alert("Nasłuchiwanie i zapis danych do bazy wyłączony!")
 
 										}, errorResponseFunctoin);
 							}

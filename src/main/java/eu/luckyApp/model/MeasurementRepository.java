@@ -20,5 +20,8 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
 	// public Iterable<>
 	@Query("SELECT m FROM Measurement m WHERE m.serverId=:serverId")
 	public Iterable<Measurement> findAllFromServer(@Param("serverId") Long serverId);
+	
+	@Query("SELECT MAX(m.date) FROM Measurement m WHERE m.serverId=:serverId" )
+	public Date findLastMeasurementDate(@Param("serverId") Long serverId);
 
 }

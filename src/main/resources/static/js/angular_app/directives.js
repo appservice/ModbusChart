@@ -15,7 +15,8 @@ angular
 							seriesNumber : '=',
 							height : '=',
 							valueAxisTitle:'=',
-							chartTitle:'='
+							chartTitle:'=',
+							lineThickness:'='
 						},
 
 						template : '<div id="chartdiv" style="min-width: 310px; height:{{height}}; margin: 0 auto"></div>',
@@ -30,6 +31,12 @@ angular
 
 												// --------------------amChart
 												// object--------------------------------------------------------
+												
+												
+												
+												
+												
+												
 												var myChart = {
 													"type" : "serial",
 													"theme" : "none",
@@ -96,7 +103,8 @@ angular
 																"title" : "Czujnik "
 																		+ (g + 1),
 																"valueField" : "column-"
-																		+ (g + 1)
+																		+ (g + 1),
+																		"lineThickness":scope.lineThickness||1
 															});
 												}
 
