@@ -22,10 +22,10 @@
             <th>IP:</th>
             <th>Port</th>
             <th>Interwał</th>
-             <th>Typ danych</th>
+            <th>Typ danych</th>
             <th>Ilość odczyt. danych</th>
             <th>Pierwszy rejestr odczytu</th>
-            
+
             <th></th>
             <th></th>
             <th></th>
@@ -37,12 +37,12 @@
             <td>{{server.ip}}</td>
             <td>{{server.port}}</td>
             <td>{{server.timeInterval}}</td>
-             <td>{{server.readedDataType}}</td>
+            <td>{{server.readedDataType}}</td>
             <td>{{server.readedDataCount}}</td>
             <td>{{server.firstRegisterPos}}</td>
             <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td>
             <td><a href="#" data-ng-click="removeServer(server)">Usuń </a></td>
-            <td><a href="#" data-ng-click="runServer(server)" >Włącz </a></td>
+            <td><a href="#" data-ng-click="runServer(server)">Włącz </a></td>
             <td><a href="#" data-ng-click="stopServer(server)">Wyłącz </a></td>
 
           </tr>
@@ -52,90 +52,122 @@
         <button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog">Dodaj nowy:</button>
 
       </div>
-<!--     </div>
+      <!--     </div>
     <div class="col-md-1 ">
       <div class="jumbotron">Przykładowy tekst</div>
     </div> -->
 
-  </div>
+    </div>
 
 
-  <!-- ==================modal dialog add new server =========================== -->
-  <!-- Modal -->
-  <div class="modal fade" id="newServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel">Dodaj</h4>
-        </div>
-        <div class="modal-body">
+    <!-- ==================modal dialog add new server =========================== -->
+    <!-- Modal -->
+    <form name="newServerForm" novalidate>
+      <div class="modal fade" id="newServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">Dodaj</h4>
+            </div>
+            <div class="modal-body">
 
-          <div class="form-group">
-            <label for="input_name" class="control-label">Nazwa:</label>
-            <input type="text" class="form-control" id="input_name" data-ng-model="newServer.name">
-            <label for="input_ip" class="control-label">IP:</label>
-            <input type="text" class="form-control" id="input_ip" data-ng-model="newServer.ip">
-            <label for="input_port" class="control-label">Port:</label>
-            <input type="text" class="form-control" id="input_port" data-ng-model="newServer.port">
-            <label for="input_time" class="control-label">Interwał:</label>
-            <input type="text" class="form-control" id="input_time" data-ng-model="newServer.timeInterval">
-            
-            <label for="input_type" class="control-label">Typ danych:</label>
-            <input type="text" class="form-control" id="input_type" data-ng-model="newServer.readedDataType">
-            <label for="input_count" class="control-label">Ilość odczyt. danych:</label>
-            <input type="text" class="form-control" id="input_count" data-ng-model="newServer.readedDataCount">
-            <label for="input_pos" class="control-label">Pierwszy rejestr odczyt:</label>
-            <input type="text" class="form-control" id="nput_pos"" data-ng-model="newServer.firstRegisterPos">
+
+              <div class="form-horizontal">
+                <label for="input_name" class="control-label">Nazwa:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.name.$error.required"> Wymagana!</span>
+                <input name="name" type="text" class="form-control" id="input_name" data-ng-model="newServer.name" required>
+
+
+                <label for="input_ip" class="control-label">IP:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.ip.$error.required"> Wymagane!</span>
+                <span class="alert-danger" data-ng-show="newServerForm.ip.$error.pattern">Zły format ip!</span>
+                <input name="ip" type="text" class="form-control" id="input_ip" data-ng-model="newServer.ip" required="required"
+                  data-ng-pattern='/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/' placeholder='xxx.xxx.xxx.xxx'>
+
+                <!-- port  -->
+                <label for="input_port" class="control-label">Port:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.port.$error.required"> Wymagany!</span>
+                <span class="alert-danger" data-ng-show="newServerForm.port.$error.number">Zły format danych! Wymagana liczba z przedziału
+                  1-65535</span>
+                <span class="alert-danger" data-ng-show="newServerForm.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
+                <input name="port" type="number" class="form-control" id="input_port" data-ng-model="newServer.port" required="required" max="65535">
+
+                <!-- interwal -->
+                <label for="input_time" class="control-label">Interwał [ms]:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.interval.$error.required"> Wymagany!</span>
+                <span class="alert-danger" data-ng-show="newServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
+                <span class="alert-danger" data-ng-show="newServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
+                <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="newServer.timeInterval" required min="100">
+
+                <!-- readedDataTypes -->
+                <label for="input_type" class="control-label">Typ danych:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.readedDataType.$error.required"> Wymagany!</span>
+                <select name="readedDataType" id="input_type" class="form-control" data-ng-model="newServer.readedDataType"
+                  data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
+                </select>
+
+                <!-- readeDataCount -->
+                <label for="input_count" class="control-label">Ilość danych do odczytu:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.readedDataCount.$error.required"> Wymagany!</span>
+                <span class="alert-danger" data-ng-show="newServerForm.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span>
+                <input name="readedDataCount" type="number" class="form-control" id="input_count" data-ng-model="newServer.readedDataCount"
+                  required>
+
+                <label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
+                <span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.required"> Wymagany!</span>
+                <span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.number">Zły format danych! Wymagana liczba!</span>
+
+                <input name="firstRegisterPos" type="number" class="form-control" id="nput_pos" " data-ng-model="newServer.firstRegisterPos"
+                  required>
+              </div>
+
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+              <button type="button" class="btn btn-primary" data-ng-click="addNewServer(newServer)" data-dismiss="modal" data-ng-disabled="newServerForm.$invalid">Zapisz</button>
+            </div>
+
           </div>
-
-
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-          <button type="button" class="btn btn-primary" data-ng-click="addNewServer(newServer)" data-dismiss="modal">Zapisz</button>
+      </div>
+    </form>
+    <!-- ==================modal dialog edit server =========================== -->
+    <!-- Modal -->
+    <div class="modal fade" id="editServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Edytuj</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="input_name" class="control-label">Nazwa:</label>
+              <input type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name">
+              <label for="input_ip" class="control-label">IP:</label>
+              <input type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip">
+              <label for="input_port" class="control-label">Port:</label>
+              <input type="text" class="form-control" id="input_port" data-ng-model="updatedServer.port">
+              <label for="input_time" class="control-label">Interwał:</label>
+              <input type="text" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval">
+            </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-primary" data-ng-click="updateServer(updatedServer)" data-dismiss="modal">Zapisz</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- ==================modal dialog edit server =========================== -->
-  <!-- Modal -->
-  <div class="modal fade" id="editServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel">Edytuj</h4>
-        </div>
-        <div class="modal-body">
-
-          <div class="form-group">
-            <label for="input_name" class="control-label">Nazwa:</label>
-            <input type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name">
-            <label for="input_ip" class="control-label">IP:</label>
-            <input type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip">
-            <label for="input_port" class="control-label">Port:</label>
-            <input type="text" class="form-control" id="input_port" data-ng-model="updatedServer.port">
-            <label for="input_time" class="control-label">Interwał:</label>
-            <input type="text" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval">
-          </div>
-
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-          <button type="button" class="btn btn-primary" data-ng-click="updateServer(updatedServer)" data-dismiss="modal">Zapisz</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- =========================================================================== -->
+    <!-- =========================================================================== -->
 </body>
 </html>

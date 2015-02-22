@@ -54,8 +54,8 @@ public class RegisterReader2 extends Observable implements Runnable {
 			
 			//-----------read and save to DB float data--------------
 			//LOG.warn(serverEntity.getReadedDataType());
-			if(serverEntity.getReadedDataType().equals("FLOAT")){
-				//LOG.warn("ZADZIALALO");
+			LOG.info("READED TYPE FROM MODBUS: "+serverEntity.getReadedDataType());
+			if(serverEntity.getReadedDataType().equalsIgnoreCase("FLOAT")){
 				Register[] registers=modbusMaster.readMultipleRegisters(serverEntity.getFirstRegisterPos(),
 						serverEntity.getReadedDataCount()*2);
 				

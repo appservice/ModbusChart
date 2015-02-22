@@ -8,53 +8,53 @@ angular
 
 			$scope.height='500px';
 
-			$scope.someData = [ {
-				"column-1" : 1,
-				"column-2" : 3,
-				"date" : "2014-03-01 20:58:00"
-			}, {
-				"column-1" : 2,
-				"column-2" : 1,
-				"date" : "2014-03-01 21:58:01"
-			}, {
-				"column-1" : 3,
-				"column-2" : 2,
-				"date" : "2014-03-01 22:58:02"
-			}, {
-				"column-1" : 1,
-				"column-2" : 3,
-				"date" : "2014-03-01 23:58:00"
-			} ];
+			$scope.someData = [{
+
+			    "id": 1448,
+			    "date": 1424625141783,
+			    "serverId": 2,
+			    "measuredValue": 
+
+			    [
+			        11,
+			        3,
+			        12,
+			        42,
+			        4,
+			        1
+			    ]
+
+			},
+			{
+
+			    "id": 1449,
+			    "date": 1424625142783,
+			    "serverId": 2,
+			    "measuredValue": 
+
+			    [
+			        11,
+			        3,
+			        12,
+			        42,
+			        4,
+			        1
+			    ]
+
+			}];
 
 		} ])
 
 		// ------------------------------------------------------------------------------------------
-		.controller('ChartOnlineController',['$scope','$filter','Restangular', function($scope,$filter,Restangular) {
+		.controller('ChartOnlineController',['$scope','Restangular', function($scope,Restangular) {
 			$scope.myData = [];
 
 
 			 var baseMeasurements = Restangular.all('servers/2/measurements');
 			 
 			 baseMeasurements.getList().then(function(measurements){
-				// $scope.measurements=measurements;
 				 
-			
-				for(var i=0;i<measurements.length;i++){
-					
-					var myDate=new Date(measurements[i].date);
-					var myStringDate=$filter('date')(myDate,"yyyy-MM-dd HH:mm:ss");
-
-					var dataToDisplay={};
-				 
-				 //dynamically create object with measured value
-				 for(var j=0;j<measurements[i].measuredValue.length;j++){
-					// console.log("jvalue: "+j);
-					 dataToDisplay["column-"+(j+1)]=measurements[i].measuredValue[j];
-				 };
-				 dataToDisplay["date"]=myStringDate;
-					
-					$scope.myData.push(dataToDisplay);
-				}
+				 $scope.myData=measurements;
 		
 				 
 			 });
@@ -68,6 +68,10 @@ angular
 						'Restangular',
 						function($scope, Restangular) {
 							$scope.serversList = [];
+							$scope.readedDataTypes=[
+							           {"type":"FLOAT","name":"FLOAT (32 bit)"},
+							           {"type":"INTEGER","name":"INTEGER (16 bit)"}
+							                        ];
 
 							
 							var errorResponseFunctoin = function(response) {
