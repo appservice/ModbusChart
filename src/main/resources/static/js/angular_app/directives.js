@@ -13,7 +13,9 @@ angular
 						scope : {
 							chartData : '=',
 							seriesNumber : '=',
-							height : '='
+							height : '=',
+							valueAxisTitle:'=',
+							chartTitle:'='
 						},
 
 						template : '<div id="chartdiv" style="min-width: 310px; height:{{height}}; margin: 0 auto"></div>',
@@ -35,12 +37,14 @@ angular
 													"pathToImages" : "http://www.amcharts.com/lib/3/images/",
 													"decimalSeparator" : ",",
 													"thousandsSeparator" : ".",
-													"dataProvider" : scope.chartData,// scope.chartData,
+													"dataProvider" : scope.chartData,
 													"valueAxes" : [ {
 														"axisAlpha" : 0,
 														"inside" : true,
 														"position" : "left",
-														"ignoreAxisWidth" : true
+														"ignoreAxisWidth" : true,
+											      		"id": "ValueAxis-1",
+											      		"title":scope.valueAxisTitle
 													} ],
 													"graphs" : [],
 
@@ -68,6 +72,12 @@ angular
 														"valueWidth" : 150,
 														"valueAlign" : "left"
 													},
+													"titles": [
+													   		{
+													   			"id": "Title-1",
+													   			"size": 15,
+													   			"text": scope.chartTitle
+													   		}],
 													"amExport" : {
 														"exportPNG" : true,
 														"imageFileName" : "wykres",
