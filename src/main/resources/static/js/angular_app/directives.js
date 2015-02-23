@@ -110,7 +110,8 @@ angular
 															"id" : "AmGraph-"+ (g + 1),																	
 															"title" : "Czujnik "+ (g + 1),																	
 															"valueField" : "column-"+ (g + 1),																	
-															"lineThickness" : scope.lineThickness || 1
+															"lineThickness" : scope.lineThickness || 1,
+															/*"connect":false*/
 														});
 											}
 

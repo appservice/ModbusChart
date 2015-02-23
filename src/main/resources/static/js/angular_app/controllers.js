@@ -46,21 +46,58 @@ angular
 		} ])
 
 		// ------------------------------------------------------------------------------------------
-		.controller('ChartOnlineController',['$scope','Restangular', function($scope,Restangular) {
+		.controller('ChartOnlineController',['$scope','Restangular','poller','getLastMeasurement', function($scope,Restangular,poller,getLastMeasurement) {
 			$scope.myData = [];
+			
 
-
-			 var baseMeasurements = Restangular.all('servers/2/measurements');
+		 var baseMeasurements = Restangular.all('servers/1/measurements');
 			 
 			 baseMeasurements.getList().then(function(measurements){
 				 
 				 $scope.myData=measurements;
-		
+				// console.log(measurements);
+				 
+				 var myPoller = poller.get(getLastMeasurement);
+				 
+					
+				    var myPoller = poller.get(Restangular.one('servers/1/measurements/last') , { //Restangular.all('servers/2/measurements/last').getList() 
+				    	action: 'get',
+					        
+					        delay: 5000});
+				 
+			
+					   	myPoller.promise.then(null, null,function(data){
+					   	   console.log(measurements[measurements.length-1].id);
+							/*console.log(data[0]+" myData: "+ $scope.myData);*/
+							console.log("tekst "+new Date());
+							if (measurements[measurements.length-1].id!=data[0].id){
+								console.log("dodamy");
+								$scope.myData.shift();
+								$scope.myData.push(data[0]);
+							}else{
+								console.log("niedodamy");
+							}
+						});
+					   	
 				 
 			 });
 			 
+		
+		//	console.log(getLastMeasurement);
+			 
+			 // Get poller.
+			 
+	
+
+
+			    
 
 		}])
+		
+		/**
+		 * ============================================================================================================
+		 * SettingsController -for site settings
+		 */
 		.controller(
 				'SettingsController',
 				[
@@ -89,9 +126,9 @@ angular
 							});
 
 							
-							/*$scope.getOneServer=function(){
-								
-							}*/
+							/*
+							 * $scope.getOneServer=function(){ }
+							 */
 							
 							// ----------remove server----------------
 							$scope.removeServer = function(server) {
@@ -142,10 +179,11 @@ angular
 								server.post('executor').then(function() {
 									console.log("run");
 									
-									//-----------checking if the server is running or occurred error
+									// -----------checking if the server is
+									// running or occurred error
 									baseServers.customGET(id+"/executor").then(function(response){
 										console.log(response);
-										if(response=="true"){
+										if(response.connectedToServer){
 											alert("Zapis do bazy danych z serwera: "+server.name+ " włączony!");
 
 										}else{

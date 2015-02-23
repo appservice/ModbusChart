@@ -58,6 +58,13 @@ public class MearuementRS {
 	}
 	
 	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Measurement getOne(@PathParam("id")Long id){
+		return measurementRepository.findOne(id);
+	}
+	
+	@GET
 	@Path("/last")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getLastMeasurements(@PathParam("serverId")Long serverId,@DefaultValue("0") @QueryParam("timePeriod")Long timePeriod){

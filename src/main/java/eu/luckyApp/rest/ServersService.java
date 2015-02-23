@@ -30,6 +30,7 @@ import eu.luckyApp.modbus.service.RegisterReader2;
 import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRepository;
+import eu.luckyApp.model.ServerRunningChecker;
 
 @Component
 @Path("/servers")
@@ -58,7 +59,7 @@ public class ServersService implements Observer {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public ServerEntity getServer(@PathParam("id") long id) { 
+	public ServerEntity getServer(@PathParam("id") long id) {
 
 		ServerEntity server = serverRepository.findOne(id);
 
@@ -137,7 +138,6 @@ public class ServersService implements Observer {
 		return Response.ok().build();
 	}
 
-	
 	/**
 	 * 
 	 * @param id
@@ -146,12 +146,18 @@ public class ServersService implements Observer {
 	 */
 	@GET
 	@Path("/{id}/executor")
-	public boolean isConntectedToServer(@PathParam("id") Long id) {
-		if ((schedulersMap.get(id)) != null) {
-			return true;
-		}
+	@Produces(MediaType.APPLICATION_JSON)
+	public ServerRunningChecker isConntectedToServer(@PathParam("id") Long id) {
 
-		return false;
+		ServerRunningChecker serverRunningChecker = new ServerRunningChecker();
+
+		if ((schedulersMap.get(id)) != null) {
+			serverRunningChecker.setConnectedToServer(true);
+
+		} else {
+			serverRunningChecker.setConnectedToServer(false);
+		}
+		return serverRunningChecker;
 	}
 
 	@Override
@@ -170,7 +176,5 @@ public class ServersService implements Observer {
 		registerReader.deleteObserver(this);
 
 	}
-
-	
 
 }
