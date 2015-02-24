@@ -23,5 +23,8 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
 	
 	@Query("SELECT MAX(m.date) FROM Measurement m WHERE m.serverId=:serverId" )
 	public Date findLastMeasurementDate(@Param("serverId") Long serverId);
+	
+	@Query("SELECT MAX(m.id) FROM Measurement m WHERE m.serverId=:serverId")
+	public Long findLastMeasurementIdByServer(@Param("serverId")Long serverId);
 
 }

@@ -71,7 +71,7 @@ angular
 												},
 
 												"categoryField" : "date",
-												"dataDateFormat" : "YYYY-MM-DD HH:NN:SS",
+												"dataDateFormat" : "YYYY-MM-DD HH:NN",//:SS
 												"categoryAxis" : {
 													"minPeriod" : "ss",
 													"parseDates" : true,
@@ -79,7 +79,7 @@ angular
 													"minorGridEnabled" : true
 												},
 												"chartCursor" : {
-													"categoryBalloonDateFormat" : "JJ:NN:SS"
+													"categoryBalloonDateFormat" : "JJ:NN"//:SS
 												},
 												"legend" : {
 													"useGraphSettings" : true,
@@ -140,7 +140,7 @@ angular
 
 							var myDate = new Date(myDataTable[i].date);
 							var myStringDate = $filter('date')(myDate,
-									"yyyy-MM-dd HH:mm:ss");
+									"yyyy-MM-dd HH:mm:ss");//:ss
 
 							var dataToDisplay = {};
 

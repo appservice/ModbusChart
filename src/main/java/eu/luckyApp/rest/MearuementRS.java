@@ -1,6 +1,7 @@
 package eu.luckyApp.rest;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -27,16 +28,26 @@ public class MearuementRS {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllFromServer(@PathParam("serverId") Long serverId, @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate) {
+	public Response getAllFromServer(@PathParam("serverId") Long serverId, @QueryParam("startDate") long startDate,
+			@QueryParam("endDate") long endDate, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
 
 		try {
 
 			// without parameters
-			if (startDate == 0 && endDate == 0) {
+			if (startDate == 0 && endDate == 0&&timePeriod==0) {
 				LOG.info("function findAllFromServer is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
 
 				return Response.ok(measurementRepository.findAllFromServer(serverId)).build();
 			} else
+			
+			if(timePeriod!=0){
+				Date now=new Date();
+				Date beginDate=new Date(now.getTime()-timePeriod);				
+
+				return Response.ok(measurementRepository.findAllFromServerByStartDate(serverId, beginDate)).build();
+				
+			}
+			else
 
 			// with startDate parameter
 			if (startDate != 0 && endDate == 0) {
@@ -56,23 +67,21 @@ public class MearuementRS {
 		return Response.status(Status.BAD_REQUEST).build();
 
 	}
-	
+
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Measurement getOne(@PathParam("id")Long id){
+	public Measurement getOne(@PathParam("id") Long id) {
 		return measurementRepository.findOne(id);
 	}
-	
+
 	@GET
 	@Path("/last")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getLastMeasurements(@PathParam("serverId")Long serverId,@DefaultValue("0") @QueryParam("timePeriod")Long timePeriod){
-		Date lastMeasurementDate=measurementRepository.findLastMeasurementDate(serverId);
-			Date startDate=new Date(lastMeasurementDate.getTime()-timePeriod);
-			LOG.info(startDate.getTime());
-			
-			Iterable<Measurement>measurements=measurementRepository.findAllFromServerByStartDate(serverId, startDate);
-			return Response.ok(measurements).build();
-	/**/}
+	public Measurement getLastMeasurements(@PathParam("serverId") Long serverId, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
+		
+		Long lastId=measurementRepository.findLastMeasurementIdByServer(serverId);
+		Measurement m=measurementRepository.findOne(lastId);				
+		return m;
+		}
 }

@@ -46,31 +46,45 @@ angular
 		} ])
 
 		// ------------------------------------------------------------------------------------------
-		.controller('ChartOnlineController',['$scope','Restangular','poller','getLastMeasurement', function($scope,Restangular,poller,getLastMeasurement) {
-			$scope.myData = [];
+		.controller('ChartOnlineController',['$scope','Restangular','poller', function($scope,Restangular,poller) {
+			$scope.myMeasurements = [];
 			
+		Restangular.one('servers',1).get().then(function(myServer){
+			console.log(myServer);
+			$scope.serverTimeIterval=myServer.timeInterval;
+		
+	
+		//	myServer.getList("measurements").then(function(measurements){
+			var myTimePeriod=12*60*60*1000;
+			myServer.getList("measurements",{"timePeriod":myTimePeriod}).then(function(measurements){
 
-		 var baseMeasurements = Restangular.all('servers/1/measurements');
-			 
-			 baseMeasurements.getList().then(function(measurements){
+			
+				//asign data to chart
+				 $scope.myMeasurements=measurements;
+
+			/*	console.log(measurements);
+				 measurements.customGET("last").then(function(data){
+					 console.log(data);
+				 });*/
+
+			
+				 //----------------poller----------------
 				 
-				 $scope.myData=measurements;
-				// console.log(measurements);
-				 
-				 var myPoller = poller.get(getLastMeasurement);
-				 
-					
-				    var myPoller = poller.get(Restangular.one('servers/1/measurements/last') , { //Restangular.all('servers/2/measurements/last').getList() 
-				    	action: 'get',
+				    var myPoller = poller.get(measurements.one("last") , { //Restangular.getOne('servers/2/measurements/last').getList() 
+				   	action: 'get',
 					        
-					        delay: 5000});
+					        delay: $scope.serverTimeIterval});
 				 
 			
-					   	myPoller.promise.then(null, null,function(data){
-					   	   console.log(measurements[measurements.length-1].id);
+					   	myPoller.promise.then(null, null,function(myData){
+					   		
+					   		
+					   		console.log(myData);
+					   		console.log($scope.myMeasurements.length);
+					   	   //console.log(measurements[measurements.length-1].id);
 							/*console.log(data[0]+" myData: "+ $scope.myData);*/
 							console.log("tekst "+new Date());
-							if (measurements[measurements.length-1].id!=data[0].id){
+							if (measurements[measurements.length-1].id!=myData.id){
 								console.log("dodamy");
 								$scope.myData.shift();
 								$scope.myData.push(data[0]);
@@ -81,7 +95,7 @@ angular
 					   	
 				 
 			 });
-			 
+		});
 		
 		//	console.log(getLastMeasurement);
 			 
