@@ -74,9 +74,9 @@ public class RegisterReader2 extends Observable implements Runnable {
 	                  System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
 	                 // LOG.warn(ModbusUtil.registersToFloat(tmp)+" ");
 	              //   System.out.println(ModbusUtil.registersToFloat(tmp)+" ");
-	               
-	                 measurement.getMeasuredValue().add(ModbusUtil.registersToFloat(tmp));
-	                 
+	               Float myFloatData=ModbusUtil.registersToFloat(tmp);
+	                 measurement.getMeasuredValue().add(Double.parseDouble(myFloatData.toString()));
+	                
 	              }
 				
 				measurmentsRepo.save(measurement);

@@ -35,7 +35,7 @@ public class Measurement {
 	@CollectionTable(name="VALUE", 
 						joinColumns={@JoinColumn(name="ID",referencedColumnName="id")})
 	
-	private List<Float> measuredValue=new ArrayList<>();
+	private List<Double> measuredValue=new ArrayList<>();
 
 	
 	
@@ -71,11 +71,11 @@ public class Measurement {
 		this.date = date;
 	}
 
-	public List<Float> getMeasuredValue() {
+	public List<Double> getMeasuredValue() {
 		return measuredValue;
 	}
 
-	public void setMeasuredValue(List<Float> measuredValue) {
+	public void setMeasuredValue(List<Double> measuredValue) {
 		this.measuredValue = measuredValue;
 	}
 	
