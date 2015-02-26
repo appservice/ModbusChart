@@ -55,6 +55,7 @@ public class RegisterReader2 extends Observable implements Runnable {
 			//-----------read and save to DB float data--------------
 			//LOG.warn(serverEntity.getReadedDataType());
 			LOG.info("READED TYPE FROM MODBUS: "+serverEntity.getReadedDataType());
+			
 			if(serverEntity.getReadedDataType().equalsIgnoreCase("FLOAT")){
 				Register[] registers=modbusMaster.readMultipleRegisters(serverEntity.getFirstRegisterPos(),
 						serverEntity.getReadedDataCount()*2);
@@ -82,6 +83,35 @@ public class RegisterReader2 extends Observable implements Runnable {
 	
 			
 			}
+			
+			
+		/*	if(serverEntity.getReadedDataType().equalsIgnoreCase("DOBULE")){
+				Register[] registers=modbusMaster.readMultipleRegisters(serverEntity.getFirstRegisterPos(),
+						serverEntity.getReadedDataCount()*2);
+				
+			      Measurement measurement=new Measurement();
+	              measurement.setDate(new Date());
+	              measurement.setServerId(serverEntity.getId());
+	            //  measurement.setServer(serverEntity);
+	              
+	           
+				
+				int len=registers.length;
+				for(int i = 0; i<len; i+=2){
+	                  byte [] tmp = new byte[4];
+	                  System.arraycopy(registers[i+1].toBytes(), 0, tmp, 0, 2);
+	                  System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
+	                 // LOG.warn(ModbusUtil.registersToFloat(tmp)+" ");
+	              //   System.out.println(ModbusUtil.registersToFloat(tmp)+" ");
+	               
+	                 measurement.getMeasuredValue().add(ModbusUtil.registersToFloat(tmp));
+	                 
+	              }
+				
+				measurmentsRepo.save(measurement);
+	
+			
+			}*/
 
 
 

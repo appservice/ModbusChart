@@ -14,16 +14,7 @@ public class ServerEntity {
 
 	}
 
-	/*public ServerEntity(String name, String ip, int port, int timeInterval,
-			String description) {
-		// this.id = id;
-		this.name = name;
-		this.ip = ip;
-		this.port = port;
-		this.timeInterval = timeInterval;
-		this.description = description;
-	}*/
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;

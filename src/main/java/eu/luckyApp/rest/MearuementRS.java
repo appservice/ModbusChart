@@ -2,6 +2,7 @@ package eu.luckyApp.rest;
 
 import java.util.Date;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,20 +34,19 @@ public class MearuementRS {
 		try {
 
 			// without parameters
-			if (startDate == 0 && endDate == 0&&timePeriod==0) {
+			if (startDate == 0 && endDate == 0 && timePeriod == 0) {
 				LOG.info("function findAllFromServer is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
 
 				return Response.ok(measurementRepository.findAllFromServer(serverId)).build();
 			} else
-			
-			if(timePeriod!=0){
-				Date now=new Date();
-				Date beginDate=new Date(now.getTime()-timePeriod);				
+
+			if (timePeriod != 0) {
+				Date now = new Date();
+				Date beginDate = new Date(now.getTime() - timePeriod);
 
 				return Response.ok(measurementRepository.findAllFromServerByStartDate(serverId, beginDate)).build();
-				
-			}
-			else
+
+			} else
 
 			// with startDate parameter
 			if (startDate != 0 && endDate == 0) {
@@ -78,9 +78,30 @@ public class MearuementRS {
 	@Path("/last")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Measurement getLastMeasurements(@PathParam("serverId") Long serverId, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
-		
-		Long lastId=measurementRepository.findLastMeasurementIdByServer(serverId);
-		Measurement m=measurementRepository.findOne(lastId);				
+
+		Long lastId = measurementRepository.findLastMeasurementIdByServer(serverId);
+		Measurement m = measurementRepository.findOne(lastId);
 		return m;
-		}
+	}
+
+	@DELETE
+	@Path("/{id}")
+	public Response deleteOne(@PathParam("id") Long id) {
+		measurementRepository.delete(id);
+
+		return Response.noContent().build();
+	}
+
+	@DELETE
+	public Response deleteCollection(@PathParam("serverId") Long serverId, @QueryParam("startDate") Long startDate,
+			@QueryParam("endDate") Long endDate) {
+
+		if (startDate > 0 && endDate > 0) {
+			Iterable<Measurement> deletedMeasurements = measurementRepository.findAllFromServerByDates(serverId, new Date(startDate), new Date(
+					endDate));
+			measurementRepository.delete(deletedMeasurements);
+			return Response.noContent().build();
+		} else
+			return Response.status(Status.BAD_REQUEST).build();
+	}
 }
