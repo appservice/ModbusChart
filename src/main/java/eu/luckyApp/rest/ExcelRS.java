@@ -1,11 +1,11 @@
 package eu.luckyApp.rest;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -21,17 +21,26 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Path("/download")
+
+import eu.luckyApp.model.MeasurementRepository;
+
+@Path("/servers/{id}/download")
 public class ExcelRS {
 
-	Workbook workbook;
-	File file;
+	@Autowired
+	MeasurementRepository measurementRepository;
+	
+	private Workbook workbook;
 
 	@GET
 	@Path("/excel")
 	@Produces("application/vnd.ms-excel")
-	public Response getFile() {
+	public Response getFile(@PathParam("id")Long id) {
+		
+		
+	
 
 
 		StreamingOutput soutput = new StreamingOutput() {
@@ -98,8 +107,22 @@ public class ExcelRS {
 
 	}
 
-	private void setExcelRows(Sheet sheet, int dataNumber) {
-
+	private void setExcelRows(Sheet sheet, int dataNumber, Long serverId) {
+		
+		
+		
+		Font font=workbook.createFont();
+		//List<Measurements> measurements=measurementRepository.findAllFromServer(serverId);
+		//font.setBold(true);
+		CellStyle style=workbook.createCellStyle();
+		style.setFont(font);
+		//style.setBorderBottom(1);
+		style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+		
+		
+		
+		
+		
 	}
 
 }
