@@ -28,10 +28,7 @@ public class Measurement {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
-	/*@ManyToOne//(fetch=javax.persistence.FetchType.LAZY)
-	@JoinColumn(name="server_id", referencedColumnName="id")
-	private ServerEntity server;*/
-	
+
 	private long serverId ;
 	
 	@ElementCollection(fetch=javax.persistence.FetchType.EAGER)
