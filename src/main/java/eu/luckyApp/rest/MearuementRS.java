@@ -1,7 +1,6 @@
 package eu.luckyApp.rest;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
