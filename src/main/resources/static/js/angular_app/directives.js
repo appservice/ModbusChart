@@ -71,7 +71,7 @@ angular
 												},
 
 												"categoryField" : "date",
-												"dataDateFormat" : "YYYY-MM-DD HH:NN",//:SS
+												"dataDateFormat" : "YYYY-MM-DD HH:NN:SS",//:SS
 												"categoryAxis" : {
 													"minPeriod" : "ss",
 													"parseDates" : true,
@@ -79,7 +79,7 @@ angular
 													"minorGridEnabled" : true
 												},
 												"chartCursor" : {
-													"categoryBalloonDateFormat" : "JJ:NN"//:SS
+													"categoryBalloonDateFormat" : "JJ:NN:SS"//:SS
 												},
 												"legend" : {
 													"useGraphSettings" : true,

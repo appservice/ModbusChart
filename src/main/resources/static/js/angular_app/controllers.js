@@ -49,14 +49,14 @@ angular
 		.controller('ChartOnlineController',['$scope','Restangular','poller', function($scope,Restangular,poller) {
 			$scope.myMeasurements = [];
 			
-		Restangular.one('servers',1).get().then(function(myServer){
+		Restangular.one('servers',2).get().then(function(myServer){
 			console.log(myServer);
 			$scope.serverTimeIterval=myServer.timeInterval;
 		
 	
 		//	myServer.getList("measurements").then(function(measurements){
 			var myTimePeriod=12*60*60*1000;
-			myServer.getList("measurements",{"timePeriod":myTimePeriod}).then(function(measurements){
+			myServer.getList("measurements").then(function(measurements){ //,{"timePeriod":myTimePeriod}
 
 			
 				//asign data to chart
