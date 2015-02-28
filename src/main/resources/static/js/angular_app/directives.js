@@ -10,7 +10,7 @@ angular
 					var directive = {};
 
 					// restrict
-					directive.restrict = 'E';
+					directive.restrict = 'EA';
 
 					directive.replace = true;
 					// scope

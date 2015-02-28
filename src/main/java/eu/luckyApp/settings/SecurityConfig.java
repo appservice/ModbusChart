@@ -35,18 +35,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 
 				.authorizeRequests()
-				//.anyRequest().permitAll()
-				//.antMatchers("/**").hasRole("USER")
-			//	.antMatchers("/ModbusChart/main.html#/settings").hasRole("ADMIN")
-			//	.antMatchers(HttpMethod.DELETE,"/ModbusChart/rest/servers/**").hasRole("ADMIN")
+				.antMatchers("/js/**").permitAll()			 
 				.antMatchers(HttpMethod.DELETE,"/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.POST,"/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.PUT,"/**").hasRole("ADMIN")
-				.antMatchers(HttpMethod.GET, "/**").hasRole("USER")
+			//	.antMatchers(HttpMethod.GET,"/**").fullyAuthenticated()
+				.antMatchers(HttpMethod.GET,"/view/admin/**").hasRole("ADMIN")
+				.antMatchers(HttpMethod.GET,"/*", "/user/**").hasRole("USER")
 				.anyRequest().authenticated()
-				.and().httpBasic().and()
+				.and().httpBasic();//.and()
 			//	.formLogin().loginPage("/login.html").loginProcessingUrl("/j_spring_security_check.action").permitAll().and()
-				.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/");
+			//	.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/");
 				//.and().rememberMe()
 				//.and().exceptionHandling().accessDeniedPage("/401");//.
 		

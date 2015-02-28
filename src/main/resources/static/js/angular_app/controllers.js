@@ -3,45 +3,34 @@
  */
 angular
 		.module('myApp.controllers', [])
-		.controller('ChartController', [ '$scope', function($scope) {
+		.controller('DayChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			
 
-
+			var baseMeasurements=Restangular.all('servers/2/measurements');
+			baseMeasurements.getList({"timePeriod":24*60*60*1000}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
 			$scope.height='500px';
 
-			$scope.someData = [{
+			$scope.someData = [];
 
-			    "id": 1448,
-			    "date": 1424625141783,
-			    "serverId": 2,
-			    "measuredValue": 
+		} ])
 
-			    [
-			        11,
-			        3,
-			        12,
-			        42,
-			        4,
-			        1
-			    ]
+		// ------------------------------------------------------------------------------------------
+		.controller('HourChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			
 
-			},
-			{
+			var baseMeasurements=Restangular.all('servers/2/measurements');
+			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
+			$scope.height='500px';
 
-			    "id": 1449,
-			    "date": 1424625142783,
-			    "serverId": 2,
-			    "measuredValue": 
-
-			    [
-			        11,
-			        3,
-			        12,
-			        42,
-			        4,
-			        1
-			    ]
-
-			}];
+			$scope.someData = [];
 
 		} ])
 

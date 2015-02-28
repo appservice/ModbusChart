@@ -15,37 +15,22 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
-
 @Entity
-@Table(name="MEASUREMENT")
+@Table(name = "MEASUREMENT")
 public class Measurement {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-	
 
-	private long serverId ;
-	
-	@ElementCollection(fetch=javax.persistence.FetchType.EAGER)
-	@CollectionTable(name="VALUE", 
-						joinColumns={@JoinColumn(name="ID",referencedColumnName="id")})
-	
-	private List<Double> measuredValue=new ArrayList<>();
+	private long serverId;
 
-	
-	
-	/*public ServerEntity getServer() {
-		return server;
-	}
-
-	public void setServer(ServerEntity server) {
-		this.server = server;
-	}*/
+	@ElementCollection(fetch = javax.persistence.FetchType.EAGER)
+	@CollectionTable(name = "VALUE", joinColumns = { @JoinColumn(name = "ID", referencedColumnName = "id") })
+	private List<Double> measuredValue = new ArrayList<>();
 
 	public long getServerId() {
 		return serverId;
@@ -78,7 +63,5 @@ public class Measurement {
 	public void setMeasuredValue(List<Double> measuredValue) {
 		this.measuredValue = measuredValue;
 	}
-	
-	
 
 }
