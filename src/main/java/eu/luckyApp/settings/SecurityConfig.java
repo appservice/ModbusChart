@@ -39,15 +39,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.DELETE,"/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.POST,"/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.PUT,"/**").hasRole("ADMIN")
-			//	.antMatchers(HttpMethod.GET,"/**").fullyAuthenticated()
 				.antMatchers(HttpMethod.GET,"/view/admin/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.GET,"/*", "/user/**").hasRole("USER")
 				.anyRequest().authenticated()
-				.and().httpBasic();//.and()
-			//	.formLogin().loginPage("/login.html").loginProcessingUrl("/j_spring_security_check.action").permitAll().and()
-			//	.logout().permitAll().logoutUrl("/logout").logoutSuccessUrl("/");
-				//.and().rememberMe()
-				//.and().exceptionHandling().accessDeniedPage("/401");//.
+				.and().formLogin().loginPage("/login.html").permitAll().loginProcessingUrl("/j_spring_security_check")
+				.failureUrl("/login.html?login_error=true").passwordParameter("j_password")
+				.usernameParameter("j_username")
+				.and().rememberMe().tokenValiditySeconds(7*24*3600).key("uniqueAndSecret")
+				//.and().httpBasic()
+				.and().logout().permitAll().logoutUrl("/logout");
+		
 		
 				
 				

@@ -22,7 +22,7 @@ angular
 		.controller('HourChartController', [ '$scope','Restangular', function($scope,Restangular) {
 			
 
-			var baseMeasurements=Restangular.all('servers/2/measurements');
+			var baseMeasurements=Restangular.all('servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
@@ -38,14 +38,14 @@ angular
 		.controller('ChartOnlineController',['$scope','Restangular','poller', function($scope,Restangular,poller) {
 			$scope.myMeasurements = [];
 			
-		Restangular.one('servers',2).get().then(function(myServer){
+		Restangular.one('servers',1).get().then(function(myServer){
 			console.log(myServer);
 			$scope.serverTimeIterval=myServer.timeInterval;
 		
 	
 		//	myServer.getList("measurements").then(function(measurements){
-			var myTimePeriod=12*60*60*1000;
-			myServer.getList("measurements").then(function(measurements){ //,{"timePeriod":myTimePeriod}
+			//var myTimePeriod=12*60*60*1000;
+			myServer.getList("measurements").then(function(measurements){ 
 
 			
 				//asign data to chart
@@ -68,8 +68,8 @@ angular
 					   	myPoller.promise.then(null, null,function(myData){
 					   		
 					   		
-					   		console.log(myData);
-					   		console.log($scope.myMeasurements.length);
+					   	//	console.log(myData);
+					   		//console.log($scope.myMeasurements.length);
 					   	   //console.log(measurements[measurements.length-1].id);
 							/*console.log(data[0]+" myData: "+ $scope.myData);*/
 							console.log("tekst "+new Date());
@@ -96,6 +96,16 @@ angular
 			    
 
 		}])
+		
+		.controller('DownloadController',['$scope','Restangular',function($scope,Restangular){
+			$scope.downloadData=function(){
+				/*Restangular.one('servers/1/measurements/download/excel').get().then(function(){
+					
+				});*/
+			}
+			$scope.getAllData='rest/servers/1/measurements/download/excel';
+		}])
+		
 		
 		/**
 		 * ============================================================================================================

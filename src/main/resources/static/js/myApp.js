@@ -34,8 +34,11 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		templateUrl : 'view/403.html',
 		//controller : ''
 
+	}).state('download',{
+		url:'/download',
+		templateUrl:'view/download.html',
+		controller:'DownloadController'
 	});
-	
 	
 });
 myApp.config([ 'RestangularProvider', function(RestangularProvider) {
