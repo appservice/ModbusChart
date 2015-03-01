@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Wykres</title>
+<meta name="description" content="chart created using amCharts live editor" />
+<meta charset="UTF-8" />
+
+
+
+</head>
+<body>
+
+  <div class="page-header">
+    <h3>Wykres n-dniowy</h3>
+  </div>
+  <form>
+  <div class="form-inline">
+   <p class="input-group">
+              <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+    <label for="input_name" class="control-label ">Od:</label>
+    <input name="date" type="text" class="form-control" id="input_name" data-ng-model="timePeriod.startDate"  required><!-- data-ng-value="{{ date:'MM/dd/yyyy'}}" -->
+    <label for="input_name" class="control-label">Do</label>
+    <input name="date" type="text" class="form-control" id="input_name" data-ng-model="timePeriod.endDate" required>
+     <button class="btn btn-danger" data-ng-click="createChart()">Twórz wykres</button>
+    </div>
+   
+
+   
+   
+  </form>
+  <div>
+  
+
+    <luke-am-chart data-ng-if="showChart"  chart-data=myMeasurements height="height" chart-title="'Wykres n-dniowy'" value-axis-title="'Przepływ'" line-thickness="'2'"></luke-am-chart>
+
+
+  </div>
+</body>
+</html>

@@ -23,7 +23,7 @@
             <th>Port</th>
             <th>Interwał</th>
             <th>Typ danych</th>
-            <th>Ilość odczyt. danych</th>
+            <th>Ilość czujników</th>
             <th>Pierwszy rejestr odczytu</th>
 
             <th></th>
@@ -74,46 +74,48 @@
 
             <div class="form-horizontal">
               <label for="input_name" class="control-label">Nazwa:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.name.$error.required"> Wymagana!</span> <input name="name" type="text"
-                class="form-control" id="input_name" data-ng-model="newServer.name" required>
+              <span class="alert-danger" data-ng-show="newServerForm.name.$error.required"> Wymagana!</span>
+              <input name="name" type="text" class="form-control" id="input_name" data-ng-model="newServer.name" required>
 
 
               <label for="input_ip" class="control-label">IP:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.ip.$error.required"> Wymagane!</span> <span class="alert-danger"
-                data-ng-show="newServerForm.ip.$error.pattern">Zły format ip!</span> <input name="ip" type="text" class="form-control" id="input_ip"
-                data-ng-model="newServer.ip" required="required" data-ng-pattern='/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/' placeholder='xxx.xxx.xxx.xxx'>
+              <span class="alert-danger" data-ng-show="newServerForm.ip.$error.required"> Wymagane!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.ip.$error.pattern">Zły format ip!</span>
+              <input name="ip" type="text" class="form-control" id="input_ip" data-ng-model="newServer.ip" required="required"
+                data-ng-pattern='/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/' placeholder='xxx.xxx.xxx.xxx'>
 
               <!-- port  -->
               <label for="input_port" class="control-label">Port:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.port.$error.required"> Wymagany!</span> <span class="alert-danger"
-                data-ng-show="newServerForm.port.$error.number">Zły format danych! Wymagana liczba z przedziału 1-65535</span> <span
-                class="alert-danger" data-ng-show="newServerForm.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span> <input
-                name="port" type="number" class="form-control" id="input_port" data-ng-model="newServer.port" required="required" max="65535">
+              <span class="alert-danger" data-ng-show="newServerForm.port.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.port.$error.number">Zły format danych! Wymagana liczba z przedziału
+                1-65535</span>
+              <span class="alert-danger" data-ng-show="newServerForm.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
+              <input name="port" type="number" class="form-control" id="input_port" data-ng-model="newServer.port" required="required" max="65535">
 
               <!-- interwal -->
               <label for="input_time" class="control-label">Interwał [ms]:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.interval.$error.required"> Wymagany!</span> <span class="alert-danger"
-                data-ng-show="newServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span> <span class="alert-danger"
-                data-ng-show="newServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span> <input name="interval" type="number"
-                class="form-control" id="input_time" data-ng-model="newServer.timeInterval" required min="100">
+              <span class="alert-danger" data-ng-show="newServerForm.interval.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="newServer.timeInterval" required min="100">
 
               <!-- readedDataTypes -->
               <label for="input_type" class="control-label">Typ danych:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.readedDataType.$error.required"> Wymagany!</span> <select name="readedDataType"
-                id="input_type" class="form-control" data-ng-model="newServer.readedDataType"
+              <span class="alert-danger" data-ng-show="newServerForm.readedDataType.$error.required"> Wymagany!</span>
+              <select name="readedDataType" id="input_type" class="form-control" data-ng-model="newServer.readedDataType"
                 data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
               </select>
 
               <!-- readeDataCount -->
-              <label for="input_count" class="control-label">Ilość danych do odczytu:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.readedDataCount.$error.required"> Wymagany!</span> <span class="alert-danger"
-                data-ng-show="newServerForm.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span> <input name="readedDataCount"
-                type="number" class="form-control" id="input_count" data-ng-model="newServer.readedDataCount" required>
+              <label for="input_count" class="control-label">Ilość czujników:</label>
+              <span class="alert-danger" data-ng-show="newServerForm.readedDataCount.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="readedDataCount" type="number" class="form-control" id="input_count" data-ng-model="newServer.readedDataCount" required>
 
               <label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
-              <span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.required"> Wymagany!</span> <span class="alert-danger"
-                data-ng-show="newServerForm.firstRegisterPos.$error.number">Zły format danych! Wymagana liczba!</span> <input name="firstRegisterPos"
-                type="number" class="form-control" id="nput_pos" data-ng-model="newServer.firstRegisterPos" required>
+              <span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="firstRegisterPos" type="number" class="form-control" id="nput_pos" data-ng-model="newServer.firstRegisterPos" required>
             </div>
 
 
@@ -143,13 +145,47 @@
 
           <div class="form-group">
             <label for="input_name" class="control-label">Nazwa:</label>
-            <input type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name">
+            <span class="alert-danger" data-ng-show="updatedServer.name.$error.required"> Wymagana!</span>
+            <input name="name" type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name" required>
+
+
             <label for="input_ip" class="control-label">IP:</label>
-            <input type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip">
+            <span class="alert-danger" data-ng-show="updatedServer.ip.$error.required"> Wymagane!</span>
+            <span class="alert-danger" data-ng-show="updatedServer.ip.$error.pattern">Zły format ip!</span>
+            <input name="ip" type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip" required="required"
+              data-ng-pattern='/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/' placeholder='xxx.xxx.xxx.xxx'>
+
+            <!-- port  -->
             <label for="input_port" class="control-label">Port:</label>
-            <input type="text" class="form-control" id="input_port" data-ng-model="updatedServer.port">
-            <label for="input_time" class="control-label">Interwał:</label>
-            <input type="text" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval">
+            <span class="alert-danger" data-ng-show="updatedServer.port.$error.required"> Wymagany!</span>
+            <span class="alert-danger" data-ng-show="updatedServer.port.$error.number">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
+            <span class="alert-danger" data-ng-show="updatedServer.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
+            <input name="port" type="number" class="form-control" id="input_port" data-ng-model="updatedServer.port" required="required" max="65535">
+
+            <!-- interwal -->
+            <label for="input_time" class="control-label">Interwał [ms]:</label>
+            <span class="alert-danger" data-ng-show="updatedServer.interval.$error.required"> Wymagany!</span>
+            <span class="alert-danger" data-ng-show="updatedServer.interval.$error.min">Minimalny intewał to 100 ms!</span>
+            <span class="alert-danger" data-ng-show="updatedServer.interval.$error.number">Zły format danych! Wymagana liczba!</span>
+            <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval" required min="100">
+
+            <!-- readedDataTypes -->
+            <label for="input_type" class="control-label">Typ danych:</label>
+            <span class="alert-danger" data-ng-show="nupdatedServer.readedDataType.$error.required"> Wymagany!</span>
+            <select name="readedDataType" id="input_type" class="form-control" data-ng-model="updatedServer.readedDataType"
+              data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
+            </select>
+
+            <!-- readeDataCount -->
+            <label for="input_count" class="control-label">Ilość czujników:</label>
+            <span class="alert-danger" data-ng-show="updatedServer.readedDataCount.$error.required"> Wymagany!</span>
+            <span class="alert-danger" data-ng-show="updatedServer.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span>
+            <input name="readedDataCount" type="number" class="form-control" id="input_count" data-ng-model="updatedServer.readedDataCount" required>
+
+            <label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
+            <span class="alert-danger" data-ng-show="updatedServer.firstRegisterPos.$error.required"> Wymagany!</span>
+            <span class="alert-danger" data-ng-show="updatedServer.firstRegisterPos.$error.number">Zły format danych! Wymagana liczba!</span>
+            <input name="firstRegisterPos" type="number" class="form-control" id="nput_pos" data-ng-model="updatedServer.firstRegisterPos" required>
           </div>
 
 

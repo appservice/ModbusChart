@@ -101,7 +101,10 @@ angular
 											};
 
 											// -------------------------grpahs--------------------------------------------
-											var graphNumber=scope.seriesNumber||scope.chartData[0].measuredValue.length;
+											var graphNumber=scope.seriesNumber||0;
+											if(scope.chartData.length>0)
+												graphNumber=scope.seriesNumber||scope.chartData[0].measuredValue.length;
+											
 											
 											for (var g = 0; g <graphNumber; g++) { //
 												myChart.graphs

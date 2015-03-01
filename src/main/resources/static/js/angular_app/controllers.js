@@ -3,24 +3,29 @@
  */
 angular
 		.module('myApp.controllers', [])
+		
+		/**
+		 * ================================================================================================
+		 * Day chart controller
+		 * ================================================================================================
+		 */
 		.controller('DayChartController', [ '$scope','Restangular', function($scope,Restangular) {
-			
+			$scope.myMeasurements=[];
 
-			var baseMeasurements=Restangular.all('servers/2/measurements');
+			var baseMeasurements=Restangular.all('servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":24*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
 			});
 		
-			$scope.height='500px';
+			$scope.height='600px';
 
-			$scope.someData = [];
 
 		} ])
 
 		// ------------------------------------------------------------------------------------------
 		.controller('HourChartController', [ '$scope','Restangular', function($scope,Restangular) {
-			
+			$scope.myMeasurements=[];
 
 			var baseMeasurements=Restangular.all('servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
@@ -30,36 +35,59 @@ angular
 		
 			$scope.height='500px';
 
-			$scope.someData = [];
+			
 
 		} ])
+		
+		.controller('AllDataChartController',['$scope','Restangular',function($scope,Restangular){
+			$scope.myMeasurements=[];
+			
+			var baseMeasurements=Restangular.all('servers/1/measurements');
+			baseMeasurements.getList().then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
+			$scope.height='600px';
 
-		// ------------------------------------------------------------------------------------------
+			
+		}])
+
+		/**
+		 * ============================================================================================================
+		 * chart online controller
+		 * ======================================================================================================
+		 */
 		.controller('ChartOnlineController',['$scope','Restangular','poller', function($scope,Restangular,poller) {
 			$scope.myMeasurements = [];
+		//	$scope.mySeriesNumber=0;
 			
 		Restangular.one('servers',1).get().then(function(myServer){
 			console.log(myServer);
+			$scope.mySeriesNumber=myServer.readedDataCount||0;
 			$scope.serverTimeIterval=myServer.timeInterval;
-		
-	
-		//	myServer.getList("measurements").then(function(measurements){
-			//var myTimePeriod=12*60*60*1000;
-			myServer.getList("measurements").then(function(measurements){ 
-
+			var myDate=new Date();
+			var dataTableSize=60;
 			
-				//asign data to chart
-				 $scope.myMeasurements=measurements;
+			for(j=0;j<dataTableSize;j++){
+				$scope.myMeasurements.push({"date":myDate.getTime()-(dataTableSize-j)*$scope.serverTimeIterval,"measuredValue":[]});
+				
+				
+				
+			}
 
-			/*	console.log(measurements);
-				 measurements.customGET("last").then(function(data){
-					 console.log(data);
-				 });*/
+			console.log($scope.myMeasurements);
+			
+				 myServer.customGET("measurements/last").then(function(lastMeasurementData){
+				//	 $scope.lastData=lastMeasurementData;
+					// $scope.myMeasurements.push(lastMeasurementData);
+					 console.log(lastMeasurementData);
+				
 
 			
 				 //----------------poller----------------
 				 
-				    var myPoller = poller.get(measurements.one("last") , { //Restangular.getOne('servers/2/measurements/last').getList() 
+				    var myPoller = poller.get(myServer.one("measurements/last") , { //Restangular.getOne('servers/2/measurements/last').getList() 
 				   	action: 'get',
 					        
 					        delay: $scope.serverTimeIterval});
@@ -68,15 +96,16 @@ angular
 					   	myPoller.promise.then(null, null,function(myData){
 					   		
 					   		
-					   	//	console.log(myData);
-					   		//console.log($scope.myMeasurements.length);
-					   	   //console.log(measurements[measurements.length-1].id);
-							/*console.log(data[0]+" myData: "+ $scope.myData);*/
+
 							console.log("tekst "+new Date());
-							if (measurements[measurements.length-1].id!=myData.id){
+							if ($scope.myMeasurements[$scope.myMeasurements.length-1].date!=myData.date){
 								console.log("dodamy");
-								$scope.myData.shift();
-								$scope.myData.push(data[0]);
+								//$scope.myData.shift();
+								
+								$scope.myMeasurements.shift();
+								$scope.myMeasurements.push(myData);
+								
+								console.log($scope.myMeasurements);
 							}else{
 								console.log("niedodamy");
 							}
@@ -84,7 +113,9 @@ angular
 					   	
 				 
 			 });
-		});
+				 
+		 });
+	//	});
 		
 		//	console.log(getLastMeasurement);
 			 
@@ -97,6 +128,10 @@ angular
 
 		}])
 		
+		/**
+		 * ============================================================================================================
+		 * download controller
+		 */
 		.controller('DownloadController',['$scope','Restangular',function($scope,Restangular){
 			$scope.downloadData=function(){
 				/*Restangular.one('servers/1/measurements/download/excel').get().then(function(){
@@ -105,6 +140,68 @@ angular
 			}
 			$scope.getAllData='rest/servers/1/measurements/download/excel';
 		}])
+		
+		/**
+		 * ============================================================================================================
+		 * Custom period chart controller
+		 * ============================================================================================================
+		 */
+		.controller('CustomPeriodChartController',['$scope','Restangular',function($scope,Restangular){
+			$scope.showChart=false;
+			
+			$scope.today = function() {
+			    $scope.dt = new Date();
+			  };
+			  $scope.today();
+
+			  $scope.clear = function () {
+			    $scope.dt = null;
+			  };
+
+			  // Disable weekend selection
+			  $scope.disabled = function(date, mode) {
+			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+			  };
+
+			  $scope.toggleMin = function() {
+			    $scope.minDate = $scope.minDate ? null : new Date();
+			  };
+			  $scope.toggleMin();
+
+			  $scope.open = function($event) {
+			    $event.preventDefault();
+			    $event.stopPropagation();
+
+			    $scope.opened = true;
+			  };
+
+			  $scope.dateOptions = {
+			    formatYear: 'yy',
+			    startingDay: 1
+			  };
+
+			  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+			  $scope.format = $scope.formats[0];
+			
+			
+			
+			$scope.createChart=function(){
+				
+			$scope.myMeasurements=[];
+
+			var baseMeasurements=Restangular.all('servers/1/measurements');
+			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
+			$scope.height='500px';
+			$scope.showChart=true;
+			}
+			
+		}])
+		
+
 		
 		
 		/**

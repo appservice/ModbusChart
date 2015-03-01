@@ -3,7 +3,7 @@
  */
 var myApp = angular.module('myApp', [ 'ui.router', 'restangular',
 		'emguo.poller', 'myApp.directives', 'myApp.controllers',
-		'myApp.services' ]);
+		'myApp.services','ui.bootstrap' ,'ngLocale']);
 myApp.config(function($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise('/');
 
@@ -38,6 +38,14 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		url:'/download',
 		templateUrl:'view/download.html',
 		controller:'DownloadController'
+	}).state('allDataChart',{
+		url:'/all-data-chart',
+		templateUrl:'view/all-data-chart.html',
+		controller:'AllDataChartController'
+	}).state('customPeriodChart',{
+		url:'/custom-period-chart',
+		templateUrl:'view/custom-period-chart.html',
+		controller:'CustomPeriodChartController'
 	});
 	
 });
