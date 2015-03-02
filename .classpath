@@ -6,7 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="WEB-INF/|app/|app/karma/|app/src/|app/src/app/|app/src/app/about/|app/src/app/home/|app/src/assets/|app/src/common/|app/src/common/plusOne/|app/src/less/|app/vendor/placeholders/|errors/|vendors/|js/|css/" kind="src" path="src/main/webapp"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

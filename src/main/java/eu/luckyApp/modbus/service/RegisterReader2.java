@@ -48,6 +48,7 @@ public class RegisterReader2 extends Observable implements Runnable {
 	@Override
 	public void run() {
 		modbusMaster = new ModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
+	//	modbusMaster.
 		try {
 			modbusMaster.connect();
 			
@@ -73,7 +74,6 @@ public class RegisterReader2 extends Observable implements Runnable {
 	                  System.arraycopy(registers[i+1].toBytes(), 0, tmp, 0, 2);
 	                  System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
 	                 // LOG.warn(ModbusUtil.registersToFloat(tmp)+" ");
-	              //   System.out.println(ModbusUtil.registersToFloat(tmp)+" ");
 	               Float myFloatData=ModbusUtil.registersToFloat(tmp);
 	                 measurement.getMeasuredValue().add(Double.parseDouble(myFloatData.toString()));
 	                

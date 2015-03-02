@@ -12,7 +12,7 @@ angular
 		.controller('DayChartController', [ '$scope','Restangular', function($scope,Restangular) {
 			$scope.myMeasurements=[];
 
-			var baseMeasurements=Restangular.all('servers/1/measurements');
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":24*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
@@ -27,7 +27,7 @@ angular
 		.controller('HourChartController', [ '$scope','Restangular', function($scope,Restangular) {
 			$scope.myMeasurements=[];
 
-			var baseMeasurements=Restangular.all('servers/1/measurements');
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
@@ -42,7 +42,7 @@ angular
 		.controller('AllDataChartController',['$scope','Restangular',function($scope,Restangular){
 			$scope.myMeasurements=[];
 			
-			var baseMeasurements=Restangular.all('servers/1/measurements');
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList().then(function(data){
 				$scope.myMeasurements=data;
 				
@@ -62,7 +62,7 @@ angular
 			$scope.myMeasurements = [];
 		//	$scope.mySeriesNumber=0;
 			
-		Restangular.one('servers',1).get().then(function(myServer){
+		Restangular.one('rest/servers',1).get().then(function(myServer){
 			console.log(myServer);
 			$scope.mySeriesNumber=myServer.readedDataCount||0;
 			$scope.serverTimeIterval=myServer.timeInterval;
@@ -81,7 +81,7 @@ angular
 				 myServer.customGET("measurements/last").then(function(lastMeasurementData){
 				//	 $scope.lastData=lastMeasurementData;
 					// $scope.myMeasurements.push(lastMeasurementData);
-					 console.log(lastMeasurementData);
+				//	 console.log(lastMeasurementData);
 				
 
 			
@@ -105,7 +105,7 @@ angular
 								$scope.myMeasurements.shift();
 								$scope.myMeasurements.push(myData);
 								
-								console.log($scope.myMeasurements);
+							//	console.log($scope.myMeasurements);
 							}else{
 								console.log("niedodamy");
 							}
@@ -189,7 +189,7 @@ angular
 				
 			$scope.myMeasurements=[];
 
-			var baseMeasurements=Restangular.all('servers/1/measurements');
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
@@ -228,7 +228,7 @@ angular
 
 							}
 							// ---------get all servers-------------------
-							var baseServers = Restangular.all('servers');
+							var baseServers = Restangular.all('rest/servers');
 							// callback
 							baseServers.getList().then(function(servers) {
 								$scope.serversList = servers;
@@ -317,5 +317,11 @@ angular
 											alert("Nasłuchiwanie i zapis danych do bazy wyłączony!")
 
 										}, errorResponseFunctoin);
+							}
+							
+							$scope.switchOffServer=function(){
+								Restangular.one("shutdown").customPOST().then(function(data){
+									alert("Aplikacja wyłączona");
+								});
 							}
 						} ]);
