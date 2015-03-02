@@ -212,8 +212,8 @@ angular
 				'SettingsController',
 				[
 						'$scope',
-						'Restangular',
-						function($scope, Restangular) {
+						'Restangular','$timeout',
+						function($scope, Restangular,$timeout) {
 							$scope.serversList = [];
 							$scope.readedDataTypes=[
 							           {"type":"FLOAT","name":"FLOAT (32 bit)"},
@@ -291,19 +291,29 @@ angular
 									
 									// -----------checking if the server is
 									// running or occurred error
-									baseServers.customGET(id+"/executor").then(function(response){
-										console.log(response);
-										if(response.connectedToServer){
-											alert("Zapis do bazy danych z serwera: "+server.name+ " włączony!");
-
-										}else{
-											alert("Wystąpił błąd podczas połączenia z serwerem: "+ server.name+"\nSprawdź połączenie!");	
-
-										}
 									
-									});
+								//	
 									
-									// angular.element()
+									var executeGet=function(){
+										
+										baseServers.customGET(id+"/executor").then(function(response){
+											//console.log(response);
+											if(response.connectedToServer){
+												alert("Zapis do bazy danych z serwera: "+server.name+ " włączony!");
+
+											}else{
+												//console.log(response);
+												alert("Wystąpił błąd podczas połączenia z serwerem: "+ server.name+"\n" +
+														response.errorMessage+"!");	
+
+											}
+										
+										});
+										
+									}
+									$timeout(executeGet,1000);
+									
+									
 								}, errorResponseFunctoin
 
 								);

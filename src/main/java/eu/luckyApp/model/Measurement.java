@@ -64,4 +64,11 @@ public class Measurement {
 		this.measuredValue = measuredValue;
 	}
 
+	@Override
+	public String toString() {
+		return "id: "+id+" "+" |date: "+date.toString()+" "+" |server id: "+serverId+
+				" |measured list: "+measuredValue;
+	}
+
+	
 }
