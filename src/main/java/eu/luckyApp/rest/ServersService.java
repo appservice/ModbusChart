@@ -87,7 +87,7 @@ public class ServersService implements Observer {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateServer(ServerEntity server) {
 		serverRepository.save(server);
-		LOG.info("zmieniono server" + server);
+		LOG.warn("zmieniono server" + server);
 		return Response.noContent().build();
 
 	}
@@ -119,6 +119,7 @@ public class ServersService implements Observer {
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 			schedulersMap.put(id, scheduler);
 			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
+			
 
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
@@ -141,9 +142,10 @@ public class ServersService implements Observer {
 			registerReader.deleteObserver(this);
 			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
 			return Response.ok().build();
-		} else
+		} else{
+			
 			return Response.serverError().build();
-
+		}
 	}
 
 	/**
