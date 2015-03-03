@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
+import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.facade.ModbusTCPMaster;
 import net.wimpi.modbus.procimg.Register;
 import net.wimpi.modbus.util.ModbusUtil;
@@ -13,16 +14,18 @@ import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
 import eu.luckyApp.model.ServerEntity;
 
 @Component
 @Scope("prototype")
 public class RegisterReader2 extends Observable implements Runnable {
 
-	ModbusTCPMaster modbusMaster;
-	Logger LOG = Logger.getLogger(this.getClass());
+	private MyModbusTCPMaster modbusMaster;
+	private static final Logger LOG = Logger.getLogger(RegisterReader2.class);
+	private ServerEntity serverEntity;
 
-	ServerEntity serverEntity;
+	
 
 	public ServerEntity getServerEntity() {
 		return serverEntity;
@@ -34,7 +37,7 @@ public class RegisterReader2 extends Observable implements Runnable {
 
 	@Override
 	public void run() {
-		modbusMaster = new ModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
+		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
 		try {
 			modbusMaster.connect();
 
@@ -43,7 +46,9 @@ public class RegisterReader2 extends Observable implements Runnable {
 			LOG.info("READED TYPE FROM MODBUS: " + new Date() + " " + serverEntity.getReadedDataType());
 
 			if (serverEntity.getReadedDataType().equalsIgnoreCase("FLOAT")) {
-				Register[] registers = modbusMaster.readMultipleRegisters(serverEntity.getFirstRegisterPos(), serverEntity.getReadedDataCount() * 2);
+				//modbusMaster.re
+				
+				Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,serverEntity.getFirstRegisterPos(), serverEntity.getReadedDataCount() * 2);
 
 				List<Double> resultList = new ArrayList<>();
 
