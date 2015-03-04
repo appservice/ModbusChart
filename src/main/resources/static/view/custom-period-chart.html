@@ -13,29 +13,68 @@
   <div class="page-header">
     <h3>Wykres n-dniowy</h3>
   </div>
-  <form>
-  <div class="form-inline">
-   <p class="input-group">
+  <form novalidate name="dateForm">
+
+
+    <div class="form-inline">
+      <!--    <p class="input-group">
               <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
               <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
               </span>
-            </p>
-    <label for="input_name" class="control-label ">Od:</label>
-    <input name="date" type="text" class="form-control" id="input_name" data-ng-model="timePeriod.startDate"  required><!-- data-ng-value="{{ date:'MM/dd/yyyy'}}" -->
-    <label for="input_name" class="control-label">Do</label>
-    <input name="date" type="text" class="form-control" id="input_name" data-ng-model="timePeriod.endDate" required>
-     <button class="btn btn-danger" data-ng-click="createChart()">Twórz wykres</button>
-    </div>
-   
+            </p> -->
+      <table style="margin-right: 10px; " border="1" >
+        <tbody>
+          <tr>
 
-   
-   
+            <td style="text-align: center;">
+              <span class="alert-danger" data-ng-show="dateForm.startDate.$error.date"> Zły format!</span>
+              <span class="alert-danger" data-ng-show="dateForm.startDate.$error.required"> Wartość wymagana!</span>
+
+            </td>
+
+            <td style="text-align: center;">
+              <span class="alert-danger" data-ng-show="dateForm.endDate.$error.date"> Zły format!</span>
+              <span class="alert-danger" data-ng-show="dateForm.endDate.$error.required"> Wartość wymagana!</span>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <label for="start_date" class="control-label ">Od:</label>
+              <input name="startDate" type="date" class="form-control" id="start_date" data-ng-model="timePeriod.startDate" required
+                placeholder="rrrr-mm-dd">
+            </td>
+
+            <td>
+              <label for="endDate" class="control-label">Do:</label>
+              <input name="endDate" type="date" class="form-control" id="endDate" data-ng-model="timePeriod.endDate" required placeholder="rrrr-mm-dd">
+            </td>
+            <td>
+              <button class="btn btn-danger" data-ng-disabled="dateForm.$invalid" data-ng-click="createChart()">Twórz wykres</button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+
+
+      <!-- data-ng-value="{{ date:'MM/dd/yyyy'}}" -->
+
+
+
+    </div>
+
+
+
+
   </form>
   <div>
-  
 
-    <luke-am-chart data-ng-if="showChart"  chart-data=myMeasurements height="height" chart-title="'Wykres n-dniowy'" value-axis-title="'Przepływ'" line-thickness="'2'"></luke-am-chart>
+
+    <luke-am-chart data-ng-if="showChart" chart-data=myMeasurements height="height" chart-title="'Wykres n-dniowy'" value-axis-title="'Przepływ'"
+      line-thickness="'2'"></luke-am-chart>
 
 
   </div>
