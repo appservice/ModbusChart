@@ -1,7 +1,9 @@
 package eu.luckyApp.rest;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import eu.luckyApp.modbus.service.RegisterReader2;
+import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRepository;
@@ -46,6 +49,8 @@ public class ServersService implements Observer {
 
 	@Autowired
 	private RegisterReader2 registerReader;
+
+	private String errorMessage;
 
 	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
 
@@ -82,7 +87,7 @@ public class ServersService implements Observer {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateServer(ServerEntity server) {
 		serverRepository.save(server);
-		LOG.info("zmieniono server" + server);
+		LOG.warn("zmieniono server" + server);
 		return Response.noContent().build();
 
 	}
@@ -114,6 +119,7 @@ public class ServersService implements Observer {
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 			schedulersMap.put(id, scheduler);
 			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
+			
 
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
@@ -129,13 +135,17 @@ public class ServersService implements Observer {
 		ServerEntity server = serverRepository.findOne(id);
 
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
-		scheduler.shutdown();
-		schedulersMap.remove(id);
-		// registerReader.setConnected(false);
-		registerReader.deleteObserver(this);
-		LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
-
-		return Response.ok().build();
+		if (scheduler != null) {
+			scheduler.shutdown();
+			schedulersMap.remove(id);
+			// registerReader.setConnected(false);
+			registerReader.deleteObserver(this);
+			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
+			return Response.ok().build();
+		} else{
+			
+			return Response.serverError().build();
+		}
 	}
 
 	/**
@@ -156,24 +166,40 @@ public class ServersService implements Observer {
 
 		} else {
 			serverRunningChecker.setConnectedToServer(false);
+			serverRunningChecker.setErrorMessage(this.errorMessage);
 		}
 		return serverRunningChecker;
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
-
+	public void update(Observable o, Object dataObject) {
 		ServerEntity server = ((RegisterReader2) o).getServerEntity();
-		LOG.error("Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |" + ((Exception) arg).getMessage());
 
-		Long id = server.getId();
+		if (dataObject instanceof List) {
+			List<Double> myData = (List<Double>) dataObject;
+			Measurement measurement = new Measurement();
+			measurement.setDate(new Date());
+			measurement.setServerId(server.getId());
+			measurement.getMeasuredValue().addAll(myData);
+			mesasurementRepo.save(measurement);
+			LOG.warn("dodano: " + measurement);
+			this.errorMessage = "";
 
-		ScheduledExecutorService scheduler = schedulersMap.get(id);
+		}
 
-		scheduler.shutdown();
-		schedulersMap.remove(id);
-		// registerReader.setConnected(false);
-		registerReader.deleteObserver(this);
+		if (dataObject instanceof Exception) {
+			Exception ex = (Exception) dataObject;
+			LOG.error("Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |" + ex.getMessage());
+			this.errorMessage = ex.getMessage();
+			Long id = server.getId();
+
+			ScheduledExecutorService scheduler = schedulersMap.get(id);
+
+			scheduler.shutdown();
+			schedulersMap.remove(id);
+			// registerReader.setConnected(false);
+			registerReader.deleteObserver(this);
+		}
 
 	}
 

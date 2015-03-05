@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"ide":{},"libs":["ecma5","browser","jquery"],"plugins":{"guess-types":{},"node":{},"angular":{}}}
+=======
+{"ide":{},"plugins":{"guess-types":{},"node":{},"angular":{}},"libs":["ecma5","browser","jquery"]}
+>>>>>>> refs/heads/developNew

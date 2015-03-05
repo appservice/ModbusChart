@@ -50,7 +50,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 	
 });
 myApp.config([ 'RestangularProvider', function(RestangularProvider) {
-	RestangularProvider.setBaseUrl('/ModbusChart/rest');
+	RestangularProvider.setBaseUrl('/ModbusChart');
 
 } ]);
 

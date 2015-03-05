@@ -8,7 +8,16 @@ public class ServerRunningChecker {
 	
 	private boolean isConnectedToServer;
 	private long serverId;
+	private String errorMessage;
 	
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
 	public boolean isConnectedToServer() {
 		return isConnectedToServer;
 	}

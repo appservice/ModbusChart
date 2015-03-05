@@ -1,6 +1,7 @@
 package eu.luckyApp.settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,18 +15,25 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
-	//@Value(value="user.password")
-	//public String userPassword="start123";
-
-
+	@Value(value="${user.login}")
+	public String userLogin;
+	
+	@Value(value="${user.password}")
+	public String userPassword;
+	
+	@Value(value="${admin.login}")
+	public String adminLogin;
+	
+	@Value(value="${admin.password}")
+	public String adminPassword;
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth)
 			throws Exception {
 		auth.inMemoryAuthentication()
-				.withUser("user").password("start123").roles("USER")
+				.withUser(userLogin).password(userPassword).roles("USER")
 				.and()
-				.withUser("admin").password("admin123").roles("ADMIN","USER"); //"USER", 
+				.withUser(adminLogin).password(adminPassword).roles("ADMIN","USER"); //"USER", 
 	}
 
 	@Override
@@ -35,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 
 				.authorizeRequests()
-				.antMatchers("/js/**").permitAll()			 
+				.antMatchers("/js/**","**/favicon.ico","/css/**","/images/**").permitAll()			 
 				.antMatchers(HttpMethod.DELETE,"/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.POST,"/**").hasRole("ADMIN")
 				.antMatchers(HttpMethod.PUT,"/**").hasRole("ADMIN")
