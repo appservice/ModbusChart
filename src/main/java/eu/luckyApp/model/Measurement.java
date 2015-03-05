@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "MEASUREMENT")
 public class Measurement {
@@ -25,7 +27,8 @@ public class Measurement {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
-
+	
+	@JsonIgnore
 	private long serverId;
 
 	@ElementCollection(fetch = javax.persistence.FetchType.EAGER)

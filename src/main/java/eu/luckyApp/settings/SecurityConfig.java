@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 
-		http.csrf().disable()
+		http.csrf().disable()//.sessionManagement().disable()
 
 				.authorizeRequests()
 				.antMatchers("/js/**","**/favicon.ico","/css/**","/images/**").permitAll()			 
@@ -55,7 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.usernameParameter("j_username")
 				.and().rememberMe().tokenValiditySeconds(7*24*3600).key("uniqueAndSecret")
 				//.and().httpBasic()
-				.and().logout().permitAll().logoutUrl("/logout");
+				.and().logout().permitAll().logoutUrl("/logout");//.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
 		
 		
 				
