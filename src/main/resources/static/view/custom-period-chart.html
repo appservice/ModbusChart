@@ -2,7 +2,8 @@
 <html>
 <head>
 <title>Wykres</title>
-<meta name="description" content="chart created using amCharts live editor" />
+<meta name="description"
+	content="chart created using amCharts live editor" />
 <meta charset="UTF-8" />
 
 
@@ -10,73 +11,120 @@
 </head>
 <body>
 
-  <div class="page-header">
-    <h3>Wykres n-dniowy</h3>
-  </div>
-  <form novalidate name="dateForm">
+	<div class="page-header">
+		<h3>Wykres n-dniowy</h3>
+	</div>
+	<form novalidate name="dateForm">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="form-inline">
+					<p class="input-group">
+						<input type="text" class="form-control"
+							data-datepicker-popup="{{format}}" data-ng-model="dt" data-is-open="opened"
+							data-min-date="minDate" data-max-date="maxDate"
+							data-datepicker-options="dateOptions"
+							 data-ng-required="true"
+							data-close-text="Zamknij"
+							style="min-width: 220px"
+							
+							 />
+							 <!--data-date-disabled="disabled(date, mode)"  -->
+							 
+							  <span class="input-group-btn">
+							<button type="button" class="btn btn-default"
+								data-ng-click="open($event)">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
+				</div>
+			
+			
+						
+				<div class="form-inline">
+					<p class="input-group">
+						<input type="text" class="form-control"
+							data-datepicker-popup="{{format}}" data-ng-model="dt" data-is-open="opened"
+							data-min-date="minDate" data-max-date="maxDate"
+							data-datepicker-options="dateOptions"
+							 data-ng-required="true"
+							data-close-text="Zamknij"
+							style="min-width: 220px"
+							
+							 />
+							 <!--data-date-disabled="disabled(date, mode)"  -->
+							 
+							  <span class="input-group-btn">
+							<button type="button" class="btn btn-default"
+								data-ng-click="open($event)">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
+					</p>
+				</div>
+			</div>
+			
+
+			<table style="margin-right: 10px;">
+				<tbody>
+					<tr>
+
+						<td style="text-align: center; height: 25pt;"
+							class="table_padding"><span class="alert-danger"
+							data-ng-show="dateForm.startDate.$error.date"> Zły format!</span>
+							<span class="alert-danger"
+							data-ng-show="dateForm.startDate.$error.required"> Wartość
+								wymagana!</span></td>
+
+						<td style="text-align: center;" class="table_padding"><span
+							class="alert-danger" data-ng-show="dateForm.endDate.$error.date">
+								Zły format!</span> <span class="alert-danger"
+							data-ng-show="dateForm.endDate.$error.required"> Wartość
+								wymagana!</span></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="table_padding"><label for="start_date"
+							class="control-label ">Od:</label> <input name="startDate"
+							type="date" class="form-control" id="start_date"
+							data-ng-model="timePeriod.startDate" required
+							placeholder="rrrr-mm-dd"></td>
+
+						<td class="table_padding"><label for="endDate"
+							class="control-label">Do:</label> <input name="endDate"
+							type="date" class="form-control" id="endDate"
+							data-ng-model="timePeriod.endDate" required
+							placeholder="rrrr-mm-dd"></td>
+						<td class="table_padding">
+							<button class="btn btn-danger"
+								data-ng-disabled="dateForm.$invalid"
+								data-ng-click="createChart()">Twórz wykres</button>
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
 
 
-    <div class="form-inline">
-      <!--    <p class="input-group">
-              <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-              <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-              </span>
-            </p> -->
-      <table style="margin-right: 10px; " border="1" >
-        <tbody>
-          <tr>
 
-            <td style="text-align: center;">
-              <span class="alert-danger" data-ng-show="dateForm.startDate.$error.date"> Zły format!</span>
-              <span class="alert-danger" data-ng-show="dateForm.startDate.$error.required"> Wartość wymagana!</span>
-
-            </td>
-
-            <td style="text-align: center;">
-              <span class="alert-danger" data-ng-show="dateForm.endDate.$error.date"> Zły format!</span>
-              <span class="alert-danger" data-ng-show="dateForm.endDate.$error.required"> Wartość wymagana!</span>
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>
-              <label for="start_date" class="control-label ">Od:</label>
-              <input name="startDate" type="date" class="form-control" id="start_date" data-ng-model="timePeriod.startDate" required
-                placeholder="rrrr-mm-dd">
-            </td>
-
-            <td>
-              <label for="endDate" class="control-label">Do:</label>
-              <input name="endDate" type="date" class="form-control" id="endDate" data-ng-model="timePeriod.endDate" required placeholder="rrrr-mm-dd">
-            </td>
-            <td>
-              <button class="btn btn-danger" data-ng-disabled="dateForm.$invalid" data-ng-click="createChart()">Twórz wykres</button>
-            </td>
-          </tr>
-
-        </tbody>
-      </table>
+			<!-- data-ng-value="{{ date:'MM/dd/yyyy'}}" -->
 
 
 
-      <!-- data-ng-value="{{ date:'MM/dd/yyyy'}}" -->
-
-
-
-    </div>
+		</div>
 
 
 
 
-  </form>
-  <div>
+	</form>
+	<div>
 
 
-    <luke-am-chart data-ng-if="showChart" chart-data=myMeasurements height="height" chart-title="'Wykres n-dniowy'" value-axis-title="'Przepływ'"
-      line-thickness="'2'"></luke-am-chart>
+		<luke-am-chart data-ng-if="showChart" chart-data=myMeasurements
+			height="height" chart-title="'Wykres n-dniowy'"
+			value-axis-title="'Przepływ'" line-thickness="'2'"></luke-am-chart>
 
 
-  </div>
+	</div>
 </body>
 </html>

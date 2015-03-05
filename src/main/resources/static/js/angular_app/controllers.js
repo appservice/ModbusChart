@@ -149,25 +149,25 @@ angular
 		.controller('CustomPeriodChartController',['$scope','Restangular',function($scope,Restangular){
 			$scope.showChart=false;
 			
-			$scope.today = function() {
+		/*	$scope.today = function() {
 			    $scope.dt = new Date();
 			  };
 			  $scope.today();
-
+*/
 			  $scope.clear = function () {
 			    $scope.dt = null;
 			  };
 
 			  // Disable weekend selection
-			  $scope.disabled = function(date, mode) {
-			    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-			  };
+			//  $scope.disabled = function(date, mode) {
+			//    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+			//  };
 
-			  $scope.toggleMin = function() {
+			/*  $scope.toggleMin = function() {
 			    $scope.minDate = $scope.minDate ? null : new Date();
 			  };
 			  $scope.toggleMin();
-
+*/			$scope.maxDate=new Date();
 			  $scope.open = function($event) {
 			    $event.preventDefault();
 			    $event.stopPropagation();
@@ -180,8 +180,8 @@ angular
 			    startingDay: 1
 			  };
 
-			  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-			  $scope.format = $scope.formats[0];
+			  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate','dd-MM-yyyy'];
+			  $scope.format = $scope.formats[4];
 			
 			
 			
