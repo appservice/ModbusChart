@@ -1,6 +1,8 @@
 package eu.luckyApp.rest;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -103,5 +105,38 @@ public class MearuementRS {
 			return Response.noContent().build();
 		} else
 			return Response.status(Status.BAD_REQUEST).build();
+	}
+	
+	
+	
+	private Iterable<Measurement> getCollectionByAverage(int rowNumbers, Iterable<Measurement> fullList){
+		
+		List<Measurement> response=new ArrayList<Measurement>();
+		double avgValue;
+		int i=0;
+		for(Measurement m:fullList){
+			
+			avgValue=+m.getMeasuredValue().get(0);
+			if(i==rowNumbers){
+				long j=1;
+				Measurement myMeasuremnt=new Measurement();
+				myMeasuremnt.setDate(m.getDate());
+				myMeasuremnt.setId(j);
+				
+				//myMeasuremnt.setMeasuredValue(new List<>);
+				
+				j++;
+				myMeasuremnt.setServer(m.getServer());
+				response.add(myMeasuremnt);
+			}
+			i++;
+			
+			
+			//for(int i=0;i<m.getMeasuredValue().size()-1;i++)
+			 //avgValue=m.getMeasuredValue().get(i);
+			
+		}
+		return response;
+		
 	}
 }

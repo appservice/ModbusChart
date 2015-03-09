@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Observable;
 
 import net.wimpi.modbus.Modbus;
-import net.wimpi.modbus.facade.ModbusTCPMaster;
 import net.wimpi.modbus.procimg.Register;
 import net.wimpi.modbus.util.ModbusUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
 import eu.luckyApp.model.ServerEntity;

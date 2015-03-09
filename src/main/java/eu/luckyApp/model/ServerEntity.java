@@ -1,11 +1,18 @@
 package eu.luckyApp.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class ServerEntity {
@@ -35,8 +42,10 @@ public class ServerEntity {
 	
 	//@Enumerated
 	private String readedDataType;
-
 	
+	@JsonIgnore
+	@OneToMany(mappedBy="server",fetch=FetchType.LAZY,cascade=CascadeType.REMOVE)
+	private Collection<Measurement> measurements;
 	
 	private String description;
 
@@ -44,6 +53,22 @@ public class ServerEntity {
 	
 	
 	
+	public Collection<Measurement> getMeasurements() {
+		return measurements;
+	}
+
+
+
+
+
+	public void setMeasurements(Collection<Measurement> measurements) {
+		this.measurements = measurements;
+	}
+
+
+
+
+
 	public Long getId() {
 		return id;
 	}

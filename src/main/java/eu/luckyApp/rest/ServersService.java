@@ -40,7 +40,9 @@ import eu.luckyApp.model.ServerRunningChecker;
 public class ServersService implements Observer {
 
 	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
-
+	/*
+	 * @PersistenceContext private EntityManager em;
+	 */
 	@Autowired
 	private ServerRepository serverRepository;
 
@@ -94,6 +96,7 @@ public class ServersService implements Observer {
 
 	@DELETE
 	@Path("/{id}")
+	// @Transactional
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
 		serverRepository.delete(server);
@@ -102,8 +105,8 @@ public class ServersService implements Observer {
 
 	@DELETE
 	@Path("/{id}")
-	// @Consumes(MediaType.APPLICATION_JSON)
-	public Response deleteServerById(@PathParam("id") Long id) {
+	public Response deleteServerById(@PathParam("id") long id) {
+		LOG.warn(id);
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}
@@ -111,6 +114,7 @@ public class ServersService implements Observer {
 	@POST
 	@Path("/{id}/executor")
 	public Response runServer(@PathParam("id") long id) {
+
 		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
 		if ((schedulersMap.get(id)) == null) {
@@ -119,7 +123,6 @@ public class ServersService implements Observer {
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 			schedulersMap.put(id, scheduler);
 			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
-			
 
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
@@ -142,8 +145,8 @@ public class ServersService implements Observer {
 			registerReader.deleteObserver(this);
 			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
 			return Response.ok().build();
-		} else{
-			
+		} else {
+
 			return Response.serverError().build();
 		}
 	}
@@ -172,6 +175,7 @@ public class ServersService implements Observer {
 	}
 
 	@Override
+	// @Transactional
 	public void update(Observable o, Object dataObject) {
 		ServerEntity server = ((RegisterReader2) o).getServerEntity();
 
@@ -179,10 +183,11 @@ public class ServersService implements Observer {
 			List<Double> myData = (List<Double>) dataObject;
 			Measurement measurement = new Measurement();
 			measurement.setDate(new Date());
-			measurement.setServerId(server.getId());
+			measurement.setServer(server);
 			measurement.getMeasuredValue().addAll(myData);
-			mesasurementRepo.save(measurement);
-			LOG.warn("dodano: " + measurement);
+			// mesasurementRepo.
+			Measurement m = mesasurementRepo.save(measurement);
+			LOG.info("dodano: " + m);
 			this.errorMessage = "";
 
 		}

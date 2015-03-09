@@ -70,7 +70,7 @@ angular
 			var dataTableSize=60;
 			
 			for(j=0;j<dataTableSize;j++){
-				$scope.myMeasurements.push({"date":myDate.getTime()-(dataTableSize-j)*$scope.serverTimeIterval,"measuredValue":[]});
+				$scope.myMeasurements.push({"date":myDate.getTime()-(dataTableSize-j)*$scope.serverTimeIterval,"values":[]});
 				
 				
 				
@@ -148,54 +148,23 @@ angular
 		 */
 		.controller('CustomPeriodChartController',['$scope','Restangular',function($scope,Restangular){
 			$scope.showChart=false;
-			
-		/*	$scope.today = function() {
-			    $scope.dt = new Date();
-			  };
-			  $scope.today();
-*/
-			  $scope.clear = function () {
-			    $scope.dt = null;
-			  };
+			$scope.untilMaxDate=new Date();
 
-			  // Disable weekend selection
-			//  $scope.disabled = function(date, mode) {
-			//    return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-			//  };
-
-			/*  $scope.toggleMin = function() {
-			    $scope.minDate = $scope.minDate ? null : new Date();
-			  };
-			  $scope.toggleMin();
-*/			$scope.maxDate=new Date();
-			  $scope.open = function($event) {
-			    $event.preventDefault();
-			    $event.stopPropagation();
-
-			    $scope.opened = true;
-			  };
-
-			  $scope.dateOptions = {
-			    formatYear: 'yy',
-			    startingDay: 1
-			  };
-
-			  $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate','dd-MM-yyyy'];
-			  $scope.format = $scope.formats[4];
-			
-			
 			
 			$scope.createChart=function(){
 				
 			$scope.myMeasurements=[];
+			
+		
+		
 
 			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
-			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
+
+			baseMeasurements.getList({"startDate":$scope.fromDate.getTime(),"endDate":$scope.untilDate.getTime()+1000*3600*24}).then(function(data){
 				$scope.myMeasurements=data;
 				
 			});
 		
-			$scope.height='500px';
 			$scope.showChart=true;
 			}
 			
@@ -216,9 +185,9 @@ angular
 						function($scope, Restangular,$timeout) {
 							$scope.serversList = [];
 							$scope.readedDataTypes=[
-							           {"type":"FLOAT","name":"FLOAT (32 bit)"},
-							           {"type":"INTEGER","name":"INTEGER (16 bit)"}
-							                        ];
+						           {"type":"FLOAT","name":"FLOAT (32 bit)"},
+							          // {"type":"INTEGER","name":"INTEGER (16 bit)"}
+						                        ];
 
 							
 							var errorResponseFunctoin = function(response) {

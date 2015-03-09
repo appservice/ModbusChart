@@ -35,6 +35,7 @@ angular
 						scope.$watchCollection(
 										'chartData',
 										function(newChartData, oldChartData) {
+											console.log(newChartData);
 											
 			
 											// this functions adapted my data to
@@ -103,7 +104,7 @@ angular
 											// -------------------------grpahs--------------------------------------------
 											var graphNumber=scope.seriesNumber||0;
 											if(scope.chartData.length>0)
-												graphNumber=scope.seriesNumber||scope.chartData[0].measuredValue.length;
+												graphNumber=scope.seriesNumber||scope.chartData[0].values.length;
 											
 											
 											for (var g = 0; g <graphNumber; g++) { //
@@ -138,7 +139,7 @@ angular
 					 */
 					var adaptMyData = function(myDataTable) {
 						var dataForChart=[];
-
+						//console.log(myDataTable);
 						for (var i = 0; i < myDataTable.length; i++) {
 
 							var myDate = new Date(myDataTable[i].date);
@@ -149,9 +150,10 @@ angular
 
 							// dynamically create object
 							// with measured value
-							for (var j = 0; j < myDataTable[i].measuredValue.length; j++) {
+							
+							for (var j = 0; j < myDataTable[i].values.length; j++) {
 	
-								dataToDisplay["column-" + (j + 1)] = myDataTable[i].measuredValue[j];
+								dataToDisplay["column-" + (j + 1)] = myDataTable[i].values[j];
 							}
 							
 							dataToDisplay["date"] = myStringDate;

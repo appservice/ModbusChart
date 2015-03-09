@@ -1,0 +1,6 @@
+#FileLock
+#Mon Mar 09 20:24:24 CET 2015
+hostName=luke-300V5A
+id=14bfffed08cb13d5526418df27fa118dbe43e22c0e7
+method=file
+server=127.0.1.1\:33101

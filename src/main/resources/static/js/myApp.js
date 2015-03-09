@@ -3,7 +3,7 @@
  */
 var myApp = angular.module('myApp', [ 'ui.router', 'restangular',
 		'emguo.poller', 'myApp.directives', 'myApp.controllers',
-		'myApp.services','ui.bootstrap' ,'ngLocale']);
+		'myApp.services','mgcrea.ngStrap' ,'ngLocale']);//'ui.bootstrap'
 myApp.config(function($stateProvider, $urlRouterProvider) {
 	$urlRouterProvider.otherwise('/');
 

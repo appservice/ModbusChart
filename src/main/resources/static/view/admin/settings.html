@@ -61,8 +61,8 @@
         <span>
           <button class="btn btn-danger " data-ng-click="switchOffServer();">Wyłącz program</button>
 
-          Po naciśnięciu tego przycisku cały program zostanie wyłączony. Aby włączyć ponownie należy uruchomić aplikację bezpośrednio na
-            serwerze sieciowym.
+          Po naciśnięciu tego przycisku cały program zostanie wyłączony. Aby włączyć ponownie należy uruchomić aplikację bezpośrednio na serwerze
+          sieciowym.
         </span>
       </div>
 
@@ -147,71 +147,74 @@
   </form>
   <!-- ==================modal dialog edit server =========================== -->
   <!-- Modal -->
-  <div class="modal fade" id="editServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          <h4 class="modal-title" id="myModalLabel">Edytuj</h4>
-        </div>
-        <div class="modal-body">
-
-          <div class="form-group">
-            <label for="input_name" class="control-label">Nazwa:</label>
-            <span class="alert-danger" data-ng-show="updatedServer.name.$error.required"> Wymagana!</span>
-            <input name="name" type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name" required>
-
-
-            <label for="input_ip" class="control-label">IP:</label>
-            <span class="alert-danger" data-ng-show="updatedServer.ip.$error.required"> Wymagane!</span>
-            <span class="alert-danger" data-ng-show="updatedServer.ip.$error.pattern">Zły format ip!</span>
-            <input name="ip" type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip" required="required"
-              data-ng-pattern='/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/' placeholder='xxx.xxx.xxx.xxx'>
-
-            <!-- port  -->
-            <label for="input_port" class="control-label">Port:</label>
-            <span class="alert-danger" data-ng-show="updatedServer.port.$error.required"> Wymagany!</span>
-            <span class="alert-danger" data-ng-show="updatedServer.port.$error.number">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
-            <span class="alert-danger" data-ng-show="updatedServer.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
-            <input name="port" type="number" class="form-control" id="input_port" data-ng-model="updatedServer.port" required="required" max="65535">
-
-            <!-- interwal -->
-            <label for="input_time" class="control-label">Interwał [ms]:</label>
-            <span class="alert-danger" data-ng-show="updatedServer.interval.$error.required"> Wymagany!</span>
-            <span class="alert-danger" data-ng-show="updatedServer.interval.$error.min">Minimalny intewał to 100 ms!</span>
-            <span class="alert-danger" data-ng-show="updatedServer.interval.$error.number">Zły format danych! Wymagana liczba!</span>
-            <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval" required min="100">
-
-            <!-- readedDataTypes -->
-            <label for="input_type" class="control-label">Typ danych:</label>
-            <span class="alert-danger" data-ng-show="nupdatedServer.readedDataType.$error.required"> Wymagany!</span>
-            <select name="readedDataType" id="input_type" class="form-control" data-ng-model="updatedServer.readedDataType"
-              data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
-            </select>
-
-            <!-- readeDataCount -->
-            <label for="input_count" class="control-label">Ilość czujników:</label>
-            <span class="alert-danger" data-ng-show="updatedServer.readedDataCount.$error.required"> Wymagany!</span>
-            <span class="alert-danger" data-ng-show="updatedServer.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span>
-            <input name="readedDataCount" type="number" class="form-control" id="input_count" data-ng-model="updatedServer.readedDataCount" required>
-
-            <label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
-            <span class="alert-danger" data-ng-show="updatedServer.firstRegisterPos.$error.required"> Wymagany!</span>
-            <span class="alert-danger" data-ng-show="updatedServer.firstRegisterPos.$error.number">Zły format danych! Wymagana liczba!</span>
-            <input name="firstRegisterPos" type="number" class="form-control" id="nput_pos" data-ng-model="updatedServer.firstRegisterPos" required>
+  <form name="updatedServerForm" novalidate>
+    <div class="modal fade" id="editServerDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Edytuj</h4>
           </div>
+          <div class="modal-body">
+
+            <div class="form-group">
+              <label for="input_name" class="control-label">Nazwa:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.name.$error.required"> Wymagana!</span>
+              <input name="name" type="text" class="form-control" id="input_name" data-ng-model="updatedServer.name" required>
 
 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
-          <button type="button" class="btn btn-primary" data-ng-click="updateServer(updatedServer)" data-dismiss="modal">Zapisz</button>
+              <label for="input_ip" class="control-label">IP:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.ip.$error.required"> Wymagane!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.ip.$error.pattern">Zły format ip!</span>
+              <input name="ip" type="text" class="form-control" id="input_ip" data-ng-model="updatedServer.ip" required="required"
+                data-ng-pattern='/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/' placeholder='xxx.xxx.xxx.xxx'>
+
+              <!-- port  -->
+              <label for="input_port" class="control-label">Port:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.port.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="uupdatedServerForm.port.$error.number">Zły format danych! Wymagana liczba z przedziału
+                1-65535</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
+              <input name="port" type="number" class="form-control" id="input_port" data-ng-model="updatedServer.port" required="required" max="65535">
+
+              <!-- interwal -->
+              <label for="input_time" class="control-label">Interwał [ms]:</label>
+              <span class="alert-danger" data-ng-show="updatedServerFormr.interval.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval" required min="100">
+
+              <!-- readedDataTypes -->
+              <label for="input_type" class="control-label">Typ danych:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.readedDataType.$error.required"> Wymagany!</span>
+              <select name="readedDataType" id="input_type" class="form-control" data-ng-model="updatedServer.readedDataType"
+                data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
+              </select>
+
+              <!-- readeDataCount -->
+              <label for="input_count" class="control-label">Ilość czujników:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.readedDataCount.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="readedDataCount" type="number" class="form-control" id="input_count" data-ng-model="updatedServer.readedDataCount" required>
+
+              <label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.firstRegisterPos.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.firstRegisterPos.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="firstRegisterPos" type="number" class="form-control" id="nput_pos" data-ng-model="updatedServer.firstRegisterPos" required>
+            </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+            <button type="button" class="btn btn-primary" data-ng-click="updateServer(updatedServer)" data-dismiss="modal">Zapisz</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </form>
   <!-- =========================================================================== -->
 </body>
 </html>
