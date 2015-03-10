@@ -3,6 +3,78 @@
  */
 angular
 		.module('myApp.controllers', [])
+		/**
+		 * ============================================================================================================
+		 * Custom period chart controller
+		 * ============================================================================================================
+		 */
+		.controller('CustomPeriodChartController',['$scope','Restangular',function($scope,Restangular){
+			
+			$scope.chartTitle='Wykres z ostatnich 2 godzin';
+			
+			$scope.showChart=false;
+			$scope.untilMaxDate=new Date();
+			
+			$scope.createChart=function(){				
+			$scope.myMeasurements=[];		
+
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
+
+			baseMeasurements.getList({"startDate":$scope.fromDate.getTime(),"endDate":$scope.untilDate.getTime()+1000*3600*24}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
+			$scope.showChart=true;
+			}
+			
+		}])
+		
+
+		
+		
+		 /**
+		 * ================================================================================================
+		 *  2 hours chart controller
+		 * ================================================================================================
+		 */
+		.controller('TwoHoursChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			$scope.height='600px';
+			$scope.chartTitle='Wykres z ostatnich 2 godzin';
+			$scope.myMeasurements=[];
+
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
+			baseMeasurements.getList({"timePeriod":2*60*60*1000}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
+			
+
+
+		} ])
+		
+		 /**
+		 * ================================================================================================
+		 *  8 hours chart controller
+		 * ================================================================================================
+		 */
+		.controller('EightHoursChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			$scope.height='600px';
+			$scope.chartTitle='Wykres z ostatnich 8 godzin';
+			$scope.myMeasurements=[];
+
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
+			baseMeasurements.getList({"timePeriod":8*60*60*1000}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});
+		
+			
+
+
+		} ])
+		
 		
 		/**
 		 * ================================================================================================
@@ -10,35 +82,64 @@ angular
 		 * ================================================================================================
 		 */
 		.controller('DayChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			$scope.height='600px';
+			$scope.chartTitle='Wykres z ostatnich 8 godzin';
+			
 			$scope.myMeasurements=[];
 
 			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":24*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
-			});
-		
-			$scope.height='600px';
+			});			
 
 
 		} ])
-
-		// ------------------------------------------------------------------------------------------
-		.controller('HourChartController', [ '$scope','Restangular', function($scope,Restangular) {
+				
+		/**
+		 * ================================================================================================
+		 * 7 days chart controller
+		 * ================================================================================================
+		 */
+		.controller('SevenDaysChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			$scope.height='600px';
+			$scope.chartTitle='Wykres z ostatnich 7 dni';
+			
 			$scope.myMeasurements=[];
 
 			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
-			baseMeasurements.getList({"timePeriod":60*60*1000}).then(function(data){
+			baseMeasurements.getList({"timePeriod":7*24*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
-			});
-		
-			$scope.height='500px';
+			});			
 
-			
 
 		} ])
-		
+					
+		/**
+		 * ================================================================================================
+		 * 31 days chart controller
+		 * ================================================================================================
+		 */
+		.controller('ThirtyOneDaysChartController', [ '$scope','Restangular', function($scope,Restangular) {
+			$scope.height='600px';
+			$scope.chartTitle='Wykres z ostatnich 31 dni';
+			
+			$scope.myMeasurements=[];
+
+			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
+			baseMeasurements.getList({"timePeriod":31*24*60*60*1000}).then(function(data){
+				$scope.myMeasurements=data;
+				
+			});			
+
+
+		} ])
+		/**
+		 * ================================================================================================
+		 * All data chart controller
+		 * ================================================================================================
+		 */
 		.controller('AllDataChartController',['$scope','Restangular',function($scope,Restangular){
 			$scope.myMeasurements=[];
 			
@@ -115,17 +216,7 @@ angular
 			 });
 				 
 		 });
-	//	});
-		
-		//	console.log(getLastMeasurement);
-			 
-			 // Get poller.
-			 
 	
-
-
-			    
-
 		}])
 		
 		/**
@@ -134,43 +225,11 @@ angular
 		 */
 		.controller('DownloadController',['$scope','Restangular',function($scope,Restangular){
 			$scope.downloadData=function(){
-				/*Restangular.one('servers/1/measurements/download/excel').get().then(function(){
-					
-				});*/
+			
 			}
 			$scope.getAllData='rest/servers/1/measurements/download/excel';
 		}])
 		
-		/**
-		 * ============================================================================================================
-		 * Custom period chart controller
-		 * ============================================================================================================
-		 */
-		.controller('CustomPeriodChartController',['$scope','Restangular',function($scope,Restangular){
-			$scope.showChart=false;
-			$scope.untilMaxDate=new Date();
-
-			
-			$scope.createChart=function(){
-				
-			$scope.myMeasurements=[];
-			
-		
-		
-
-			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
-
-			baseMeasurements.getList({"startDate":$scope.fromDate.getTime(),"endDate":$scope.untilDate.getTime()+1000*3600*24}).then(function(data){
-				$scope.myMeasurements=data;
-				
-			});
-		
-			$scope.showChart=true;
-			}
-			
-		}])
-		
-
 		
 		
 		/**

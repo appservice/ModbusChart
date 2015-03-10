@@ -3,3 +3,7 @@ modbus_chart.log
 myData3.lock.db
 myData3.mv.db
 
+/database.mv.db
+/ss2.bmp
+/light.ico
+/ModbusChart.exe

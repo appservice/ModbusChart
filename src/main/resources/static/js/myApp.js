@@ -11,9 +11,28 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		url : '/',
 		templateUrl : "view/home.html"// /ModbusChart
 	}).state('chart', {
-		url : '/chart',
+		url : '/2-hours-chart',
+		templateUrl : 'view/day-chart.html',
+		controller : 'TwoHoursChartController'})
+	.state('8-hours-chart', {
+		url : '/8-hours-chart',
+		templateUrl : 'view/day-chart.html',
+		controller : 'EightHoursChartController'})
+
+	.state('1-day-chart', {
+		url : '/1-day-chart',
 		templateUrl : 'view/day-chart.html',
 		controller : 'DayChartController'
+
+	}).state('7-days-chart', {
+		url : '/7-days-chart',
+		templateUrl : 'view/day-chart.html',
+		controller : 'SevenDaysChartController'
+
+	}).state('31-days-chart', {
+		url : '/31-days-chart',
+		templateUrl : 'view/day-chart.html',
+		controller : 'ThirtyOneDaysChartController'
 
 	}).state('settings', {
 		url : '/settings',
