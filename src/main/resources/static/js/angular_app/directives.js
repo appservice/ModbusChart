@@ -6,7 +6,7 @@ angular
 		.module('myApp.directives', [])
 		.directive(
 				'lukeAmChart',
-				function($filter) {
+				function() {
 					var directive = {};
 
 					// restrict
@@ -24,125 +24,161 @@ angular
 					};
 
 					// templete
-					directive.template = '<div id="chartdiv" style="min-width: 310px; height:{{height}}; margin: 0 auto"></div>';
+					directive.template = '<div id="chartdiv" style="min-width: 310px; height:600px; margin: 0 auto"></div>';
 
 					// link
 					directive.link = function(scope, element, attrs) {
 
-						var chart = false;
+						// var chart = false;
 						var dataForChart = [];
 
-						scope.$watchCollection(
+					/*	scope
+								.$watchCollection(
 										'chartData',
 										function(newChartData, oldChartData) {
-											console.log(newChartData);
+											console.log(newChartData);*/
 
-											// this functions adapted my data to
-											// data needed by amCharts
-										//	var asyncFunction = function() {
-											//	return $q(function(resolve,
-											//			reject) {
+											dataForChart = adaptMyData(scope.chartData);
 
-													var dataForChart = adaptMyData(scope.chartData);
+											var initChart = function() {
+												myChart = new AmCharts.AmSerialChart();
+												myChart.langulage = "pl";
+												myChart.marginLeft = 20;
+												myChart.pathToImages = "http://www.amcharts.com/lib/3/images/";
+												myChart.decimalSeparator = ",";
+												myChart.thousandsSeparator = ".";
 
-													// --------------------amChart
-													// object------------------
-													var myChart = {
-														"type" : "serial",
-														"theme" : "none",
-														"language" : "pl",
-														"marginLeft" : 20,
-														"pathToImages" : "http://www.amcharts.com/lib/3/images/",
-														"decimalSeparator" : ",",
-														"thousandsSeparator" : ".",
-														"dataProvider" : dataForChart,
-														"valueAxes" : [ {
-															"axisAlpha" : 0,
-															"inside" : true,
-															"position" : "left",
-															"ignoreAxisWidth" : true,
-															"id" : "ValueAxis-1",
-															"title" : scope.valueAxisTitle
-																	|| ""
-														} ],
-														"graphs" : [],
+												// myChart.
+												// VALUE AXES
+												var valueAxis = new AmCharts.ValueAxis();
+												valueAxis.axisAlpha = "0";
+												valueAxis.inside = true;
+												valueAxis.position = "left";
+												valueAxis.ignoreAxisWidth = true;
+												valueAxis.id = "ValueAxis-1";
+												valueAxis.title = scope.valueAxisTitle
+														|| "";
+												valueAxis.titleFontSize=15;
 
-														"chartScrollbar" : {},
-														"chartCursor" : {
-															"categoryBalloonDateFormat" : "YYYY",
-															"cursorAlpha" : 0,
-															"cursorPosition" : "mouse"
-														},
+												myChart.addValueAxis(valueAxis);
 
-														"categoryField" : "date",
-														"dataDateFormat" : "YYYY-MM-DD HH:NN:SS",// :SS
-														"categoryAxis" : {
-															"minPeriod" : "ss",
-															"parseDates" : true,
-															"minorGridAlpha" : 0.1,
-															"minorGridEnabled" : true
-														},
-														"chartCursor" : {
-															"categoryBalloonDateFormat" : "JJ:NN:SS"// :SS
-														},
-														"legend" : {
-															"useGraphSettings" : true,
-															"spacing" : 32,
-															"valueWidth" : 150,
-															"valueAlign" : "left"
-														},
-														"titles" : [ {
-															"id" : "Title-1",
-															"size" : 15,
-															"text" : scope.chartTitle
-																	|| ""
-														} ],
-														"amExport" : {
-															"exportPNG" : true,
-															"imageFileName" : "wykres",
-															"buttonTitle" : "Zapisz wykres jako obraz .png"
-														}
+												var graph = new AmCharts.AmGraph();
+												myChart.addGraph(graph);
 
-													};
+												var chartScrollbar = new AmCharts.ChartScrollbar();
+												myChart.addChartScrollbar(chartScrollbar);
 
-													// -------------------------grpahs--------------------------------------------
-													var graphNumber = scope.seriesNumber || 0;
-													if (scope.chartData.length > 0)
-														graphNumber = scope.seriesNumber
-																|| scope.chartData[0].values.length;
+												// CURSOR
+												chartCursor = new AmCharts.ChartCursor();
+												chartCursor.cursorPosition = "mouse";
+												chartCursor.cursorAlpha = 0;
+												chartCursor.categoryBalloonDateFormat = "JJ:NN:SS"
+												myChart
+														.addChartCursor(chartCursor);
 
-													for (var g = 0; g < graphNumber; g++) { //
-														myChart.graphs
-																.push({
-																	"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
-																	"id" : "AmGraph-"
-																			+ (g + 1),
-																	"title" : "Czujnik "
-																			+ (g + 1),
-																	"valueField" : "column-"
-																			+ (g + 1),
-																	"lineThickness" : scope.lineThickness || 1,
-																/* "connect":false */
-																});
-													}
+												// CATEGORY FIELD
+												myChart.categoryField = "date";
+												myChart.dataDateFormat = "YYYY-MM-DD HH:NN:SS";
 
-													myChart.amExport.imageFileName = "wykres_"
-															+ (new Date())
-																	.toLocaleString();
+												// CATEGORY AXES
+												var categoryAxis = myChart.categoryAxis;
 
-													// function makeChart-------
-													var chart = AmCharts
-															.makeChart(
-																	"chartdiv",
-																	myChart);
+												categoryAxis.parseDates = true;
+												categoryAxis.minPeriod = "ss";
+												categoryAxis.minorGridAlpha = 0.1;
+												categoryAxis.minorGridEnabled = true;
+												categoryAxis.dateFormats= [{
+												    period: 'fff',
+												    format: 'JJ:NN:SS'
+												}, {
+												    period: 'ss',
+												    format: 'JJ:NN:SS'
+												}, {
+												    period: 'mm',
+												    format: 'JJ:NN'
+												}, {
+												    period: 'hh',
+												    format: 'DD-MMM JJ:NN'
+												}, {
+												    period: 'DD',
+												    format: 'DD-MMM'
+												}, {
+												    period: 'WW',
+												    format: 'DD-MMM'
+												}, {
+												    period: 'MM',
+												    format: 'MMM YYYY'
+												}, {
+												    period: 'YYYY',
+												    format: 'MMM YYYY'
+												}];
 
-												});
+												// LEGEND
+												var chartLegend = new AmCharts.AmLegend();
+												chartLegend.useGraphSettings = true;
+												chartLegend.spacing = 32;
+												chartLegend.width = 150;
+												chartLegend.valueAlign = "left";
 
-											};
-											//asyncFunction();
+												// TITLES		
+												myChart.addTitle(scope.chartTitle||"",20);
 
-									//	});
-					//}
+												// AMEXPORT 											
+												myChart.amExport={
+														top		: 10,
+														right		: 30,
+														exportJPG	: true,
+														exportPNG	: true,
+														exportSVG	: true,
+														buttonTitle:'Zapisz obraz jako: '
+														
+														
+												};
+												myChart.amExport.imageFileName="Wykres "+new Date().toDateString();
+
+												// -------------------------grpahs--------------------------------------------
+												var graphNumber = scope.seriesNumber || 0;
+												if (scope.chartData.length > 0)
+													graphNumber = scope.seriesNumber
+															|| scope.chartData[0].values.length;
+
+												for (var g = 0; g < 8; g++) { //
+													myChart.graphs
+															.push({
+																"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+																"id" : "AmGraph-"
+																		+ (g + 1),
+																"title" : "Czujnik "
+																		+ (g + 1),
+																"valueField" : "column-"
+																		+ (g + 1),
+																"lineThickness" : scope.lineThickness || 1,
+															/* "connect":false */
+															});
+												}
+
+	
+												// WRITE
+												myChart.write("chartdiv");
+
+											}
+											initChart();
+
+											myChart.dataProvider = adaptMyData(scope.chartData);
+											myChart.validateData();
+											
+											
+
+											scope
+											.$watchCollection(
+													'chartData',
+													function(newChartData, oldChartData) {
+														//console.log(newChartData);	
+														myChart.dataProvider = adaptMyData(scope.chartData);
+														myChart.validateData();
+											
+									});
+					};
 
 					/**
 					 * function for adapting my data json object to amChart
@@ -154,26 +190,22 @@ angular
 						for (var i = 0; i < myDataTable.length; i++) {
 
 							var myDate = new Date(myDataTable[i].date);
-							var myStringDate = $filter('date')(myDate,
-									"yyyy-MM-dd HH:mm:ss");// :ss
-
+						
 							var dataToDisplay = {};
 
-							// dynamically create object
-							// with measured value
 
 							for (var j = 0; j < myDataTable[i].values.length; j++) {
 
 								dataToDisplay["column-" + (j + 1)] = myDataTable[i].values[j];
 							}
 
-							dataToDisplay["date"] = myStringDate;
-
+							dataToDisplay["date"] = myDate;
 							dataForChart.push(dataToDisplay);
+
 						}
 						return dataForChart;
 
-					}
+					};
 
 					return directive;
 

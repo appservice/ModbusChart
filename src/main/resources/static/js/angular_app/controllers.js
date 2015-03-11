@@ -83,7 +83,7 @@ angular
 		 */
 		.controller('DayChartController', [ '$scope','Restangular', function($scope,Restangular) {
 			$scope.height='600px';
-			$scope.chartTitle='Wykres z ostatnich 8 godzin';
+			$scope.chartTitle='Wykres z ostatnich 24 godzin';
 			
 			$scope.myMeasurements=[];
 

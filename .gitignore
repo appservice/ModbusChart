@@ -7,3 +7,7 @@ myData3.mv.db
 /ss2.bmp
 /light.ico
 /ModbusChart.exe
+/database.lock.db
+/database.trace.db
+/modbus_chart.log.1
+/pom.xml
