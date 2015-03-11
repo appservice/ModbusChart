@@ -162,6 +162,7 @@ angular
 		.controller('ChartOnlineController',['$scope','Restangular','poller', function($scope,Restangular,poller) {
 			$scope.myMeasurements = [];
 		//	$scope.mySeriesNumber=0;
+			$scope.height='600px';
 			
 		Restangular.one('rest/servers',1).get().then(function(myServer){
 			console.log(myServer);

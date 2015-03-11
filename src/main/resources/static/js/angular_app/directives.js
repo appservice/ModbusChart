@@ -87,6 +87,7 @@ angular
 												categoryAxis.minPeriod = "ss";
 												categoryAxis.minorGridAlpha = 0.1;
 												categoryAxis.minorGridEnabled = true;
+												categoryAxis.dashLenght=3;
 												categoryAxis.dateFormats= [{
 												    period: 'fff',
 												    format: 'JJ:NN:SS'
@@ -115,10 +116,14 @@ angular
 
 												// LEGEND
 												var chartLegend = new AmCharts.AmLegend();
-												chartLegend.useGraphSettings = true;
+												//chartLegend.useGraphSettings = true;
+												chartLegend.align="left";
+												chartLegend.showEntries=true;
 												chartLegend.spacing = 32;
-												chartLegend.width = 150;
+												chartLegend.width = 100;
+												chartLegend.position="right";
 												chartLegend.valueAlign = "left";
+												myChart.addLegend(chartLegend);
 
 												// TITLES		
 												myChart.addTitle(scope.chartTitle||"",20);
@@ -142,10 +147,10 @@ angular
 													graphNumber = scope.seriesNumber
 															|| scope.chartData[0].values.length;
 
-												for (var g = 0; g < 8; g++) { //
+												for (var g = 0; g < graphNumber; g++) { //
 													myChart.graphs
 															.push({
-																"balloonText" : "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+																"balloonText" : "[[category]]<br><b><span style='font-size:15px;'>[[value]]</span></b>",
 																"id" : "AmGraph-"
 																		+ (g + 1),
 																"title" : "Czujnik "
