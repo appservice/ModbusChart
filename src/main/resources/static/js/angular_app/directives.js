@@ -47,6 +47,7 @@ angular
 												myChart.pathToImages = "http://www.amcharts.com/lib/3/images/";
 												myChart.decimalSeparator = ",";
 												myChart.thousandsSeparator = ".";
+												myChart.startIndex=1;
 
 												// myChart.
 												// VALUE AXES
@@ -55,7 +56,7 @@ angular
 												valueAxis.inside = true;
 												valueAxis.position = "left";
 												valueAxis.ignoreAxisWidth = true;
-												valueAxis.id = "ValueAxis-1";
+												valueAxis.id = "ValueAxis-";
 												valueAxis.title = scope.valueAxisTitle
 														|| "";
 												valueAxis.titleFontSize=15;
@@ -87,7 +88,7 @@ angular
 												categoryAxis.minPeriod = "ss";
 												categoryAxis.minorGridAlpha = 0.1;
 												categoryAxis.minorGridEnabled = true;
-												categoryAxis.dashLenght=3;
+												//categoryAxis.dashLenght=3;
 												categoryAxis.dateFormats= [{
 												    period: 'fff',
 												    format: 'JJ:NN:SS'
@@ -120,9 +121,10 @@ angular
 												chartLegend.align="left";
 												chartLegend.showEntries=true;
 												chartLegend.spacing = 32;
-												chartLegend.width = 100;
-												chartLegend.position="right";
+												//chartLegend.width ="auto";
+												chartLegend.position="bottom";
 												chartLegend.valueAlign = "left";
+												//chartLegend.
 												myChart.addLegend(chartLegend);
 
 												// TITLES		
@@ -158,6 +160,7 @@ angular
 																"valueField" : "column-"
 																		+ (g + 1),
 																"lineThickness" : scope.lineThickness || 1,
+																//"type":"column"
 															/* "connect":false */
 															});
 												}
@@ -169,8 +172,8 @@ angular
 											}
 											initChart();
 
-											myChart.dataProvider = adaptMyData(scope.chartData);
-											myChart.validateData();
+										//	myChart.dataProvider = adaptMyData(scope.chartData);
+										//	myChart.validateData();
 											
 											
 
@@ -178,8 +181,9 @@ angular
 											.$watchCollection(
 													'chartData',
 													function(newChartData, oldChartData) {
-														//console.log(newChartData);	
+															
 														myChart.dataProvider = adaptMyData(scope.chartData);
+														console.log(myChart.dataProvider);
 														myChart.validateData();
 											
 									});
