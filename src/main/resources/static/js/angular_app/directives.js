@@ -169,12 +169,12 @@ angular
 							myChart.dataProvider = adaptMyData(newChartData);
 							console.log(myChart.dataProvider);
 							
-							//if (myChart.dataProvider.length > 0) {
+							if (myChart.dataProvider.length > 0) {
 								console.log("before validateData()");
 								//FUNCTION WHICH REFRESH DATA ON CHART
 								myChart.validateData();
 								console.log("after validateData()");
-							//}
+							}
 							
 
 						});
