@@ -32,156 +32,153 @@ angular
 						// var chart = false;
 						var dataForChart = [];
 
-			
-											dataForChart = adaptMyData(scope.chartData);
+						dataForChart = adaptMyData(scope.chartData);
 
-											var initChart = function() {
-												myChart = new AmCharts.AmSerialChart();
-												myChart.langulage = "pl";
-												myChart.marginLeft = 20;
-												myChart.pathToImages = "http://www.amcharts.com/lib/3/images/";
-												myChart.decimalSeparator = ",";
-												myChart.thousandsSeparator = ".";
-												myChart.startIndex=1;
+						var initChart = function() {
+							myChart = new AmCharts.AmSerialChart();
+							myChart.langulage = "pl";
+							myChart.marginLeft = 20;
+							myChart.pathToImages = "http://www.amcharts.com/lib/3/images/";
+							myChart.decimalSeparator = ",";
+							myChart.thousandsSeparator = ".";
+							myChart.startIndex = 1;
 
-												// myChart.
-												// VALUE AXES
-												var valueAxis = new AmCharts.ValueAxis();
-												valueAxis.axisAlpha = "0";
-												valueAxis.inside = true;
-												valueAxis.position = "left";
-												valueAxis.ignoreAxisWidth = true;
-												valueAxis.id = "ValueAxis-";
-												valueAxis.title = scope.valueAxisTitle
-														|| "";
-												valueAxis.titleFontSize=15;
+							// myChart.
+							// VALUE AXES
+							var valueAxis = new AmCharts.ValueAxis();
+							valueAxis.axisAlpha = "0";
+							valueAxis.inside = true;
+							valueAxis.position = "left";
+							valueAxis.ignoreAxisWidth = true;
+							valueAxis.id = "ValueAxis-";
+							valueAxis.title = scope.valueAxisTitle || "";
+							valueAxis.titleFontSize = 15;
 
-												myChart.addValueAxis(valueAxis);
+							myChart.addValueAxis(valueAxis);
 
-												//var graph = new AmCharts.AmGraph();
-												//myChart.addGraph(graph);
+							// var graph = new AmCharts.AmGraph();
+							// myChart.addGraph(graph);
 
-												var chartScrollbar = new AmCharts.ChartScrollbar();
-												myChart.addChartScrollbar(chartScrollbar);
+							var chartScrollbar = new AmCharts.ChartScrollbar();
+							myChart.addChartScrollbar(chartScrollbar);
 
-												// CURSOR
-												chartCursor = new AmCharts.ChartCursor();
-												chartCursor.cursorPosition = "mouse";
-												chartCursor.cursorAlpha = 0;
-												chartCursor.categoryBalloonDateFormat = "JJ:NN:SS"
-												myChart
-														.addChartCursor(chartCursor);
+							// CURSOR
+							chartCursor = new AmCharts.ChartCursor();
+							chartCursor.cursorPosition = "mouse";
+							chartCursor.cursorAlpha = 0;
+							chartCursor.categoryBalloonDateFormat = "JJ:NN:SS"
+							myChart.addChartCursor(chartCursor);
 
-												// CATEGORY FIELD
-												myChart.categoryField = "date";
-												myChart.dataDateFormat = "YYYY-MM-DD HH:NN:SS";
+							// CATEGORY FIELD
+							myChart.categoryField = "date";
+							myChart.dataDateFormat = "YYYY-MM-DD HH:NN:SS";
 
-												// CATEGORY AXES
-												var categoryAxis = myChart.categoryAxis;
+							// CATEGORY AXES
+							var categoryAxis = myChart.categoryAxis;
 
-												categoryAxis.parseDates = true;
-												categoryAxis.minPeriod = "ss";
-												categoryAxis.minorGridAlpha = 0.1;
-												categoryAxis.minorGridEnabled = true;
-												//categoryAxis.dashLenght=3;
-												categoryAxis.dateFormats= [{
-												    period: 'fff',
-												    format: 'JJ:NN:SS'
-												}, {
-												    period: 'ss',
-												    format: 'JJ:NN:SS'
-												}, {
-												    period: 'mm',
-												    format: 'JJ:NN'
-												}, {
-												    period: 'hh',
-												    format: 'DD-MMM JJ:NN'
-												}, {
-												    period: 'DD',
-												    format: 'DD-MMM'
-												}, {
-												    period: 'WW',
-												    format: 'DD-MMM'
-												}, {
-												    period: 'MM',
-												    format: 'MMM YYYY'
-												}, {
-												    period: 'YYYY',
-												    format: 'MMM YYYY'
-												}];
+							categoryAxis.parseDates = true;
+							categoryAxis.minPeriod = "ss";
+							categoryAxis.minorGridAlpha = 0.1;
+							categoryAxis.minorGridEnabled = true;
+							// categoryAxis.dashLenght=3;
+							categoryAxis.dateFormats = [ {
+								period : 'fff',
+								format : 'JJ:NN:SS'
+							}, {
+								period : 'ss',
+								format : 'JJ:NN:SS'
+							}, {
+								period : 'mm',
+								format : 'JJ:NN'
+							}, {
+								period : 'hh',
+								format : 'DD-MMM JJ:NN'
+							}, {
+								period : 'DD',
+								format : 'DD-MMM'
+							}, {
+								period : 'WW',
+								format : 'DD-MMM'
+							}, {
+								period : 'MM',
+								format : 'MMM YYYY'
+							}, {
+								period : 'YYYY',
+								format : 'MMM YYYY'
+							} ];
 
-												// LEGEND
-												var chartLegend = new AmCharts.AmLegend();
-												//chartLegend.useGraphSettings = true;
-												chartLegend.align="left";
-												chartLegend.showEntries=true;
-												chartLegend.spacing = 32;
-												chartLegend.position="bottom";
-												chartLegend.valueAlign = "left";
-												myChart.addLegend(chartLegend);
-					
-												// TITLES		
-												myChart.addTitle(scope.chartTitle||"",20);
+							// LEGEND
+							var chartLegend = new AmCharts.AmLegend();
+							// chartLegend.useGraphSettings = true;
+							chartLegend.align = "left";
+							chartLegend.showEntries = true;
+							chartLegend.spacing = 32;
+							chartLegend.position = "bottom";
+							chartLegend.valueAlign = "left";
+							myChart.addLegend(chartLegend);
 
-												// AMEXPORT 											
-												myChart.amExport={
-														top		: 10,
-														right		: 30,
-														exportJPG	: true,
-														exportPNG	: true,
-														exportSVG	: true,
-														buttonTitle:'Zapisz obraz jako: '
-														
-														
-												};
-												myChart.amExport.imageFileName="Wykres "+new Date().toDateString();
+							// TITLES
+							myChart.addTitle(scope.chartTitle || "", 20);
 
-												// -------------------------grpahs--------------------------------------------
-												var graphNumber = scope.seriesNumber || 0;
-												if (scope.chartData.length > 0)
-													graphNumber = scope.seriesNumber
-															|| scope.chartData[0].values.length;
-												
-												for (var g = 0; g < graphNumber; g++) { 
-													myChart.graphs
-															.push({
-																"balloonText" : "[[category]]<br><b><span style='font-size:15px;'>[[value]]</span></b>",
-																"id" : "AmGraph-"
-																		+ (g + 1),
-																"title" : "Czujnik "
-																		+ (g + 1),
-																"valueField" : "column-"
-																		+ (g + 1),
-																"lineThickness" : scope.lineThickness || 1
-																//"type":"column"
-															// "connect":false 
-															});
-												}
+							// AMEXPORT
+							myChart.amExport = {
+								top : 10,
+								right : 30,
+								exportJPG : true,
+								exportPNG : true,
+								exportSVG : true,
+								buttonTitle : 'Zapisz obraz jako: '
 
-					
-												// WRITE
-												myChart.write("chartdiv");
+							};
+							myChart.amExport.imageFileName = "Wykres "
+									+ new Date().toDateString();
 
-											}
-											initChart();
+							// -------------------------grpahs--------------------------------------------
+							var graphNumber = scope.seriesNumber || 0;
+							if (scope.chartData.length > 0)
+								graphNumber = scope.seriesNumber
+										|| scope.chartData[0].values.length;
 
-										//	myChart.dataProvider = adaptMyData(scope.chartData);
-										//	myChart.validateData();
-											
-											
-											
+							for (var g = 0; g < graphNumber; g++) {
+								myChart.graphs
+										.push({
+											"balloonText" : "[[category]]<br><b><span style='font-size:15px;'>[[value]]</span></b>",
+											"id" : "AmGraph-" + (g + 1),
+											"title" : "Czujnik " + (g + 1),
+											"valueField" : "column-" + (g + 1),
+											"lineThickness" : scope.lineThickness || 1
+										// "type":"column"
+										// "connect":false
+										});
+							}
+							myChart.addListener("dataUpdated", function() {
+								console.log("data Updated");
+							});
 
-											scope
-											.$watchCollection(
-													'chartData',
-													function(newChartData, oldChartData) {
-															
-														myChart.dataProvider = adaptMyData(scope.chartData);
-														console.log(myChart.dataProvider);
-														myChart.validateData();
-														//console.log(myChart.legend);
-											
-									});
+							// WRITE
+							myChart.write("chartdiv");
+
+						}
+						initChart();
+
+
+
+						//WATCHER
+						scope.$watchCollection('chartData', function(newChartData,
+								oldChartData) {
+							myChart.dataProvider = adaptMyData(newChartData);
+							console.log(myChart.dataProvider);
+							
+							//if (myChart.dataProvider.length > 0) {
+								console.log("before validateData()");
+								//FUNCTION WHICH REFRESH DATA ON CHART
+								myChart.validateData();
+								console.log("after validateData()");
+							//}
+							
+
+						});
+
 					};
 
 					/**
@@ -194,9 +191,8 @@ angular
 						for (var i = 0; i < myDataTable.length; i++) {
 
 							var myDate = new Date(myDataTable[i].date);
-						
-							var dataToDisplay = {};
 
+							var dataToDisplay = {};
 
 							for (var j = 0; j < myDataTable[i].values.length; j++) {
 
