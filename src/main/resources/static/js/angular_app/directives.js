@@ -32,12 +32,7 @@ angular
 						// var chart = false;
 						var dataForChart = [];
 
-					/*	scope
-								.$watchCollection(
-										'chartData',
-										function(newChartData, oldChartData) {
-											console.log(newChartData);*/
-
+			
 											dataForChart = adaptMyData(scope.chartData);
 
 											var initChart = function() {
@@ -63,8 +58,8 @@ angular
 
 												myChart.addValueAxis(valueAxis);
 
-												var graph = new AmCharts.AmGraph();
-												myChart.addGraph(graph);
+												//var graph = new AmCharts.AmGraph();
+												//myChart.addGraph(graph);
 
 												var chartScrollbar = new AmCharts.ChartScrollbar();
 												myChart.addChartScrollbar(chartScrollbar);
@@ -121,12 +116,10 @@ angular
 												chartLegend.align="left";
 												chartLegend.showEntries=true;
 												chartLegend.spacing = 32;
-												//chartLegend.width ="auto";
 												chartLegend.position="bottom";
 												chartLegend.valueAlign = "left";
-												//chartLegend.
 												myChart.addLegend(chartLegend);
-
+					
 												// TITLES		
 												myChart.addTitle(scope.chartTitle||"",20);
 
@@ -148,8 +141,8 @@ angular
 												if (scope.chartData.length > 0)
 													graphNumber = scope.seriesNumber
 															|| scope.chartData[0].values.length;
-
-												for (var g = 0; g < graphNumber; g++) { //
+												
+												for (var g = 0; g < graphNumber; g++) { 
 													myChart.graphs
 															.push({
 																"balloonText" : "[[category]]<br><b><span style='font-size:15px;'>[[value]]</span></b>",
@@ -159,13 +152,13 @@ angular
 																		+ (g + 1),
 																"valueField" : "column-"
 																		+ (g + 1),
-																"lineThickness" : scope.lineThickness || 1,
+																"lineThickness" : scope.lineThickness || 1
 																//"type":"column"
-															/* "connect":false */
+															// "connect":false 
 															});
 												}
 
-	
+					
 												// WRITE
 												myChart.write("chartdiv");
 
@@ -174,6 +167,7 @@ angular
 
 										//	myChart.dataProvider = adaptMyData(scope.chartData);
 										//	myChart.validateData();
+											
 											
 											
 
@@ -185,6 +179,7 @@ angular
 														myChart.dataProvider = adaptMyData(scope.chartData);
 														console.log(myChart.dataProvider);
 														myChart.validateData();
+														//console.log(myChart.legend);
 											
 									});
 					};
