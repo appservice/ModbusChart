@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class ExcelRS {
 	@Autowired
 	MeasurementRepository measurementRepository;
 
-	private Workbook workbook;
+	private SXSSFWorkbook workbook;
 	private int lastColumnNumber;
 	private Long serverId;
 	private Iterable<Measurement> measurements;
@@ -51,10 +52,10 @@ public class ExcelRS {
 			@DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
 		this.serverId = id;
 
-		this.measurements=checkQueryParams(startDate, endDate, timePeriod);
+		this.measurements = checkQueryParams(startDate, endDate, timePeriod);
 
-		
-		//-------------StreaminOutput---------- to return excel file in outputStream----------
+		// -------------StreaminOutput---------- to return excel file in
+		// outputStream----------
 		StreamingOutput soutput = new StreamingOutput() {
 			@Override
 			public void write(OutputStream output) throws IOException, WebApplicationException {
@@ -74,7 +75,6 @@ public class ExcelRS {
 
 	// ---------------------checkQueryParams---------------------------------------------
 	private Iterable<Measurement> checkQueryParams(long startDate, long endDate, Long timePeriod) {
-	
 
 		if (timePeriod != 0) {
 			Date now = new Date();
@@ -98,25 +98,31 @@ public class ExcelRS {
 	}
 
 	
-	//-----------buildExcelDokument------------------------------
+	
+	
+	// -----------buildExcelDokument------------------------------
 	private void buildExcelDokument(OutputStream os, Long serverId) throws InvalidFormatException, IOException {
 		// OutpuStream os=new FileOutputStream();
 
-		workbook = new XSSFWorkbook();
+		workbook = new SXSSFWorkbook(200);
 		Sheet sheet = workbook.createSheet("Zeszyt 1");
 
+		//setExcelHeader(sheet);
 		setExcelRows(sheet, serverId);
-		setExcelHeader(sheet, lastColumnNumber);
+		//setExcelHeader(sheet, lastColumnNumber);
 
 		// os = new FileOutputStream("temp.xlsx");
 		workbook.write(os);
+		os.flush();
+		workbook.dispose();
 		os.close();
 
 	}
 
-	private void setExcelHeader(Sheet sheet, int dataNumber) {
+	private void setExcelHeader(Sheet sheet, int lastColumnNumber) {
+		
+		
 		Row excelHeader = sheet.createRow(0);
-
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);
 		CellStyle headerStyle = workbook.createCellStyle();
@@ -137,7 +143,7 @@ public class ExcelRS {
 		b1.setCellValue("Data");
 		b1.setCellStyle(headerStyle);
 
-		for (int i = 1; i < dataNumber; i++) {
+		for (int i = 1; i < lastColumnNumber; i++) {
 			Cell c = excelHeader.createCell(i + 1);
 			c.setCellValue("Czujnik " + (i));
 			c.setCellStyle(headerStyle);
@@ -147,9 +153,19 @@ public class ExcelRS {
 	}
 
 	private void setExcelRows(Sheet sheet, Long serverId) {
+		
+		Iterator<Measurement> it1 = measurements.iterator();
+
+		//checking the last column number
+		while(it1.hasNext()){
+			int i=it1.next().getMeasuredValue().size();
+			lastColumnNumber = Math.max(lastColumnNumber, i + 1);
+		}
+		setExcelHeader(sheet,lastColumnNumber);
 
 		LOG.info("serverId: " + serverId);
-	//	Iterable<Measurement> measurements = measurementRepository.findAllFromServer(1l);
+		// Iterable<Measurement> measurements =
+		// measurementRepository.findAllFromServer(1l);
 
 		// --------------dateStyle---------------------------
 		CellStyle dateStyle = workbook.createCellStyle();
@@ -193,7 +209,7 @@ public class ExcelRS {
 				valueCell.setCellStyle(valueStyle);
 
 				// set lastColumnNumber
-				lastColumnNumber = Math.max(lastColumnNumber, i + 2);
+				//lastColumnNumber = Math.max(lastColumnNumber, i + 2);
 			}
 
 			rowNumber++;

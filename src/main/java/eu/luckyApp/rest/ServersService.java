@@ -184,7 +184,9 @@ public class ServersService implements Observer {
 			Measurement measurement = new Measurement();
 			measurement.setDate(new Date());
 			measurement.setServer(server);
+			
 			measurement.getMeasuredValue().addAll(myData);
+			//server.getMeasurements().add(measurement);
 			// mesasurementRepo.
 			Measurement m = mesasurementRepo.save(measurement);
 			LOG.info("dodano: " + m);

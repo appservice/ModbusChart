@@ -45,6 +45,7 @@ angular
 
 			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":2*60*60*1000}).then(function(data){
+				
 				$scope.myMeasurements=data;
 				
 			});
@@ -67,6 +68,7 @@ angular
 			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":8*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
+				console.log(data);
 				
 			});
 		
@@ -90,6 +92,7 @@ angular
 			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
 			baseMeasurements.getList({"timePeriod":24*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
+				console.log(data);
 				
 			});			
 
@@ -141,15 +144,64 @@ angular
 		 * ================================================================================================
 		 */
 		.controller('AllDataChartController',['$scope','Restangular',function($scope,Restangular){
-			$scope.myMeasurements=[];
+/*			$scope.myMeasurements=[];
 			
-			var baseMeasurements=Restangular.all('rest/servers/1/measurements');
-			baseMeasurements.getList().then(function(data){
+			
+			
+			//var baseMeasurements=Restangular.all('rest/servers/1/measurements');
+			Restangular.one('rest/servers/1/').customGET('measurements',{"timePeriod":31*24*60*60*1000}).then(function(data){
 				$scope.myMeasurements=data;
 				
 			});
 		
-			$scope.height='600px';
+			$scope.height='600px';*/
+			
+			$scope.isLoading=true;
+	        
+			Restangular.one('rest/servers/1/').customGET('measurements'/*,{"timePeriod":31*24*60*60*1000}*/).then(function(data){
+				$scope.isLoading=false;
+			    	  console.log("ilość danych: "+data.length);
+						var pushData=[];
+					 	var labelsTable=["Czas"];
+					 	
+					 
+				      	for(var ii=1;ii<9;ii++){
+				      		labelsTable.push("Czujnik-"+ii);
+				      	}
+				      	
+					     
+				        for(var k=0;k<data.length;k++){
+				        	var myData=[]
+				        	myData.push(new Date(data[k].date));
+				        	for(var ll=0;ll<data[k].values.length;ll++)
+				        		{
+				        		myData.push(data[k].values[ll]);
+				        		}
+				        	pushData.push(myData);
+				        }
+				      	
+						var g = new Dygraph(document.getElementById("div_g"), pushData,
+		                          {
+		                           // drawPoints: true,
+		                        //    showRoller: true,
+		                            strokeWidth: 2,
+		                            colors:["#00DD55","#DD0055","#cc3300","#5500DD","#660066","#00FF00","#FF0000","#0000FF"],
+		                          "labelsSeparateLines": true,
+		                           // valueRange: [0.0, 1.2],
+		                           labels: labelsTable,
+		                           rightGap:100,
+		                           title:"Wykres całościowy",
+		                           ylabel:"Przepływ [m3/s]",
+		                           //xlabel:"Czas",
+		                           drawGapEdgePoints:true,
+		                          // showRangeSelector: true,
+		                         //  drawPoints: true,
+		                          
+		                          });
+
+			        
+					});
+			    
 
 			
 		}])
@@ -160,7 +212,7 @@ angular
 		 * ======================================================================================================
 		 */
 		.controller('ChartOnlineController',['$scope','Restangular','poller', function($scope,Restangular,poller) {
-			$scope.myMeasurements = [];
+		/*	$scope.myMeasurements = [];
 			$scope.mySeriesNumber=8;
 			$scope.height='600px';
 			
@@ -216,7 +268,104 @@ angular
 				 
 			 });
 				 
-		 });
+		 });*/
+			
+			
+			
+			Restangular.one('rest/servers',1).get().then(function(myServer){
+				console.log(myServer);
+				//$scope.mySeriesNumber=myServer.readedDataCount||0;
+				$scope.serverTimeIterval=myServer.timeInterval;
+				var myDate=new Date();
+				var dataTableSize=60;
+				
+				for(j=0;j<dataTableSize;j++){
+					$scope.myMeasurements.push({"date":myDate.getTime()-(dataTableSize-j)*$scope.serverTimeIterval,"values":[]});
+								
+				}
+				
+			
+					$scope.isLoading=true;
+	        
+
+					myServer.customGET("measurements/last").then(function(lastMeasurementData){
+		
+	
+						//----------------poller----------------
+		 
+						var myPoller = poller.get(myServer.one("measurements/last") , { //Restangular.getOne('servers/2/measurements/last').getList() 
+		   	action: 'get',
+			        
+			        delay: $scope.serverTimeIterval});
+		 
+	
+			   	myPoller.promise.then(null, null,function(myData){
+			   		
+			   		
+
+					console.log("tekst "+new Date());
+					if ($scope.myMeasurements[$scope.myMeasurements.length-1].date!=myData.date){
+						console.log("dodamy");
+						//$scope.myData.shift();
+						
+						$scope.myMeasurements.shift();
+						$scope.myMeasurements.push(myData);
+						
+					//	console.log($scope.myMeasurements);
+					}else{
+						console.log("niedodamy");
+					}
+				});
+			   	
+		 
+	
+	});
+
+			Restangular.one('rest/servers/1/').customGET('measurements'/*,{"timePeriod":31*24*60*60*1000}*/).then(function(data){
+				$scope.isLoading=false;
+			    	  console.log("ilość danych: "+data.length);
+						var pushData=[];
+					 	var labelsTable=["Czas"];
+					 	
+					 
+				      	for(var ii=1;ii<9;ii++){
+				      		labelsTable.push("Czujnik-"+ii);
+				      	}
+				      	
+					     
+				        for(var k=0;k<data.length;k++){
+				        	var myData=[]
+				        	myData.push(new Date(data[k].date));
+				        	for(var ll=0;ll<data[k].values.length;ll++)
+				        		{
+				        		myData.push(data[k].values[ll]);
+				        		}
+				        	pushData.push(myData);
+				        }
+				      	
+						var g = new Dygraph(document.getElementById("div_g"), pushData,
+		                          {
+		                           // drawPoints: true,
+		                        //    showRoller: true,
+		                            strokeWidth: 2,
+		                            colors:["#00DD55","#DD0055","#cc3300","#5500DD","#660066","#00FF00","#FF0000","#0000FF"],
+		                          "labelsSeparateLines": true,
+		                           // valueRange: [0.0, 1.2],
+		                           labels: labelsTable,
+		                           rightGap:100,
+		                           title:"Wykres całościowy",
+		                           ylabel:"Przepływ [m3/s]",
+		                           //xlabel:"Czas",
+		                           drawGapEdgePoints:true,
+		                          // showRangeSelector: true,
+		                         //  drawPoints: true,
+		                          
+		                          });
+
+			        
+			});
+			    
+			});
 	
 		}])
 		
@@ -363,4 +512,147 @@ angular
 									alert("Aplikacja wyłączona");
 								});
 							}
-						} ]);
+						} ])
+						
+						/**
+		 * ============================================================================================================
+		 * Help CONTROLLER
+		 * ============================================================================================================
+		 */
+		.controller('HelpController',['$scope','Restangular',function($scope,Restangular){
+			
+			//$scope.chartTitle='Wykres z ostatnich 2 godzin';
+			
+			//$scope.myData=[[new Date("2013-01-01"),12,13],[new Date("2014-01-01"),52,21]];
+			
+		//	$scope.showChart=false;
+		//	$scope.untilMaxDate=new Date();
+			
+		//	$scope.createChart=function(){				
+		//	$scope.myMeasurements=[];	
+			
+			
+			/* $scope.graph = {
+			            data: [
+			            ],
+			            options: {
+			                labels: ["x", "A", "B","c"]
+			            },
+			            legend: {
+			                series: {
+			                    A: {
+			                        label: "Series A"
+			                    },
+			                    B: {
+			                        label: "Series B",
+			                        format: 3
+			                    },
+			                    c: {
+			                        label: "Series c",
+			                        format: 3
+			                    }
+			                }
+			            }
+			        };
+
+			        var base_time = Date.parse("2008/07/01");
+			        var num = 24 * 8*4* 365;
+			        console.log(num);
+			        for (var i = 0; i < num; i++) {
+			            $scope.graph.data.push([ new Date(base_time + i * 3600 * 1000),
+			                        i + 50 * (i % 40),        // line
+			                        i * (num - i) * 4.0 / num , // parabola
+			                        Math.sin(i/12)*50
+			                       
+			            ]);
+			            //console.log(i);
+			        }
+			        console.log("skonoczne");*/
+			
+
+			//var baseMeasurements=Restangular.all('rest/servers/1/measurements');
+			//baseMeasurements.getList({"timePeriod":31*24*60*60*1000}).then(function(data){
+			//	$scope.myMeasurements=data;
+				//console.log(data);
+				/*for(var i=0;i<data.length;i++){
+					var myDataElement=[];
+					myDataElement.push(data[i].date);
+					
+					for(var j=0;j<data[i].values.length;j++){
+						myDataElement.push(data[i].values[j]);
+					}
+					$scope.myData.push(myDataElement);
+				}*/
+				
+				
+		//	});			
+
+		
+		//	$scope.showChart=true;
+			//}
+			
+			//$(document).ready(function () {
+			   /*   var pushData = [];*/
+	
+			    
+			      
+			        
+			        
+			Restangular.one('rest/servers/1/').customGET('measurements'/*,{"timePeriod":31*24*60*60*1000}*/).then(function(data){
+				
+			    	  console.log("ilość danych: "+data.length);
+						var pushData=[];//[[new Date("2015-01-12"),"null","null","null","null","null","null","null","null"]];
+					 	var labelsTable=["Czas"];
+					 	
+					 
+				      	for(var ii=1;ii<9;ii++){
+				      		labelsTable.push("Czujnik-"+ii);
+				      	}
+				      	
+					     
+				        for(var k=0;k<data.length;k++){
+				        	var myData=[]
+				        	myData.push(new Date(data[k].date));
+				        	for(var ll=0;ll<data[k].values.length;ll++)
+				        		{
+				        		myData.push(data[k].values[ll]);
+				        		}
+				        	pushData.push(myData);
+				        }
+				      	
+						var g = new Dygraph(document.getElementById("div_g"), pushData,
+		                          {
+		                           // drawPoints: true,
+		                        //    showRoller: true,
+		                            strokeWidth: 2,
+		                            colors:["#00DD55","#DD0055","#cc3300","#5500DD","#660066","#00FF00","#FF0000","#0000FF"],
+		                          "labelsSeparateLines": true,
+		                           // valueRange: [0.0, 1.2],
+		                           labels: labelsTable,
+		                           rightGap:100,
+		                           title:"Wykres całościowy",
+		                           ylabel:"Przepływ [m3/s]",
+		                           //xlabel:"Czas",
+		                           drawGapEdgePoints:true,
+		                          // showRangeSelector: true,
+		                         //  drawPoints: true,
+		                          
+		                          });
+	/*	     
+			        for(var k=0;k<data.length;k++){
+			        	var myData=[]
+			        	myData.push(new Date(data[k].date));
+			        	for(var ll=0;ll<data[k].values.length;ll++)
+			        		{
+			        		myData.push(data[k].values[ll]);
+			        		}
+			        	pushData.push(myData);
+			        }*/
+			        //console.log(pushData);
+			     //   g.updateOptions( { 'file': pushData/*,showRangeSelector: true*/ } );
+			        
+					});
+			    
+			
+		}]);
+		

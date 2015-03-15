@@ -12,8 +12,14 @@
 <div class="page-header"><h3> Wykres całościowy</h3></div>
 <div >     
 
-    <luke-am-chart  chart-data=myMeasurements  height="height" chart-title="'Wykres całościowy'"series-number="'8'" value-axis-title="'Przepływ [m3/s]'" line-thickness="'2'" ></luke-am-chart>  
-
+<!--     <luke-am-chart  chart-data=myMeasurements  height="height" chart-title="'Wykres całościowy'"series-number="'8'" value-axis-title="'Przepływ [m3/s]'" line-thickness="'2'" ></luke-am-chart>  
+ -->
+ <div data-ng-show="isLoading">
+ 
+ <img alt="Ładuję" src="/ModbusChart/../images/loading.gif" class="center-block">
+ </div>
+ 
+     <div id="div_g" style="width:auto; height:500px;"></div>
     
 </div>
 	</body>

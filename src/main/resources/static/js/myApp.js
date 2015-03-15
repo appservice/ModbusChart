@@ -41,7 +41,8 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 
 	}).state('help', {
 		url : '/help',
-		templateUrl : 'view/help.html'
+		templateUrl : 'view/help.html',
+		controller:'HelpController'
 
 	}).state('chartOnline', {
 		url : '/chart-online',

@@ -44,8 +44,8 @@ public class ServerEntity {
 	private String readedDataType;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="server",fetch=FetchType.LAZY,cascade=CascadeType.REMOVE)
-	private Collection<Measurement> measurements;
+	@OneToMany(mappedBy="server",fetch=FetchType.LAZY,cascade=CascadeType.ALL)//CascadeType.MERGE,CascadeType.REMOVE,CascadeType.REFRESH}
+	private Collection<Measurement> measurements=new ArrayList<>();
 	
 	private String description;
 

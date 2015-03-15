@@ -8,10 +8,11 @@ import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication//(exclude = {ErrorMvcAutoConfiguration.class})
 @PropertySource("application.properties")
-//@EnableScheduling
+@EnableScheduling
 public class ModbusChartApplication {
 	
 

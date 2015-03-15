@@ -19,15 +19,20 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
 	@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId AND m.date >=:startDate")
 	public Iterable<Measurement> findAllFromServerByStartDate(@Param("serverId") Long serverId, @Param("startDate") Date startDate);
 
-	// public Iterable<>
 	@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId")
 	public Iterable<Measurement> findAllFromServer(@Param("serverId") Long serverId);
-	
-	@Query("SELECT MAX(m.date) FROM Measurement m WHERE m.server.id=:serverId" )
+
+	@Query("SELECT MAX(m.date) FROM Measurement m WHERE m.server.id=:serverId")
 	public Date findLastMeasurementDate(@Param("serverId") Long serverId);
-	
+
 	@Query("SELECT MAX(m.id) FROM Measurement m WHERE m.server.id=:serverId")
-	public Long findLastMeasurementIdByServer(@Param("serverId")Long serverId);
+	public Long findLastMeasurementIdByServer(@Param("serverId") Long serverId);
+
+/*	@Modifying
+	@Transactional
+	@Query("DELETE FROM Measurement m WHERE ")
+	public void deleteOlderThan(@Param("date") Date date);*/
 	
-	
+	@Query("SELECT m FROM Measurement m WHERE  m.date<:date")
+	public Iterable<Measurement>findOlderThan(@Param("date")Date date);
 }

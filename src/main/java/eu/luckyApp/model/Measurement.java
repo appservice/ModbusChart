@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +21,7 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "MEASUREMENT")
@@ -33,7 +35,7 @@ public class Measurement {
 	private Date date;
 	
 	@JsonIgnore
-	@ManyToOne(cascade=CascadeType.REMOVE,targetEntity=ServerEntity.class)
+	@ManyToOne()
 	@JoinColumn(name="server_id")
 	private ServerEntity server;
 
