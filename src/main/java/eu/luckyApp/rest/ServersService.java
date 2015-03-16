@@ -175,7 +175,6 @@ public class ServersService implements Observer {
 	}
 
 	@Override
-	// @Transactional
 	public void update(Observable o, Object dataObject) {
 		ServerEntity server = ((RegisterReader2) o).getServerEntity();
 

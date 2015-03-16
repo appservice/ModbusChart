@@ -157,9 +157,12 @@ angular
 			$scope.height='600px';*/
 			
 			$scope.isLoading=true;
+			//$scope isVisible1=true;
 	        
 			Restangular.one('rest/servers/1/').customGET('measurements'/*,{"timePeriod":31*24*60*60*1000}*/).then(function(data){
 				$scope.isLoading=false;
+			
+				var g={};
 			    	  console.log("ilość danych: "+data.length);
 						var pushData=[];
 					 	var labelsTable=["Czas"];
@@ -180,12 +183,12 @@ angular
 				        	pushData.push(myData);
 				        }
 				      	
-						var g = new Dygraph(document.getElementById("div_g"), pushData,
+						 g = new Dygraph(document.getElementById("div_g"), pushData,
 		                          {
 		                           // drawPoints: true,
 		                        //    showRoller: true,
 		                            strokeWidth: 2,
-		                            colors:["#00DD55","#DD0055","#cc3300","#5500DD","#660066","#00FF00","#FF0000","#0000FF"],
+		                            colors:["#FF0000","#00AA00","#0000FF","#FF00FF","#9900FF","#FFCC00","#808080","#000080"],
 		                          "labelsSeparateLines": true,
 		                           // valueRange: [0.0, 1.2],
 		                           labels: labelsTable,
@@ -198,11 +201,25 @@ angular
 		                         //  drawPoints: true,
 		                          
 		                          });
+						
+						
+					//	g.setVisibility(1, false);
+					//	g.setVisibility(2, false);
+					//	g.setVisibility(3, false);
+						
+						
+						$scope.isChecked1=true;
+						$scope.setVisibility1=   function(){
+					//	$scope.isVisible1!=$scope.isVisible1;
+					//	g.setVisibility(0, $scope.isVisible1);
+							console.log($scope.isChecked1);
+							g.setVisibility(0,$scope.isChecked1);
+					//	console.log($scope.isVisible1);
+						    }
 
 			        
 					});
-			    
-
+	
 			
 		}])
 
@@ -634,10 +651,13 @@ angular
 		                           ylabel:"Przepływ [m3/s]",
 		                           //xlabel:"Czas",
 		                           drawGapEdgePoints:true,
+		                          
 		                          // showRangeSelector: true,
 		                         //  drawPoints: true,
 		                          
 		                          });
+						
+					
 	/*	     
 			        for(var k=0;k<data.length;k++){
 			        	var myData=[]

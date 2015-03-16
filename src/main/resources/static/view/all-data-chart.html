@@ -16,10 +16,11 @@
  -->
  <div data-ng-show="isLoading">
  
- <img alt="Ładuję" src="/ModbusChart/../images/loading.gif" class="center-block">
+ <img alt="Ładuję" src="ModbusChart/../images/loading.gif" class="center-block">
  </div>
  
      <div id="div_g" style="width:auto; height:500px;"></div>
+     <div><input type="checkbox"  data-ng-show="!isLoading" class="squaredOne" data-ng-click="setVisibility1()" data-ng-model="isChecked1">Czujnik 1</input></div>
     
 </div>
 	</body>
