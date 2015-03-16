@@ -25,7 +25,9 @@
       <span class="navbar-brand">Wykresy z modbus</span>
 
       <button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
-        <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
       </button>
 
       <div class="collapse navbar-collapse navHeaderCollapse">
@@ -37,7 +39,7 @@
           <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Wykresy <b
               class="caret"></b></a>
             <ul class="dropdown-menu" role="menu">
-            <li><a href="#/custom-period-chart">Wykres n-dniowy</a></li>
+              <li><a href="#/custom-period-chart">Wykres n-dniowy</a></li>
               <li class="divider"></li>
               <li><a href="#/2-hours-chart">Wykres ostatnie 2 godziny</a></li>
               <li><a href="#/8-hours-chart">Wykres ostatnie 8 godzin</a></li>
@@ -45,8 +47,8 @@
               <li><a href="#/7-days-chart">Wykres ostatnie 7 dni</a></li>
               <li><a href="#/31-days-chart">Wykres ostatnie 31 dni</a></li>
               <li class="divider"></li>
-                <li><a href="#/all-data-chart">Wykres całościowy</a></li>
-              
+              <li><a href="#/all-data-chart">Wykres całościowy</a></li>
+
             </ul></li>
           <li><a href="#/download">Pobierz dane</a></li>
 
@@ -68,19 +70,19 @@
     <div data-ui-view=""></div>
 
     <!-- ==========footer=========== -->
-<!--     <div data-ng-include="" src="'view/footer.html'"></div> -->
+    <!--     <div data-ng-include="" src="'view/footer.html'"></div> -->
 
 
-<!-- =================footer================== -->
-  <footer>
-    <!--   <div class="container "> -->
-    <p>
-      © Copyright by <b>BRUK-BET</b>  All rights reserved. Designed & Developed by <b>ITEM Service </b> & <b>LuckyApp</b>
-      <span class="glyphicon glyphicon-envelope" style="margin-left:20px;"></span>
-       <!-- <a class="btn btn-danger">Kliknij</a>  -->
-    </p>
-    <!--  </div> -->
-  </footer>
+    <!-- =================footer================== -->
+    <footer>
+      <!--   <div class="container "> -->
+      <p>
+        © Copyright by <b>BRUK-BET</b> All rights reserved. Designed & Developed by <b>ITEM Service </b> & <b>LuckyApp</b>
+        <span class="glyphicon glyphicon-envelope" style="margin-left: 20px;"></span>
+        <!-- <a class="btn btn-danger">Kliknij</a>  -->
+      </p>
+      <!--  </div> -->
+    </footer>
     <!--  src="'view/footer.html'"-->
 
   </div>
@@ -100,34 +102,27 @@
   <script type="text/javascript" src="js/vendors/angular-i18n/angular-locale_pl-pl.js"></script>
   <script type="text/javascript" src="js/vendors/angular-ui-router/angular-ui-router.min.js"></script>
 
+  <!-- restangular -good rest contorller  -->
   <script type="text/javascript" src="js/vendors/loadash/lodash.min.js"></script>
   <script type="text/javascript" src="js/vendors/restangular/restangular.min.js"></script>
 
+  <!-- poller -->
   <script type="text/javascript" src="js/vendors/angular-pooler/angular-poller.min.js"></script>
-<!--   <script type="text/javascript" src="js/vendors/ui-bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script >-->
-<script type="text/javascript" src="js/vendors/angular-strap/angular-strap.min.js"></script>
-<script type="text/javascript" src="js/vendors/angular-strap/angular-strap.tpl.min.js"></script>
+  <!-- angular bootstrap  -->
+  <script type="text/javascript" src="js/vendors/angular-strap/angular-strap.min.js"></script>
+  <script type="text/javascript" src="js/vendors/angular-strap/angular-strap.tpl.min.js"></script>
 
-<script type="text/javascript" src="js/vendors/dygraph/dygraph-combined.js"></script>
+  <!-- chart engine -->
+  <script type="text/javascript" src="js/vendors/dygraph/dygraph-combined.js"></script>
 
 
-
+  <!-- my app files  -->
   <script type="text/javascript" src="js/angular_app/controllers.js"></script>
   <script type="text/javascript" src="js/angular_app/services.js"></script>
   <script type="text/javascript" src="js/angular_app/directives.js"></script>
   <script type="text/javascript" src="js/myApp.js"></script>
 
 
-
-  <!--  amCharts javascript sources -->
-  <script src="js/amcharts/amcharts.js" type="text/javascript"></script>
-  <script src="js/amcharts/serial.js" type="text/javascript"></script>
-  <script src="js/amcharts/themes/dark.js" type="text/javascript"></script>
-  <script src="js/amcharts/exporting/amexport.js" type="text/javascript"></script>
-  <script src="js/amcharts/exporting/canvg.js" type="text/javascript"></script>
-  <script src="js/amcharts/exporting/rgbcolor.js" type="text/javascript"></script>
-  <script src="js/amcharts/exporting/filesaver.js" type="text/javascript"></script>
-  <script src="js/amcharts/lang/pl.js" type="text/javascript"></script>
 
 
 

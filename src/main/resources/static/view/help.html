@@ -25,14 +25,22 @@ to jest POMOC
 </div> -->
 <!-- <graph data="myData" opts="options"></graph>
  -->
- <!--     <ng-dygraphs ng-if="graph.data.length"
+<!--      <ng-dygraphs data-ng-if="graph.data.length"
   data="graph.data"
   options="graph.options"
   legend="graph.legend"
   >
-</ng-dygraphs> -->
+</ng-dygraphs>  -->
  
- <div id="div_g" style="width:auto; height:500px;"></div>
+<!--  <div id="div_g" style="width:auto; height:500px;"></div> -->
+
+<div data-ng-show="isLoading">
+ 
+ <img alt="Ładuję" src="ModbusChart/../images/loading.gif" class="center-block">
+ </div>
+ <div data-ng-show="!isLoading">
+<chart-dygraph data="myData" title="Wykres całościowy"></chart-dygraph>
+</div>
  
  </body>
 </html>

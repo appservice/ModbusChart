@@ -71,6 +71,8 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 });
 myApp.config([ 'RestangularProvider', function(RestangularProvider) {
 	RestangularProvider.setBaseUrl('/ModbusChart');
+	 // RestangularProvider.setRequestSuffix('.json');
+
 
 } ]);
 
