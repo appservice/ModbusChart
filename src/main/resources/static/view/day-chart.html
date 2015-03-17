@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Wykres</title>
-		<meta name="description" content="chart created using amCharts live editor" />
-		<meta charset="UTF-8"/> 
+<head>
+<title>Wykres</title>
+<meta name="description" content="chart created using amCharts live editor" />
+<meta charset="UTF-8" />
 
 
-		
-	</head>
-	<body> 
-<div class="page-header"><h3> Wykresy</h3></div>
-<div >     
 
-<!--     <luke-am-chart  chart-data=myMeasurements series-number="'8'" height="height" chart-title="chartTitle"  line-thickness="'2'" value-axis-title="'Przepływ [m3/s]'" ></luke-am-chart>  
- -->
-<div data-ng-show="isLoading">
- 
- <img alt="Ładuję" src="ModbusChart/../images/loading.gif" class="center-block">
- </div>
- <div data-ng-show="!isLoading">
-<chart-dygraph data="myData" title="chartTitle" max-series-number="maxSeriesNumber" y-axis-title="Przepływ [m3/s]"></chart-dygraph>
-</div>
- 
-    
-</div>
-	</body>
-</html> 
+</head>
+<body>
+  <div class="page-header">
+    <h3>Wykresy</h3>
+  </div>
+
+
+
+    <div data-ng-show="isLoading">
+
+      <img alt="Ładuję" src="ModbusChart/../images/loading.gif" class="center-block">
+    </div>
+    <div data-ng-show="!isLoading" style="widht:100%;">
+      <chart-dygraph data="myData" title="chartTitle" max-series-number="maxSeriesNumber" y-axis-title="Przepływ [m3/s]" ></chart-dygraph>
+    </div>
+
+
+
+</body>
+</html>

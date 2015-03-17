@@ -61,21 +61,46 @@ footer {
 
 .dygraph-legend {
 
-	background-color: rgba(200,200,200,0.3)!important;
+	background-color: rgba(220,220,220,0.7)!important;
 	border-radius: 5px;
 	border: 2px #000000 solid;
 	padding:5px;
 
- 	right: -200px !important; 
-		top: -50px !important;
-	
+ /* 	right: -200px !important; */
+		top: -100px !important;
+	 
 	
 } 
+
+.dygraph-td-legend{
+	vertical-align:top;
+	padding:5px;
+	margin-left: 10px;
+}
+.dygraph-div-legend{
+	margin-top: 20px;
+}
+
+.on-top{
+	/* top: 10px!important; */
+	vertical-align: top!important;
+	 display: block!important;
+    position: relative!important;
+   
+}
 /* .dygraph-legend {
   background: transparent !important;
 } */
-.ng-dygraphs {
-	height: 50px
+
+.dygraph-table{
+	border: 2px #000000 solid;
+}
+
+.series-container{
+	border: 2px #000000 solid;
+	margin-top:10px;
+	height:35px;
+	border-radius:5px;
 }
 
 
