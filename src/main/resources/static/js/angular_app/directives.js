@@ -351,6 +351,7 @@ angular
 										"labelsSeparateLines" : true,
 										// valueRange: [0.0, 1.2],
 										labels : labelsTable,
+										animatedZooms:true,
 										//rightGap : 100,
 										title : scope.title,
 										ylabel :scope.yAxisTitle,// "Przepływ [m3/s]",

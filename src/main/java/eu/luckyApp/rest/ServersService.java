@@ -118,7 +118,13 @@ public class ServersService implements Observer {
 		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
 		if ((schedulersMap.get(id)) == null) {
-
+			
+			//save start measurement  with null values
+			Measurement startMeasurement=new Measurement();
+			startMeasurement.setServer(server);
+			startMeasurement.setDate(new Date());
+			mesasurementRepo.save(startMeasurement);
+			
 			registerReader.addObserver(this);
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 			schedulersMap.put(id, scheduler);
