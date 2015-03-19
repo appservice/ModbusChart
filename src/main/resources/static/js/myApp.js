@@ -58,10 +58,6 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		url:'/download',
 		templateUrl:'view/download.html',
 		controller:'DownloadController'
-	}).state('allDataChart',{
-		url:'/all-data-chart',
-		templateUrl:'view/all-data-chart.html',
-		controller:'AllDataChartController'
 	}).state('customPeriodChart',{
 		url:'/custom-period-chart',
 		templateUrl:'view/custom-period-chart.html',

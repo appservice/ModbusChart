@@ -180,46 +180,7 @@ angular
 
 
 		} ])
-		/**
-		 * ================================================================================================
-		 * All data chart controller
-		 * ================================================================================================
-		 */
-		.controller('AllDataChartController',['$scope','Restangular',function($scope,Restangular){
-		    $scope.myData=[];
-		    $scope.isLoading=true;
-		    $scope.maxSeriesNumber=8;
-		    $scope.chartTitle='Wykres z ostatnich 31 dni';  
-		        
-		        
-		Restangular.one('rest/servers/1/').customGET('measurements').then(function(data){
-			$scope.myData=data;
-			$scope.isLoading=false;
-
-		        
-				});
-			
-
-						
-					//	g.setVisibility(1, false);
-					//	g.setVisibility(2, false);
-					//	g.setVisibility(3, false);
-						
-						
-			/*			$scope.isChecked1=true;
-						$scope.setVisibility1=   function(){
-					//	$scope.isVisible1!=$scope.isVisible1;
-					//	g.setVisibility(0, $scope.isVisible1);
-							console.log($scope.isChecked1);
-							g.setVisibility(0,$scope.isChecked1);
-					//	console.log($scope.isVisible1);
-						    }*/
-
-			        
-				
 	
-			
-		}])
 
 		/**
 		 * ============================================================================================================
@@ -262,11 +223,8 @@ angular
 			
 					   	myPoller.promise.then(null, null,function(myData){
 					   		
-					   		//console.log(myData.plain());
-
-							//console.log("tekst "+new Date());
 							if ($scope.myData[$scope.myData.length-1].date!=myData.date){
-								console.log("dodamy");
+							//console.log("dodamy");
 								//$scope.myData.shift();
 								
 								$scope.myData.shift();
@@ -274,7 +232,7 @@ angular
 								
 							//	console.log($scope.myMeasurements);
 							}else{
-								console.log("niedodamy");
+							//	console.log("niedodamy");
 								myPoller.stop();
 								
 							}

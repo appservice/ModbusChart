@@ -43,11 +43,11 @@ Dygraph.Export.DEFAULT_ATTRS = {
     // Default position for vertical labels
     vLabelLeft: 20,
 
-    legendHeight: 30,    // Height of the legend area
-	legendMargin: 20,
+    legendHeight: 40,    // Height of the legend area
+	legendMargin: 30,
 	lineHeight: 30,
 	maxlabelsWidth: 0,
-	labelTopMargin: 35,
+	labelTopMargin: 40,
 	magicNumbertop: 15
 	
 };
@@ -296,10 +296,10 @@ Dygraph.Export.drawLegend = function (canvas, dygraph, options) {
     var ctx = canvas.getContext("2d");
 
     // Margin from the plot
-    var labelTopMargin = 10;
+    var labelTopMargin = 30;
 
     // Margin between labels
-    var labelMargin = 5;
+    var labelMargin = 10;
     
     var colors = dygraph.getColors();
     // Drop the first element, which is the label for the time dimension
