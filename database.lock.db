@@ -1,6 +1,0 @@
-#FileLock
-#Mon Mar 16 17:01:15 CET 2015
-hostName=FIP0030
-id=14c23514bd9eb1c60397f4518fa29a3101792fdcc08
-method=file
-server=192.168.0.173\:49303

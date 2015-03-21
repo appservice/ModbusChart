@@ -19,28 +19,42 @@ angular
 			tomorrow.setDate(today.getDate()+1);	
 			$scope.untilMaxDate=tomorrow;
 			
-			$scope.createChart=function(){				
+			//
+
+			
+			$scope.createChart=function(){	
+				console.log($scope.fromDate);
+				var startDate=new Date($scope.fromDate);
+				var endDate=new Date($scope.untilDate);
+				
 				  $scope.myData=[];
 				  $scope.maxSeriesNumber=8;
 				    $scope.isLoading=true;
-				    $scope.chartTitle='Wykres od: '+$scope.fromDate.toLocaleString()+' do '+$scope.untilDate.toLocaleString();  
+				    $scope.chartTitle='Wykres od: '+startDate.toLocaleString()+' do '+endDate.toLocaleString();  
 				        
 				        
-				Restangular.one('rest/servers/1/').customGET('measurements',{"startDate":$scope.fromDate.getTime()
-					,"endDate":$scope.untilDate.getTime()})
+				Restangular.one('rest/servers/1/').customGET('measurements',{"startDate":startDate.getTime()
+					,"endDate":endDate.getTime()})
 					
 					.then(function(data){
 						$scope.myData=data;
+						
 						$scope.isLoading=false;
+					
+						if(data.length>0){
 						$scope.showChart=true;
-
+						}else{
+							$scope.showChart=false;
+							alert("Brak danych do wyświetlenia");
+							
+						}
 				        
 						},function(error){
 							$scope.isLoading=false;
 							switch(error.status){
-							case 400:console.log('złe zapytanie');break;
-							case 500:console.log('Bład serwera');break;
-							case 0:console.log('Brak połączenia z serwerem');break;
+							case 400:alert('Zły przedział czasowy!');break;
+							case 500:alert('Bład serwera');break;
+							case 0:alert('Brak połączenia z serwerem!');break;
 							}
 							console.log(error);
 						});
