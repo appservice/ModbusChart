@@ -34,13 +34,13 @@ to jest POMOC
  
 <!--  <div id="div_g" style="width:auto; height:500px;"></div> -->
 
-<div data-ng-show="isLoading">
+<!-- <div data-ng-show="isLoading">
  
  <img alt="Ładuję" src="ModbusChart/../images/loading.gif" class="center-block">
  </div>
- <div data-ng-show="!isLoading">
-<chart-dygraph data="myData" title="Wykres całościowy"></chart-dygraph>
-</div>
+ <div data-ng-show="!isLoading"> -->
+<chart-dygraph-online data="myData" title="Wykres całościowy" max-series-number="parseInt(8)"></chart-dygraph-online>
+<!-- </div> -->
  
  </body>
 </html>

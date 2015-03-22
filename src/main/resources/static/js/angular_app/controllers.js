@@ -412,20 +412,54 @@ angular
 		 * Help CONTROLLER
 		 * ============================================================================================================
 		 */
-		.controller('HelpController',['$scope','Restangular',function($scope,Restangular){
+		.controller('HelpController',['$scope','Restangular','poller',function($scope,Restangular,poller){
 	
 	
-			    $scope.myData=[];
-			    $scope.isLoading=true;
+			    $scope.myData={};
+	
 			      
+			    Restangular.one('rest/servers',1).get().then(function(myServer){
+					console.log(myServer);
+					$scope.mySeriesNumber=myServer.readedDataCount||0;
+					$scope.serverTimeIterval=myServer.timeInterval;
+			
+						 //----------------poller----------------
+						 
+						    var myPoller = poller.get(myServer.one("measurements/last") , { //Restangular.getOne('servers/2/measurements/last').getList() 
+						   	action: 'get',
+							        
+							        delay: $scope.serverTimeIterval});
+						 
+					
+							   	myPoller.promise.then(null, null,function(myData){
+							   		
+							/*		if ($scope.myData[$scope.myData.length-1].date!=myData.date){
+									//console.log("dodamy");
+										//$scope.myData.shift();
+										
+										$scope.myData.shift();
+										$scope.myData.push(myData.plain());
+										
+									//	console.log($scope.myMeasurements);
+									}else{
+									//	console.log("niedodamy");
+										myPoller.stop();
+										
+									}*/
+							   		
+							   		$scope.myData=myData.plain();
+							   	//	console.log($scope.myData);
+								});
+							   	
+						 
+					 });    
 			        
-			        
-			Restangular.one('rest/servers/1/').customGET('measurements'/*,{"timePeriod":31*24*60*60*1000}*/).then(function(data){
-				$scope.myData=data;
-				$scope.isLoading=false;
+		/*	Restangular.one('rest/servers/1/').customGET('measurements/last',{"timePeriod":31*24*60*60*1000}).then(function(data){
+				$scope.myData=data.plain();
+				console.log($scope.myData);
 
 			        
-					});
+					});*/
 			    
 			
 		}]);

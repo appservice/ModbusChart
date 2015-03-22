@@ -3162,6 +3162,7 @@ Dygraph.prototype.resizeElements_ = function() {
   var canvasScale = Dygraph.getContextPixelRatio(this.canvas_ctx_);
   this.canvas_.width = this.width_ * canvasScale;
   this.canvas_.height = this.height_ * canvasScale;
+ // console.log(canvasScale);
   this.canvas_.style.width = this.width_ + "px";    // for IE
   this.canvas_.style.height = this.height_ + "px";  // for IE
   if (canvasScale !== 1) {

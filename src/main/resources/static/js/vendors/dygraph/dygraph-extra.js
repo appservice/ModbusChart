@@ -22,7 +22,7 @@ Dygraph.Export = {};
 
 Dygraph.Export.DEFAULT_ATTRS = {
 
-    backgroundColor: "#FFFFFF",//transparent
+    backgroundColor: "#FFFFFF",//#FFFFFFtransparent
 
     //Texts displayed below the chart's x-axis and to the left of the y-axis 
     titleFont: "bold 18px serif",
@@ -78,6 +78,19 @@ Dygraph.Export.isSupported = function () {
  */
 Dygraph.Export.asPNG = function (dygraph, img, userOptions) {
     "use strict";
+    
+
+
+/*    function clone(obj)
+     { var clone = {};
+       clone.prototype = obj.prototype;
+       for (property in obj) clone[property] = obj[property];
+       return clone;
+     }
+*/
+
+    
+    
     var canvas = Dygraph.Export.asCanvas(dygraph, userOptions);
     img.src = canvas.toDataURL();
 };
@@ -93,18 +106,31 @@ Dygraph.Export.asPNG = function (dygraph, img, userOptions) {
  */
 Dygraph.Export.asCanvas = function (dygraph, userOptions) {
     "use strict";
+    
+    var canvasScale = Dygraph.getContextPixelRatio(dygraph.canvas_ctx_);
+   
+    
     var options = {}, 
         canvas = Dygraph.createCanvas();
+    
+    
     
     Dygraph.update(options, Dygraph.Export.DEFAULT_ATTRS);
     Dygraph.update(options, userOptions);
 
-    canvas.width = dygraph.width_;
-    canvas.height = dygraph.height_ + options.legendHeight;
+    canvas.width = dygraph.width_*canvasScale;
+    canvas.height = dygraph.height_*canvasScale + options.legendHeight;
+   // alert(canvas.width+" ratio:"+canvasScale);
+   
 
     Dygraph.Export.drawPlot(canvas, dygraph, options);    
     Dygraph.Export.drawLegend(canvas, dygraph, options);
     
+  // canvas.canvasScale=canvasScale;
+/*    if(canvasScale != 1) {
+    	dygraph.canvas_ctx_.scale(canvasScale, canvasScale);
+      }
+    */
     return canvas;
 };
 
@@ -114,6 +140,14 @@ Dygraph.Export.asCanvas = function (dygraph, userOptions) {
 Dygraph.Export.drawPlot = function (canvas, dygraph, options) {
     "use strict";
     var ctx = canvas.getContext("2d");
+    
+
+    var canvasScale = Dygraph.getContextPixelRatio(dygraph.canvas_ctx_);
+    var axisFont=Math.ceil(parseInt(options.labelFont.substr(6,11),10)*canvasScale);
+    var axisFontString="normal "+axisFont+"px"+" serif";
+ //   alert(axisFontString);
+    
+    //alert(canvas.width);
 
     // Add user defined background
     ctx.fillStyle = options.backgroundColor;
@@ -122,6 +156,7 @@ Dygraph.Export.drawPlot = function (canvas, dygraph, options) {
     // Copy the plot canvas into the context of the new image.
     var plotCanvas = dygraph.hidden_;
     
+
     var i = 0;
     
     ctx.drawImage(plotCanvas, 0, 0);
@@ -132,15 +167,36 @@ Dygraph.Export.drawPlot = function (canvas, dygraph, options) {
     if (axesPluginDict) {
         var axesPlugin = axesPluginDict.plugin;
         
+
+        
+       
         for (i = 0; i < axesPlugin.ylabels_.length; i++) {
+
+        	 axesPlugin.ylabels_[i].style.left=(parseInt(axesPlugin.ylabels_[i].style.left)*canvasScale)+"px";
+        	var topPosition=parseInt(axesPlugin.ylabels_[i].style.top)*canvasScale;
+        	axesPlugin.ylabels_[i].style.top=topPosition+"px";
+        	
+        	
+        	//axesPlugin.ylabels_[i].offsetTop=axesPlugin.ylabels_[i].offsetTop*canvas.canvasScale;
             Dygraph.Export.putLabel(ctx, axesPlugin.ylabels_[i], options,
-                options.labelFont, options.labelFontColor);
+            		axisFontString, options.labelFontColor);
         }
+
+      
+
         
         for (i = 0; i < axesPlugin.xlabels_.length; i++) {
+      
+        	//left position depedns of canvas scale
+        	var leftPosition=parseInt(axesPlugin.xlabels_[i].style.left)*canvasScale;
+        	axesPlugin.xlabels_[i].style.left=leftPosition+"px";
+        	axesPlugin.xlabels_[i].style.top=(parseInt(axesPlugin.ylabels_[0].style.top)+25*canvasScale)+"px";
+      	
             Dygraph.Export.putLabel(ctx, axesPlugin.xlabels_[i], options,
-                options.labelFont, options.labelFontColor);
+            		axisFontString, options.labelFontColor);
+  
         }
+
     }
 
     // Title and axis labels
@@ -148,6 +204,8 @@ Dygraph.Export.drawPlot = function (canvas, dygraph, options) {
     var labelsPluginDict = Dygraph.Export.getPlugin(dygraph, 'ChartLabels Plugin');
     if (labelsPluginDict) {
         var labelsPlugin = labelsPluginDict.plugin;
+        
+      
 
         Dygraph.Export.putLabel(ctx, labelsPlugin.title_div_, options, 
             options.titleFont, options.titleFontColor);
@@ -221,7 +279,7 @@ Dygraph.Export.putVerticalLabelY1 = function (ctx, divLabel, options, font, colo
     var left = parseInt(divLabel.style.left, 10) + parseInt(divLabel.style.width, 10) / 2;
     var text = divLabel.innerText || divLabel.textContent;
 
-
+  
     // FIXME: The value of the 'left' property is frequently 0, used the option.
     if (!left)
         left = options.vLabelLeft;
@@ -230,7 +288,7 @@ Dygraph.Export.putVerticalLabelY1 = function (ctx, divLabel, options, font, colo
         var textDim = ctx.measureText(text);
         top = Math.ceil((ctx.canvas.height - textDim.width) / 2 + textDim.width);
     }
-
+   // alert("div: "+divLabel.style.width+"ctx "+ctx.canvas.width);
     ctx.save();
     ctx.translate(0, ctx.canvas.height);
     ctx.rotate(-Math.PI / 2);
@@ -261,6 +319,8 @@ Dygraph.Export.putVerticalLabelY2 = function (ctx, divLabel, options, font, colo
     }
     
     ctx.save();
+  
+    
     ctx.translate(parseInt(divLabel.style.width, 10), 0);
     ctx.rotate(Math.PI / 2);
 
