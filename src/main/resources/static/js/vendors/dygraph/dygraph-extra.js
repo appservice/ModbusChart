@@ -184,13 +184,17 @@ Dygraph.Export.drawPlot = function (canvas, dygraph, options) {
 
       
 
+    //    (parseInt(axesPlugin.ylabels_[0].style.top)+25*canvasScale)+"px";
+        //it is below the canvas with dygraph
+      var  xlabels_top=dygraph.height_*canvasScale-20+"px";
         
         for (i = 0; i < axesPlugin.xlabels_.length; i++) {
       
         	//left position depedns of canvas scale
         	var leftPosition=parseInt(axesPlugin.xlabels_[i].style.left)*canvasScale;
         	axesPlugin.xlabels_[i].style.left=leftPosition+"px";
-        	axesPlugin.xlabels_[i].style.top=(parseInt(axesPlugin.ylabels_[0].style.top)+25*canvasScale)+"px";
+        	axesPlugin.xlabels_[i].style.top= xlabels_top;
+        	
       	
             Dygraph.Export.putLabel(ctx, axesPlugin.xlabels_[i], options,
             		axisFontString, options.labelFontColor);

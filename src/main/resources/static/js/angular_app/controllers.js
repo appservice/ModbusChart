@@ -51,11 +51,7 @@ angular
 				        
 						},function(error){
 							$scope.isLoading=false;
-							switch(error.status){
-							case 400:alert('Zły przedział czasowy!');break;
-							case 500:alert('Bład serwera');break;
-							case 0:alert('Brak połączenia z serwerem!');break;
-							}
+							$scope.errorView(error);
 							console.log(error);
 						});
 		
@@ -96,6 +92,10 @@ angular
 			$scope.isLoading=false;
 
 		        
+				},function(error){
+					$scope.isLoading=false;
+					$scope.errorView(error);
+					console.log(error);
 				});
 		    
 
@@ -119,6 +119,11 @@ angular
 			$scope.myData=data;
 			$scope.isLoading=false;
 		        
+			},function(error){
+				$scope.isLoading=false;
+				$scope.errorView(error);
+
+				console.log(error);
 			});
 			
 
@@ -145,6 +150,11 @@ angular
 			$scope.isLoading=false;
 
 		        
+				},function(error){
+					$scope.isLoading=false;
+					$scope.errorView(error);
+
+					console.log(error);
 				});
 
 		} ])
@@ -168,6 +178,11 @@ angular
 			$scope.isLoading=false;
 
 		        
+				},function(error){
+					$scope.isLoading=false;
+					$scope.errorView(error);
+
+					console.log(error);
 				});
 
 
@@ -190,6 +205,11 @@ angular
 			$scope.isLoading=false;
 
 		        
+				},function(error){
+					$scope.isLoading=false;
+					$scope.errorView(error);
+
+					console.log(error);
 				});
 
 

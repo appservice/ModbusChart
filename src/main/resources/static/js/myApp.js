@@ -103,4 +103,12 @@ myApp.run(function($rootScope,$state) {
 		          }
 		    });
 	
-})
+	
+	$rootScope.errorView=function(error){
+		switch(error.status){
+		case 400:alert('Zły przedział czasowy!');break;
+		case 500:alert('Bład serwera');break;
+		case 0:alert('Brak połączenia z serwerem!');break;}
+		
+	}
+});

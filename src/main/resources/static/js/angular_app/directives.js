@@ -48,7 +48,7 @@ angular
 									"#808080", "#000080", "#FFA500", "#0AE200" ];
 
 							// ---create dygraph----------
-							g = new Dygraph(divGraph, pushData, {
+						var	g = new Dygraph(divGraph, pushData, {
 								// drawPoints: true,
 								// showRoller: true,
 								strokeWidth : 2,
@@ -79,11 +79,9 @@ angular
 								console.log("download as file");
 
 								var startDate = new Date(g.xAxisRange()[0]);
-								// alert(g.xAxisRange()[0]);
 
 								var endDate = new Date(g.xAxisRange()[1]);
 
-								// var myTitle=scope.chartTitle;
 
 								var myTitle = 'Wykres od: '
 										+ startDate.toLocaleString() + ' do: '
@@ -226,7 +224,7 @@ angular
 									"#808080", "#000080", "#FFA500", "#0AE200" ];
 
 							// ---create dygraph----------
-							g = new Dygraph(divGraph, pushData, {
+						var	g = new Dygraph(divGraph, pushData, {
 								// drawPoints: true,
 								// showRoller: true,
 								strokeWidth : 2,
