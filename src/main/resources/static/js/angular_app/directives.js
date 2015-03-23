@@ -43,12 +43,11 @@ angular
 							var pushData = [];
 
 							// create array of series colors
-							var colorsArray = [ "#FF0000", "#00AA00",
-									"#0000FF", "#FF00FF", "#800080", "#FFCC00",
+							var colorsArray = [ "#FF0000", "#00AA00", "#0000FF", "#FF00FF", "#800080", "#FFCC00",
 									"#808080", "#000080", "#FFA500", "#0AE200" ];
 
 							// ---create dygraph----------
-						var	g = new Dygraph(divGraph, pushData, {
+							var g = new Dygraph(divGraph, pushData, {
 								// drawPoints: true,
 								// showRoller: true,
 								strokeWidth : 2,
@@ -64,11 +63,11 @@ angular
 								legend : 'auto',
 								title : scope.chartTitle,
 								ylabel : scope.yAxisTitle,// "Przepływ
-															// [m3/s]",
+								// [m3/s]",
 								// xlabel:"Czas",
 								drawGapEdgePoints : true,
 
-							 //showRangeSelector: true,
+							// showRangeSelector: true,
 							// drawPoints: true,
 
 							});
@@ -82,9 +81,7 @@ angular
 
 								var endDate = new Date(g.xAxisRange()[1]);
 
-
-								var myTitle = 'Wykres od: '
-										+ startDate.toLocaleString() + ' do: '
+								var myTitle = 'Wykres od: ' + startDate.toLocaleString() + ' do: '
 										+ endDate.toLocaleString();
 								if (g.xAxisRange()[0] > 0)
 									g.updateOptions({
@@ -92,9 +89,7 @@ angular
 									});
 
 								Dygraph.Export.asPNG(g, imgExport);
-								download(imgExport.src, "wykres_"
-										+ new Date().getTime() + ".png",
-										"image/png");
+								download(imgExport.src, "wykres_" + new Date().getTime() + ".png", "image/png");
 
 								g.updateOptions({
 									title : scope.chartTitle
@@ -119,32 +114,25 @@ angular
 								g.setVisibility(serie.id, serie.isVisible);
 							};
 
-							scope
-									.$watchCollection(
-											"data",
-											function(newData, oldData) {
-												if (newData.length > 0) {
+							scope.$watchCollection("data", function(newData, oldData) {
+								if (newData.length > 0) {
 
-													// add value to number of
-													// columns in first row
-													// equil number of labels
-													while (newData[0].values.length < scope.maxSeriesNumber) {
-														newData[0].values
-																.push("NaN");
-													}
+									// add value to number of
+									// columns in first row
+									// equil number of labels
+									while (newData[0].values.length < scope.maxSeriesNumber) {
+										newData[0].values.push("NaN");
+									}
 
-													g
-															.updateOptions({
-																'file' : adaptedData(newData)
-															});
+									g.updateOptions({
+										'file' : adaptedData(newData)
+									});
 
-													console
-															.log("ilość danych: "
-																	+ newData.length);
+									console.log("ilość danych: " + newData.length);
 
-												}
+								}
 
-											});
+							});
 
 						}
 
@@ -169,7 +157,7 @@ angular
 				})
 
 		// =============================================================================================
-	
+
 		.directive(
 				'chartDygraphOnline',
 				function() {
@@ -179,8 +167,8 @@ angular
 							data : '=',
 							chartTitle : '=?',
 							maxSeriesNumber : '=',
-							//chartDataLenght:'=',
-						//	chartDataPeriod:'=',
+							// chartDataLenght:'=',
+							// chartDataPeriod:'=',
 							yAxisTitle : '@?' || '',
 
 						},
@@ -202,29 +190,28 @@ angular
 
 							// create labels
 							var labelsTable = [ "Czas" ];
-							for (var ii = 1; ii < 8 + 1; ii++) {//scope.maxSeriesNumber
+							for (var ii = 1; ii < 8 + 1; ii++) {// scope.maxSeriesNumber
 								labelsTable.push("Czujnik-" + ii);
 							}
 
 							// create table of data
 							var pushData = [];
-							
-							
-						  for(var h=60;h>0;h--){
-							  
-							  var pdStartDate=new Date()-1000*h;
-							  var myData=[new Date(pdStartDate),'NaN','NaN','NaN','NaN','NaN','NaN','NaN','NaN'];
-							  pushData.push(myData);
-						  }
-						//  console.log(pushData);
+
+							for (var h = 60; h > 0; h--) {
+
+								var pdStartDate = new Date() - 1000 * h;
+								var myData = [ new Date(pdStartDate), 'NaN', 'NaN', 'NaN', 'NaN', 'NaN', 'NaN', 'NaN',
+										'NaN' ];
+								pushData.push(myData);
+							}
+							// console.log(pushData);
 
 							// create array of series colors
-							var colorsArray = [ "#FF0000", "#00AA00",
-									"#0000FF", "#FF00FF", "#800080", "#FFCC00",
+							var colorsArray = [ "#FF0000", "#00AA00", "#0000FF", "#FF00FF", "#800080", "#FFCC00",
 									"#808080", "#000080", "#FFA500", "#0AE200" ];
 
 							// ---create dygraph----------
-						var	g = new Dygraph(divGraph, pushData, {
+							var g = new Dygraph(divGraph, pushData, {
 								// drawPoints: true,
 								// showRoller: true,
 								strokeWidth : 2,
@@ -260,8 +247,7 @@ angular
 
 								// var myTitle=scope.chartTitle;
 
-								var myTitle = 'Wykres od: '
-										+ startDate.toLocaleString() + ' do '
+								var myTitle = 'Wykres od: ' + startDate.toLocaleString() + ' do '
 										+ endDate.toLocaleString();
 								if (g.xAxisRange()[0] > 0)
 									g.updateOptions({
@@ -269,9 +255,7 @@ angular
 									});
 
 								Dygraph.Export.asPNG(g, imgExport);
-								download(imgExport.src, "wykres_"
-										+ new Date().getTime() + ".png",
-										"image/png");
+								download(imgExport.src, "wykres_" + new Date().getTime() + ".png", "image/png");
 
 								g.updateOptions({
 									title : scope.chartTitle
@@ -280,7 +264,7 @@ angular
 
 							// -------generete series--------
 							scope.series = [];
-							for (var j = 0; j < 8; j++) {//scope.maxSeriesNumber
+							for (var j = 0; j < 8; j++) {// scope.maxSeriesNumber
 								var legendSeries = {};
 								legendSeries.id = j;
 								legendSeries.isVisible = true;
@@ -296,30 +280,29 @@ angular
 								g.setVisibility(serie.id, serie.isVisible);
 							};
 
-							scope.$watch(
-											"data",
-											function(newData, oldData) {
-												
-												if(newData!=oldData){
-												//if (newData.length > 0) {
+							scope.$watch("data", function(newData, oldData) {
 
-													// add value to number of
-													// columns in first row
-													// equil number of labels
-													//console.log(newData);
-													while (newData.values.length < scope.maxSeriesNumber) {
-														newData.values
-																.push("NaN");
-													}
-													pushData.shift();
-													pushData.push(adaptedData(newData))
-													g.updateOptions({'file' :pushData});
+								if (newData != oldData) {
+									// if (newData.length > 0) {
 
-												//	console.log(pushData);
+									// add value to number of
+									// columns in first row
+									// equil number of labels
+									// console.log(newData);
+									while (newData.values.length < scope.maxSeriesNumber) {
+										newData.values.push("NaN");
+									}
+									pushData.shift();
+									pushData.push(adaptedData(newData))
+									g.updateOptions({
+										'file' : pushData
+									});
 
-												}
+									// console.log(pushData);
 
-											});
+								}
+
+							});
 
 						}
 
@@ -328,14 +311,14 @@ angular
 					// ------function which adapted my data to Dygraph
 					function adaptedData(data) {
 
-							var myData = [];
-							myData[0]=new Date(data.date);
-							//console.log(data.values);
-							for (var ll = 0; ll < data.values.length; ll++) {
-								myData[ll+1]=(data.values[ll]);
-					
+						var myData = [];
+						myData[0] = new Date(data.date);
+						// console.log(data.values);
+						for (var ll = 0; ll < data.values.length; ll++) {
+							myData[ll + 1] = (data.values[ll]);
+
 						}
-							//console.log(myData);
+						// console.log(myData);
 						return myData;
 
 					}

@@ -28,7 +28,7 @@ import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.luckyApp.modbus.service.RegisterReader2;
+import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
@@ -50,7 +50,7 @@ public class ServersService implements Observer {
 	MeasurementRepository mesasurementRepo;
 
 	@Autowired
-	private RegisterReader2 registerReader;
+	private RegisterReader registerReader;
 
 	private String errorMessage;
 
@@ -182,7 +182,7 @@ public class ServersService implements Observer {
 
 	@Override
 	public void update(Observable o, Object dataObject) {
-		ServerEntity server = ((RegisterReader2) o).getServerEntity();
+		ServerEntity server = ((RegisterReader) o).getServerEntity();
 
 		if (dataObject instanceof List) {
 			List<Double> myData = (List<Double>) dataObject;

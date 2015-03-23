@@ -33,6 +33,11 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
 	@Query("DELETE FROM Measurement m WHERE ")
 	public void deleteOlderThan(@Param("date") Date date);*/
 	
+	//@Query(nativeQuery=true,value="SELECT * FROM Measurement WHERE MINUTE(date)=0 AND serverId=:serverId")
+
+	@Query(nativeQuery=true,value="SELECT MEASUREMENT.ID, MEASUREMENT.DATE, MEASUREMENT.SERVER_ID, measured_value  FROM MEASUREMENT LEFT JOIN VALUE  ON Measurement.ID=value.id  where  MINUTE(DATE)=0  AND measurement.server_id=:serverId")
+	public Iterable<Measurement>findAllInEveryHour(@Param("serverId")Long serverId);
+	
 	@Query("SELECT m FROM Measurement m WHERE  m.date<:date")
 	public Iterable<Measurement>findOlderThan(@Param("date")Date date);
 }

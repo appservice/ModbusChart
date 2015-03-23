@@ -79,13 +79,27 @@ public class MearuementRS {
 	@GET
 	@Path("/last")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Measurement getLastMeasurements(@PathParam("serverId") Long serverId, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
+	public Response getLastMeasurements(@PathParam("serverId") Long serverId, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
 
 		Long lastId = measurementRepository.findLastMeasurementIdByServer(serverId);
-		Measurement m = measurementRepository.findOne(lastId);
-		return m;
+		if (lastId != null) {
+			Measurement m = measurementRepository.findOne(lastId);
+			LOG.info("last measurement: " + m);
+			return Response.ok(m).build();
+		}
+		return Response.noContent().build();
 	}
 
+	
+	@GET
+	@Path("/by-hours")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Iterable<Measurement> getAllInEveryHour(@PathParam("serverId") Long serverId) {
+		LOG.warn("test");
+		return measurementRepository.findAllInEveryHour(serverId);
+	}
+
+	
 	@DELETE
 	@Path("/{id}")
 	public Response deleteOne(@PathParam("id") Long id) {
@@ -106,37 +120,37 @@ public class MearuementRS {
 		} else
 			return Response.status(Status.BAD_REQUEST).build();
 	}
+
+
 	
 	
-	
-	private Iterable<Measurement> getCollectionByAverage(int rowNumbers, Iterable<Measurement> fullList){
-		
-		List<Measurement> response=new ArrayList<Measurement>();
+	private Iterable<Measurement> getCollectionByAverage(int rowNumbers, Iterable<Measurement> fullList) {
+
+		List<Measurement> response = new ArrayList<Measurement>();
 		double avgValue;
-		int i=0;
-		for(Measurement m:fullList){
-			
-			avgValue=+m.getMeasuredValue().get(0);
-			if(i==rowNumbers){
-				long j=1;
-				Measurement myMeasuremnt=new Measurement();
+		int i = 0;
+		for (Measurement m : fullList) {
+
+			avgValue = +m.getMeasuredValue().get(0);
+			if (i == rowNumbers) {
+				long j = 1;
+				Measurement myMeasuremnt = new Measurement();
 				myMeasuremnt.setDate(m.getDate());
 				myMeasuremnt.setId(j);
-				
-				//myMeasuremnt.setMeasuredValue(new List<>);
-				
+
+				// myMeasuremnt.setMeasuredValue(new List<>);
+
 				j++;
 				myMeasuremnt.setServer(m.getServer());
 				response.add(myMeasuremnt);
 			}
 			i++;
-			
-			
-			//for(int i=0;i<m.getMeasuredValue().size()-1;i++)
-			 //avgValue=m.getMeasuredValue().get(i);
-			
+
+			// for(int i=0;i<m.getMeasuredValue().size()-1;i++)
+			// avgValue=m.getMeasuredValue().get(i);
+
 		}
 		return response;
-		
+
 	}
 }

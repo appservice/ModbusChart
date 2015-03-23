@@ -12,14 +12,14 @@
   </div>
   <div class="row">
     <div class="col-lg-12">
-      <div class="jumbotron">
+      <div class="jumbotron " style="min-width: 400px" >
         <h2>Serwer</h2>
 
         <table class="table">
           <tr>
-            <th>LP</th>
+           <!--  <th>LP</th> -->
             <th>Nazwa</th>
-            <th>IP:</th>
+            <th>IP</th>
             <th>Port</th>
             <th>Interwał</th>
             <th>Typ danych</th>
@@ -32,7 +32,7 @@
           </tr>
 
           <tr data-ng-repeat="server in serversList">
-            <td>{{$index+1}}</td>
+         <!--    <td>{{$index+1}}</td> -->
             <td>{{server.name}}</td>
             <td>{{server.ip}}</td>
             <td>{{server.port}}</td>
@@ -40,16 +40,34 @@
             <td>{{server.readedDataType}}</td>
             <td>{{server.readedDataCount}}</td>
             <td>{{server.firstRegisterPos}}</td>
-            <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td>
-            <td><a  data-ng-click="removeServer(server)">Usuń </a></td>
-            <td><a href="#" data-ng-click="runServer(server)">Włącz </a></td>
-            <td><a href="#" data-ng-click="stopServer(server)">Wyłącz </a></td>
+            <!-- <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td> -->
+            <!--  <td><a  data-ng-click="removeServer(server)">Usuń </a></td> -->
+            <!--   <td><a href="#" data-ng-click="runServer(server)">Włącz </a></td> -->
+            <!--   <td><a href="#" data-ng-click="stopServer(server)">Wyłącz </a></td> -->
 
           </tr>
 
 
         </table>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog">Dodaj nowy:</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog" data-ng-show="!isButtonDisabled">
+          Dodaj nowy <i class="glyphicon glyphicon-plus"></i>
+        </button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#editServerDialog" data-ng-show="isButtonDisabled"
+          data-ng-click="preEditServer(serversList[0])">
+          Edytuj <i class="glyphicon glyphicon-edit"></i>
+        </button>
+        <button class="btn btn-primary" data-ng-show="isButtonDisabled" data-ng-click="removeServer(serversList[0])">
+          Usuń <i class="glyphicon glyphicon-remove"></i>
+        </button>
+        <span>
+          <button class="btn btn-danger " data-ng-show="isButtonDisabled" data-ng-click="runServer(serversList[0])">
+            Włącz <i class="glyphicon glyphicon-play"></i>
+          </button>
+          <button class="btn btn-danger " data-ng-show="isButtonDisabled" data-ng-click="stopServer(serversList[0])">
+            Wyłącz <i class="glyphicon glyphicon-stop"></i>
+          </button>
+        </span>
+
 
       </div>
     </div>
@@ -176,7 +194,8 @@
               <span class="alert-danger" data-ng-show="updatedServerForm.port.$error.required"> Wymagany!</span>
               <span class="alert-danger" data-ng-show="uupdatedServerForm.port.$error.number">Zły format danych! Wymagana liczba z przedziału
                 1-65535</span>
-              <span class="alert-danger" data-ng-show="updatedServerForm.port.$error.max">Zły format danych! Wymagana liczba z przedziału 1-65535</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.port.$error.max">Zły format danych! Wymagana liczba z przedziału
+                1-65535</span>
               <input name="port" type="number" class="form-control" id="input_port" data-ng-model="updatedServer.port" required="required" max="65535">
 
               <!-- interwal -->

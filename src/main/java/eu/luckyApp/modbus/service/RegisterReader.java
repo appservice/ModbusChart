@@ -1,141 +1,82 @@
 package eu.luckyApp.modbus.service;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Observable;
 
 import net.wimpi.modbus.Modbus;
-import net.wimpi.modbus.io.ModbusTCPTransaction;
-import net.wimpi.modbus.msg.ReadInputRegistersRequest;
-import net.wimpi.modbus.msg.ReadInputRegistersResponse;
-import net.wimpi.modbus.net.TCPMasterConnection;
+import net.wimpi.modbus.procimg.Register;
+import net.wimpi.modbus.util.ModbusUtil;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
 import eu.luckyApp.model.ServerEntity;
 
 @Component
 @Scope("prototype")
-public class RegisterReader extends Observable implements Runnable  {
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-	private static final Logger LOG=Logger.getLogger(RegisterReader.class.getName());
-	
-	private boolean isConnected;
-	
-	
-	public boolean isConnected() {
-		return isConnected;
-	}
+public class RegisterReader extends Observable implements Runnable {
 
-
-	public void setConnected(boolean isConnected) {
-		this.isConnected = isConnected;
-	}
-
-
-	public RegisterReader() {
-	
-	}
-
-
+	private MyModbusTCPMaster modbusMaster;
+	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
-	
-	public void setServerEntity(ServerEntity server){
-		this.serverEntity=server;
-	}
 
 	
+
 	public ServerEntity getServerEntity() {
 		return serverEntity;
 	}
 
-
-	/* The important instances of the classes mentioned before */
-	private TCPMasterConnection con = null; //the connection
-	private ModbusTCPTransaction trans = null; //the transaction
-	private ReadInputRegistersRequest  req = null; //the request
-	private ReadInputRegistersResponse res = null; //the response
-
-	/* Variables for storing the parameters */
-	private 	InetAddress addr = null; //the slave's address
-	private int port = Modbus.DEFAULT_PORT;
-	private int ref = 0; //the reference; offset where to start reading from
-	private int count = 0; //the number of DI's to read
-	
-	
-	
-
-	
+	public void setServerEntity(ServerEntity serverEntity) {
+		this.serverEntity = serverEntity;
+	}
 
 	@Override
-	public void  run() {
-		 
-		 LOG.info("Odczyt: " + dateFormat.format(new Date()));
-		
-	try {
+	public void run() {
+		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
+		try {
+			modbusMaster.connect();
 
+			// -----------read and save to DB float data--------------
+			// LOG.warn(serverEntity.getReadedDataType());
+			LOG.info("READED TYPE FROM MODBUS: " + new Date() + " " + serverEntity.getReadedDataType());
+
+			if (serverEntity.getReadedDataType().equalsIgnoreCase("FLOAT")) {
+				//modbusMaster.re
+				
+				Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,serverEntity.getFirstRegisterPos(), serverEntity.getReadedDataCount() * 2);
+
+				List<Double> resultList = new ArrayList<>();
+
+				int len = registers.length;
+				for (int i = 0; i < len; i += 2) {
+					byte[] tmp = new byte[4];
+					System.arraycopy(registers[i + 1].toBytes(), 0, tmp, 0, 2);
+					System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
+					Float myFloatData = ModbusUtil.registersToFloat(tmp);
+					Double parsedToDobuleData = Double.parseDouble(myFloatData.toString());
+					resultList.add(parsedToDobuleData);
+
+				}
+				//send data to observer
+				this.setChanged();
+				this.notifyObservers(resultList);
+
+			}
+
+		} catch (Exception e) {
 			
-			addr = InetAddress.getByName(serverEntity.getIp());
-			port=serverEntity.getPort();
-			//ref=serverEntity.getReadRegister();
-			ref=0;
-			count=2;
-			
-			
-			//2. Open the connection
-			con = new TCPMasterConnection(addr);			
-			con.setPort(port);
-			con.setTimeout(5000);
-			con.connect();
-
-			//3. Prepare the request
-			req = new ReadInputRegistersRequest(ref, count);
-
-			//4. Prepare the transaction
-			trans = new ModbusTCPTransaction(con);
-			trans.setRequest(req);
-
-	
-			 trans.execute();
-			  res = (ReadInputRegistersResponse) trans.getResponse();
-			  System.out.println("Digital Inputs Status=" + (res.getRegisterValue(0)+res.getRegisterValue(1)));
-			  LOG.info("RegisterStatus: "+res.getRegisterValue(0)+res.getRegisterValue(1));
-			  
-
-			con.close();
-			
-
-		} catch (UnknownHostException e){
+			//send exception to observer
 			this.setChanged();
 			this.notifyObservers(e);
-			//LOG.error(e);
+		} finally {
+			modbusMaster.disconnect();
 		}
-	
-	catch (Exception e ) {
-			this.setChanged();
-			this.notifyObservers(e);
-		//	LOG.error(e);
-			//throw e;
-		}
-		
+
 	}
 
-
-	public void closeConnection(){
-		if(con!=null&& con.isConnected())
-			con.close();
-	}
-
-
-	public int getTimeInterval(){
-		return serverEntity.getTimeInterval();
-	}
-
-
-
-	
 }
