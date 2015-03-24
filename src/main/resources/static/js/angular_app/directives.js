@@ -73,10 +73,11 @@ angular
 							});
 
 							// -----grab screan function-------
-							var imgExport = element.append('<img ></img>');
+							var imgExport = element.append('<img style="visibility:hidden"></img>');
 							scope.downloadGraph = function() {
 								console.log("download as file");
-
+								 var myNav = navigator.userAgent.toLowerCase();
+								// alert(myNav);
 								var startDate = new Date(g.xAxisRange()[0]);
 
 								var endDate = new Date(g.xAxisRange()[1]);

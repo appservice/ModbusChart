@@ -274,10 +274,8 @@ angular.module('myApp.controllers', [])
  * download controller
  */
 .controller('DownloadController', [ '$scope', 'Restangular', function($scope, Restangular) {
-	$scope.downloadData = function() {
 
-	}
-	$scope.getAllData = 'rest/servers/1/measurements/download/excel';
+	
 } ])
 
 /**
@@ -324,12 +322,18 @@ angular.module('myApp.controllers', [])
 					// ----------remove server----------------
 					$scope.removeServer = function(server) {
 						// $scope.serversList.splice(id, 1);
+						var doRemove=confirm("Czy na pewno chcesz usunąć "+server.name+"?\n"+
+								"W przypadku usunięcia zostaną skasowane także wszystkie pomiary! ")
+						
+						if(doRemove==true){
+						
 						server.remove().then(function() {
 							var index = $scope.serversList.indexOf(server);
 							if (index > -1)
 								$scope.serversList.splice(index, 1);
 							$scope.isButtonDisabled = false;
-						}, errorResponseFunctoin);
+							}, errorResponseFunctoin);
+						}
 					}
 
 					// --------add new server------------------
@@ -438,14 +442,6 @@ angular.module('myApp.controllers', [])
 
 		myPoller.promise.then(null, null, function(myData) {
 
-			/*
-			 * if ($scope.myData[$scope.myData.length-1].date!=myData.date){
-			 * //console.log("dodamy"); //$scope.myData.shift();
-			 * 
-			 * $scope.myData.shift(); $scope.myData.push(myData.plain()); //
-			 * console.log($scope.myMeasurements); }else{ //
-			 * console.log("niedodamy"); myPoller.stop(); }
-			 */
 
 			$scope.myData = myData.plain();
 			// console.log($scope.myData);

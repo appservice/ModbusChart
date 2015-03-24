@@ -28,14 +28,14 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
 	@Query("SELECT MAX(m.id) FROM Measurement m WHERE m.server.id=:serverId")
 	public Long findLastMeasurementIdByServer(@Param("serverId") Long serverId);
 
-/*	@Modifying
+	@Modifying
 	@Transactional
-	@Query("DELETE FROM Measurement m WHERE ")
-	public void deleteOlderThan(@Param("date") Date date);*/
+	@Query(nativeQuery=true,value="DELETE FROM Measurement ")
+	public void deleteAll();
 	
 	//@Query(nativeQuery=true,value="SELECT * FROM Measurement WHERE MINUTE(date)=0 AND serverId=:serverId")
 
-	@Query(nativeQuery=true,value="SELECT MEASUREMENT.ID, MEASUREMENT.DATE, MEASUREMENT.SERVER_ID, measured_value  FROM MEASUREMENT LEFT JOIN VALUE  ON Measurement.ID=value.id  where  MINUTE(DATE)=0  AND measurement.server_id=:serverId")
+	@Query(nativeQuery=true,value="SELECT * FROM MEASUREMENT  where  MINUTE(DATE)=0  AND measurement.server_id=:serverId")//MEASUREMENT.ID, MEASUREMENT.DATE, MEASUREMENT.SERVER_ID, measured_value  LEFT JOIN VALUE  ON Measurement.ID=value.id 
 	public Iterable<Measurement>findAllInEveryHour(@Param("serverId")Long serverId);
 	
 	@Query("SELECT m FROM Measurement m WHERE  m.date<:date")

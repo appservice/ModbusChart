@@ -29,6 +29,7 @@ public class Measurement {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonIgnore
 	private Long id;
 
 	@Temporal(TemporalType.TIMESTAMP)

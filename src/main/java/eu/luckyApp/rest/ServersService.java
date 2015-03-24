@@ -99,6 +99,7 @@ public class ServersService implements Observer {
 	// @Transactional
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
+		mesasurementRepo.deleteAll();
 		serverRepository.delete(server);
 		return Response.noContent().build();
 	}
@@ -107,6 +108,7 @@ public class ServersService implements Observer {
 	@Path("/{id}")
 	public Response deleteServerById(@PathParam("id") long id) {
 		LOG.warn(id);
+		mesasurementRepo.deleteAll();
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}
