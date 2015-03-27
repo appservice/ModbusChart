@@ -123,7 +123,7 @@ public class ServersService implements Observer {
 			
 			//save start measurement  with null values
 			Measurement startMeasurement=new Measurement();
-			startMeasurement.setServer(server);
+			//startMeasurement.setServer(server);
 			startMeasurement.setDate(new Date());
 			mesasurementRepo.save(startMeasurement);
 			
@@ -190,7 +190,7 @@ public class ServersService implements Observer {
 			List<Double> myData = (List<Double>) dataObject;
 			Measurement measurement = new Measurement();
 			measurement.setDate(new Date());
-			measurement.setServer(server);
+			//measurement.setServer(server);
 			
 			measurement.getMeasuredValue().addAll(myData);
 			//server.getMeasurements().add(measurement);

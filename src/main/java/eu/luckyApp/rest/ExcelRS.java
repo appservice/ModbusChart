@@ -80,21 +80,21 @@ public class ExcelRS {
 			Date now = new Date();
 			Date beginDate = new Date(now.getTime() - timePeriod);
 
-			return measurementRepository.findAllFromServerByStartDate(serverId, beginDate);
+			return measurementRepository.findAllFromServerByStartDate(/*serverId, */beginDate);
 
 		} else
 
 		// with startDate parameter
 		if (startDate != 0 && endDate == 0) {
-			return measurementRepository.findAllFromServerByStartDate(serverId, new Date(startDate));
+			return measurementRepository.findAllFromServerByStartDate(/*serverId,*/ new Date(startDate));
 
 		} else
 		// with startDate and endDate parameters
 		if (startDate < endDate) {
 
-			return measurementRepository.findAllFromServerByDates(serverId, new Date(startDate), new Date(endDate));
+			return measurementRepository.findAllFromServerByDates(/*serverId,*/ new Date(startDate), new Date(endDate));
 		} else
-			return measurementRepository.findAllFromServer(serverId);
+			return measurementRepository.findAllFromServer(/*serverId*/);
 	}
 
 	

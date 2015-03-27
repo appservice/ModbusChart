@@ -36,7 +36,7 @@ angular.module('myApp.controllers', [])
 		})
 
 		.then(function(data) {
-			$scope.myData = data;
+			$scope.myData = data.plain();
 
 			$scope.isLoading = false;
 
@@ -84,7 +84,7 @@ angular.module('myApp.controllers', [])
 	Restangular.one('rest/servers/1/').customGET('measurements', {
 		"timePeriod" : 2 * 60 * 60 * 1000
 	}).then(function(data) {
-		$scope.myData = data;
+		$scope.myData = data.plain();
 		$scope.isLoading = false;
 
 	}, function(error) {
@@ -110,7 +110,7 @@ angular.module('myApp.controllers', [])
 	Restangular.one('rest/servers/1/').customGET('measurements', {
 		"timePeriod" : 8 * 60 * 60 * 1000
 	}).then(function(data) {
-		$scope.myData = data;
+		$scope.myData = data.plain();
 		$scope.isLoading = false;
 
 	}, function(error) {
@@ -137,7 +137,8 @@ angular.module('myApp.controllers', [])
 	Restangular.one('rest/servers/1/').customGET('measurements', {
 		"timePeriod" : 24 * 60 * 60 * 1000
 	}).then(function(data) {
-		$scope.myData = data;
+		$scope.myData = data.plain();
+		console.log("Data count: ")
 		$scope.isLoading = false;
 
 	}, function(error) {
@@ -164,7 +165,7 @@ angular.module('myApp.controllers', [])
 	Restangular.one('rest/servers/1/').customGET('measurements', {
 		"timePeriod" : 7 * 24 * 60 * 60 * 1000
 	}).then(function(data) {
-		$scope.myData = data;
+		$scope.myData = data.plain();
 		$scope.isLoading = false;
 
 	}, function(error) {
@@ -190,7 +191,8 @@ angular.module('myApp.controllers', [])
 	Restangular.one('rest/servers/1/').customGET('measurements', {
 		"timePeriod" : 31 * 24 * 60 * 60 * 1000
 	}).then(function(data) {
-		$scope.myData = data;
+		$scope.myData = data.plain();
+		console.log("data count: "+$scope.myData.length);
 		$scope.isLoading = false;
 
 	}, function(error) {
@@ -223,11 +225,15 @@ angular.module('myApp.controllers', [])
 			$scope.serverTimeIterval = myServer.timeInterval;
 			var myDate = new Date();
 			var dataTableSize = 60;
-
+			
+			var emptyValues=[];
+			for(var emp_i=0;emp_i<$scope.mySeriesNumber;emp_i++){
+				emptyValues[emp_i]=null;
+			}
 			for (j = 0; j < dataTableSize; j++) {
 				$scope.myData.push({
 					"date" : myDate.getTime() - (dataTableSize - j) * $scope.serverTimeIterval,
-					"values" : [ null, null, null, null, null, null, null, null ]
+					"values" : emptyValues
 				});
 
 			}
@@ -249,7 +255,7 @@ angular.module('myApp.controllers', [])
 				} else {
 
 					// if response is not empty and server is run
-					if ($scope.myData[$scope.myData.length - 1].date != myData.date) {
+					if ($scope.myData[$scope.myData.length - 1].date != myData.date||$scope.myData[$scope.myData.length-2]!=myData.date) {
 
 						$scope.myData.shift();
 						$scope.myData.push(myData.plain());
@@ -457,4 +463,12 @@ angular.module('myApp.controllers', [])
 	 * });
 	 */
 
-} ]);
+} ])
+/**
+ * =============home controller======================
+ */
+
+.controller("HomeController", function($scope) {
+	$scope.list=[1,2,3,4,5,6,7,8];
+	$scope.canvName="c1";
+})

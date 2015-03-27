@@ -129,7 +129,7 @@ angular
 										'file' : adaptedData(newData)
 									});
 
-									console.log("ilość danych: " + newData.length);
+								//	console.log("ilość danych: " + newData.length);
 
 								}
 
@@ -325,3 +325,53 @@ angular
 					}
 
 				})
+				
+				//============gauge directive===============================
+				.directive('ngGauge', function() {
+					return{
+						restrict:'E',
+						scope:{
+							name:'='
+							//data:'=?',
+							//seriesNumber:'=?'
+							
+						},
+						template:'<canvas class="canv_gauge" id="c1" ></canvas>',//<div ng-repeat="myGauge in list">ziuta +{{$index}}</div>
+				link:function(scope, element, attrs) {
+					
+					var canvGauge = element.find(".canv_gauge");
+					console.log(canvGauge);
+					
+					scope.list = [1,2];
+							scope.gaugesTable=[];
+						//	scope.servi
+							console.log(scope.seriesNumber);
+							/*for(var i=0;i<1;i++){*/
+								//console.log(i);
+							console.log(scope.name);
+					
+							//console.log(gauge);
+						//	scope.gaugesTable.push(gauge);
+							
+						/*}*/
+							console.log(scope.list);
+						},
+						controller:function($scope){
+							var gauge=new Gauge({
+								renderTo:$scope.name,
+					/*			width:180,
+								height:180,
+								title:'Czujnik'*/
+								
+							});
+							
+						//	gauge.onready=function(){
+									//gauge.setValue(Math.random()*100);
+							//		};
+							
+							gauge.draw();
+						}
+						
+					}
+					
+				});

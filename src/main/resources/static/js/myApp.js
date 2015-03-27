@@ -9,7 +9,8 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 
 	$stateProvider.state('home', {
 		url : '/',
-		templateUrl : "view/home.html"// /ModbusChart
+		templateUrl : "view/home.html",
+		controller:'HomeController'// /ModbusChart
 	}).state('chart', {
 		url : '/2-hours-chart',
 		templateUrl : 'view/day-chart.html',

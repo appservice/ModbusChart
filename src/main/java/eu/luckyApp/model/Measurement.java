@@ -35,23 +35,23 @@ public class Measurement {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	
-	@JsonIgnore
+	/*@JsonIgnore
 	@ManyToOne()
 	@JoinColumn(name="server_id")
-	private ServerEntity server;
+	private ServerEntity server;*/
 
 	@ElementCollection(fetch = javax.persistence.FetchType.EAGER)
 	@CollectionTable(name = "VALUE", joinColumns = { @JoinColumn(name = "ID", referencedColumnName = "id") })
 	@JsonProperty("values")
 	private List<Double> measuredValue = new ArrayList<>();
 
-	public ServerEntity getServer() {
+/*	public ServerEntity getServer() {
 		return server;
 	}
 
 	public void setServer(ServerEntity server) {
 		this.server = server;
-	}
+	}*/
 
 	public Long getId() {
 		return id;
@@ -79,7 +79,7 @@ public class Measurement {
 
 	@Override
 	public String toString() {
-		return "id: "+id+" "+" |date: "+date.toString()+" "+" |server : "+server+
+		return "id: "+id+" "+" |date: "+date.toString()+" "+/*" |server : "+server+*/
 				" |measured list: "+measuredValue;
 	}
 
