@@ -217,7 +217,7 @@ angular.module('myApp.controllers', [])
 	// $scope.height='600px';
 
 	Restangular.one('rest/servers', 1).get().then(function(myServer) {
-		console.log(myServer);
+		//console.log(myServer);
 		$scope.myServer = myServer;
 		if ($scope.myServer != null) {
 			// console.log($scope.myServer.id);
@@ -255,7 +255,9 @@ angular.module('myApp.controllers', [])
 				} else {
 
 					// if response is not empty and server is run
-					if ($scope.myData[$scope.myData.length - 1].date != myData.date||$scope.myData[$scope.myData.length-2]!=myData.date) {
+
+					
+					if ($scope.myData[$scope.myData.length - 1].date != myData.date||$scope.myData[$scope.myData.length-2].date!=myData.date) {
 
 						$scope.myData.shift();
 						$scope.myData.push(myData.plain());

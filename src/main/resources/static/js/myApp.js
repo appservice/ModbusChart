@@ -5,8 +5,8 @@ var myApp = angular.module('myApp', [ 'ui.router', 'restangular',
 		'emguo.poller', 'myApp.directives', 'myApp.controllers',
 		'myApp.services','mgcrea.ngStrap' ,'ngLocale']);//'ui.bootstrap'
 myApp.config(function($stateProvider, $urlRouterProvider) {
-	$urlRouterProvider.otherwise('/');
-
+//	$urlRouterProvider.otherwise('/');
+   // $locationProvider.html5Mode(true);
 	$stateProvider.state('home', {
 		url : '/',
 		templateUrl : "view/home.html",
