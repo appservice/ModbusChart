@@ -2,15 +2,14 @@ package eu.luckyApp.model;
 
 import java.util.Date;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface MeasurementRepository extends CrudRepository<Measurement, Long> {
+public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
 /*	@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId AND m.date BETWEEN :startDate AND :endDate")
 */	@Query("SELECT m FROM Measurement m WHERE m.date BETWEEN :startDate AND :endDate")
@@ -34,9 +33,12 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
 	public Long findLastMeasurementIdByServer();
 
 	@Modifying
-	@Transactional
-	@Query(nativeQuery=true,value="DELETE FROM Measurement ")
-	public void deleteAll();
+	@Query(nativeQuery=true,value="DELETE FROM Value")
+	public void deleteAllValues();
+	
+	/*@Modifying
+	@Query(nativeQuery=true,value="DELETE FROM MEASUREMENT;")
+	public void deleteAllMeasurements();*/
 	
 	//@Query(nativeQuery=true,value="SELECT * FROM Measurement WHERE MINUTE(date)=0 AND serverId=:serverId")
 

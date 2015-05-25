@@ -69,7 +69,8 @@ public class ExcelRS {
 		};
 
 		ResponseBuilder response = Response.ok(soutput);
-		response.header("Content-Disposition", "attachment; filename=dane.xlsx");
+		String fileName="dane_"+new Date().getTime()+".xlsx";
+		response.header("Content-Disposition", "attachment; filename="+fileName);
 		return response.build();
 	}
 

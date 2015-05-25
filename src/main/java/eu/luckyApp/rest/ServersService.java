@@ -27,6 +27,7 @@ import javax.ws.rs.core.UriInfo;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.model.Measurement;
@@ -96,19 +97,22 @@ public class ServersService implements Observer {
 
 	@DELETE
 	@Path("/{id}")
-	// @Transactional
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
-		mesasurementRepo.deleteAll();
+		//mesasurementRepo.findAll();
+		mesasurementRepo.deleteAllValues();
+		mesasurementRepo.deleteAllInBatch();
 		serverRepository.delete(server);
 		return Response.noContent().build();
 	}
 
 	@DELETE
 	@Path("/{id}")
+	@Transactional
 	public Response deleteServerById(@PathParam("id") long id) {
 		LOG.warn(id);
-		mesasurementRepo.deleteAll();
+		mesasurementRepo.deleteAllValues();
+        mesasurementRepo.deleteAllInBatch();
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}

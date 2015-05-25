@@ -132,21 +132,20 @@ angular
 							};
 
 							scope.$watchCollection("data", function(newData, oldData) {
-								if (newData.length > 0) {
-
+							//	if (newData.length > 0) {
+								if(newData!=oldData){
 									// add value to number of
 									// columns in first row
 									// equil number of labels
 									while (newData[0].values.length < scope.maxSeriesNumber) {
 										newData[0].values.push("NaN");
 									}
-
 									g.updateOptions({
 										'file' : adaptedData(newData)
 									});
 	
-
 								}
+								//}
 
 							});
 							
@@ -158,6 +157,9 @@ angular
 
 					// ------function which adapted my data to Dygraph
 					function adaptedData(data) {
+						
+						//var sTime=new Date().getTime();
+
 						var pushData = [];
 
 						for (var k = 0; k < data.length; k++) {
@@ -168,9 +170,15 @@ angular
 							}
 							pushData.push(myData);
 						}
+					//	var eTime=new Date().getTime();
+
+						//console.log(eTime-sTime);
+
 						return pushData;
 
-					}
+					};
+					
+					
 
 				})
 
