@@ -26,6 +26,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +67,7 @@ public class ServersService implements Observer {
 
 		return serverRepository.findAll();
 	}
+
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -123,7 +128,8 @@ public class ServersService implements Observer {
 
 		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
-		if ((schedulersMap.get(id)) == null) {
+		LOG.info("schedulersMap:"+this.schedulersMap);
+		if ((this.schedulersMap.get(id)) == null) {
 			
 			//save start measurement  with null values
 			Measurement startMeasurement=new Measurement();
@@ -131,11 +137,14 @@ public class ServersService implements Observer {
 			startMeasurement.setDate(new Date());
 			mesasurementRepo.save(startMeasurement);
 			
-			registerReader.addObserver(this);
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-			schedulersMap.put(id, scheduler);
-			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
+			//TaskScheduler sched=new ThreadPoolTaskScheduler();
+			//sched.schedule(registerReader, new CronTrigger(""));
+			this.schedulersMap.put(id, scheduler);
+			registerReader.addObserver(this);
 
+			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
+			LOG.info("schedulersMap:"+this.schedulersMap);
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
 			return Response.ok().build();
@@ -148,11 +157,12 @@ public class ServersService implements Observer {
 	@Path("/{id}/executor")
 	public Response stopServer(@PathParam("id") Long id) {
 		ServerEntity server = serverRepository.findOne(id);
-
+		LOG.info(this.schedulersMap);
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
+		LOG.info(this.schedulersMap.get(id));
 		if (scheduler != null) {
 			scheduler.shutdown();
-			schedulersMap.remove(id);
+			this.schedulersMap.remove(id);
 			// registerReader.setConnected(false);
 			registerReader.deleteObserver(this);
 			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
@@ -175,8 +185,10 @@ public class ServersService implements Observer {
 	public ServerRunningChecker isConntectedToServer(@PathParam("id") Long id) {
 
 		ServerRunningChecker serverRunningChecker = new ServerRunningChecker();
+		serverRunningChecker.setServerId(id);
+		LOG.info("scheduler in get"+this.schedulersMap);
 
-		if ((schedulersMap.get(id)) != null) {
+		if ((this.schedulersMap.get(id)) != null) {
 			serverRunningChecker.setConnectedToServer(true);
 
 		} else {
@@ -201,7 +213,9 @@ public class ServersService implements Observer {
 			// mesasurementRepo.
 			Measurement m = mesasurementRepo.save(measurement);
 			LOG.info("dodano: " + m);
+			LOG.info("sched:"+this.schedulersMap);
 			this.errorMessage = "";
+			
 
 		}
 
@@ -214,7 +228,7 @@ public class ServersService implements Observer {
 			ScheduledExecutorService scheduler = schedulersMap.get(id);
 
 			scheduler.shutdown();
-			schedulersMap.remove(id);
+			this.schedulersMap.remove(id);
 			// registerReader.setConnected(false);
 			registerReader.deleteObserver(this);
 		}

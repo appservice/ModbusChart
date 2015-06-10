@@ -12,13 +12,17 @@ import org.springframework.stereotype.Repository;
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
 /*	@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId AND m.date BETWEEN :startDate AND :endDate")
-*/	@Query("SELECT m FROM Measurement m WHERE m.date BETWEEN :startDate AND :endDate")
+*/	@Query("SELECT m FROM Measurement m WHERE m.date BETWEEN :startDate AND :endDate AND MOD(m.id,:modulo)=0")
 	public Iterable<Measurement> findAllFromServerByDates( @Param("startDate") Date startDate,
-			@Param("endDate") Date endDate);
+			@Param("endDate") Date endDate,@Param("modulo")int modulo);
 
 	//@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId AND m.date >=:startDate")
-	@Query("SELECT m FROM Measurement m WHERE   m.date >=:startDate")
-	public Iterable<Measurement> findAllFromServerByStartDate( @Param("startDate") Date startDate);
+//	@Query("SELECT m FROM Measurement m WHERE   m.date >=:startDate")//AND MOD(m.id,10)=0
+	//public Iterable<Measurement> findAllFromServerByStartDate( @Param("startDate") Date startDate);
+	@Query("SELECT m FROM Measurement m WHERE   m.date >=:startDate AND MOD(m.id,:modulo)=0")
+	public Iterable<Measurement> findAllFromServerByStartDate( @Param("startDate") Date startDate,@Param("modulo")int modulo);
+	
+	
 
 	//@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId")
 	@Query("SELECT m FROM Measurement m ")

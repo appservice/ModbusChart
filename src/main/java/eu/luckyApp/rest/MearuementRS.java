@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.MeasurementRepository;
+import eu.luckyApp.model.ServerEntity;
+import eu.luckyApp.model.ServerRepository;
 
 @Path("/servers/{serverId}/measurements")
 public class MearuementRS {
@@ -28,39 +30,78 @@ public class MearuementRS {
 	@Autowired
 	MeasurementRepository measurementRepository;
 
+	// @Autowired
+	// ServerRepository serverRepository;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAllFromServer(@PathParam("serverId") Long serverId, @QueryParam("startDate") long startDate,
-			@QueryParam("endDate") long endDate, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
+	public Response getAllFromServer(@PathParam("serverId") Long serverId,
+			@QueryParam("startDate") long startDate,
+			@QueryParam("endDate") long endDate,
+			@DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
+
+		// ServerEntity se=serverRepository.findOne(serverId);
+		// int timeInterval =se.getTimeInterval();
 
 		try {
 
 			// without parameters
 			if (startDate == 0 && endDate == 0 && timePeriod == 0) {
-				LOG.info("function findAllFromServer is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
+				LOG.info("function findAllFromServer is working with parameters: beginDate: "
+						+ startDate + " endDate: " + endDate);
 
-				return Response.ok(measurementRepository.findAllFromServer(/*serverId*/)).build();
+				return Response
+						.ok(measurementRepository
+								.findAllFromServer(/* serverId */)).build();
 			} else
 
 			if (timePeriod != 0) {
 				Date now = new Date();
 				Date beginDate = new Date(now.getTime() - timePeriod);
+				if (timePeriod < 24 * 60 *60* 1000) {
+					return Response.ok(
+							measurementRepository.findAllFromServerByStartDate(
+							/* serverId, */beginDate, 1)).build();
+				} else if (timePeriod < 1000 * 60*60 * 24 * 7) {
+					return Response.ok(
+							measurementRepository.findAllFromServerByStartDate(
+							/* serverId, */beginDate, 5)).build();
 
-				return Response.ok(measurementRepository.findAllFromServerByStartDate(/*serverId, */beginDate)).build();
-
+				} else {
+					return Response.ok(
+							measurementRepository.findAllFromServerByStartDate(
+							/* serverId, */beginDate, 30)).build();
+				}
 			} else
 
 			// with startDate parameter
 			if (startDate != 0 && endDate == 0) {
-				LOG.info("function findAllFromServerByStartDate is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
-				return Response.ok(measurementRepository.findAllFromServerByStartDate(/*serverId,*/ new Date(startDate))).build();
+				LOG.info("function findAllFromServerByStartDate is working with parameters: beginDate: "
+						+ startDate + " endDate: " + endDate);
+				return Response.ok(
+						measurementRepository.findAllFromServerByStartDate(
+						/* serverId, */new Date(startDate), 1)).build();
 
 			} else
 			// with startDate and endDate parameters
 			if (startDate < endDate) {
 
-				LOG.info("function getAllByDate is working with parameters: beginDate: " + startDate + " endDate: " + endDate);
-				return Response.ok(measurementRepository.findAllFromServerByDates(/*serverId, */new Date(startDate), new Date(endDate))).build();
+				LOG.info("function getAllByDate is working with parameters: beginDate: "
+						+ startDate + " endDate: " + endDate);
+				if(endDate-startDate<24 * 60*60 * 1000){
+				return Response.ok(
+						measurementRepository.findAllFromServerByDates(
+						/* serverId, */new Date(startDate), new Date(endDate),1))
+						.build();
+				}else if(endDate-startDate<24 * 60*60 * 1000*7){
+					return Response.ok(measurementRepository.findAllFromServerByDates(
+							new Date(startDate), new Date(endDate),5)).build();
+				}
+				else {
+					return Response.ok(measurementRepository.findAllFromServerByDates(
+							new Date(startDate), new Date(endDate),30)).build();
+				}
+				//}
 			}
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage());
@@ -79,9 +120,11 @@ public class MearuementRS {
 	@GET
 	@Path("/last")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getLastMeasurements(@PathParam("serverId") Long serverId, @DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
+	public Response getLastMeasurements(@PathParam("serverId") Long serverId,
+			@DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
 
-		Long lastId = measurementRepository.findLastMeasurementIdByServer(/*serverId*/);
+		Long lastId = measurementRepository
+				.findLastMeasurementIdByServer(/* serverId */);
 		if (lastId != null) {
 			Measurement m = measurementRepository.findOne(lastId);
 			LOG.info("last measurement: " + m);
@@ -90,16 +133,15 @@ public class MearuementRS {
 		return Response.noContent().build();
 	}
 
-	
 	@GET
 	@Path("/by-hours")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Iterable<Measurement> getAllInEveryHour(@PathParam("serverId") Long serverId) {
+	public Iterable<Measurement> getAllInEveryHour(
+			@PathParam("serverId") Long serverId) {
 		LOG.warn("test");
-		return measurementRepository.findAllInEveryHour(/*serverId*/);
+		return measurementRepository.findAllInEveryHour(/* serverId */);
 	}
 
-	
 	@DELETE
 	@Path("/{id}")
 	public Response deleteOne(@PathParam("id") Long id) {
@@ -109,22 +151,22 @@ public class MearuementRS {
 	}
 
 	@DELETE
-	public Response deleteCollection(@PathParam("serverId") Long serverId, @QueryParam("startDate") Long startDate,
+	public Response deleteCollection(@PathParam("serverId") Long serverId,
+			@QueryParam("startDate") Long startDate,
 			@QueryParam("endDate") Long endDate) {
 
 		if (startDate > 0 && endDate > 0) {
-			Iterable<Measurement> deletedMeasurements = measurementRepository.findAllFromServerByDates(/*serverId,*/ new Date(startDate), new Date(
-					endDate));
+			Iterable<Measurement> deletedMeasurements = measurementRepository
+					.findAllFromServerByDates(/* serverId, */new Date(startDate),
+							new Date(endDate),1);
 			measurementRepository.delete(deletedMeasurements);
 			return Response.noContent().build();
 		} else
 			return Response.status(Status.BAD_REQUEST).build();
 	}
 
-
-	
-	
-	private Iterable<Measurement> getCollectionByAverage(int rowNumbers, Iterable<Measurement> fullList) {
+	private Iterable<Measurement> getCollectionByAverage(int rowNumbers,
+			Iterable<Measurement> fullList) {
 
 		List<Measurement> response = new ArrayList<Measurement>();
 		double avgValue;
@@ -141,7 +183,7 @@ public class MearuementRS {
 				// myMeasuremnt.setMeasuredValue(new List<>);
 
 				j++;
-				//myMeasuremnt.setServer(m.getServer());
+				// myMeasuremnt.setServer(m.getServer());
 				response.add(myMeasuremnt);
 			}
 			i++;
