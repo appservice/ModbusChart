@@ -1,4 +1,4 @@
-package eu.luckyApp.model;
+package eu.luckyApp.repository;
 
 import java.util.Date;
 
@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import eu.luckyApp.model.Measurement;
 
 @Repository
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
@@ -23,7 +25,7 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
 	public Iterable<Measurement> findAllFromServerByStartDate( @Param("startDate") Date startDate,@Param("modulo")int modulo);
 	
 	
-
+	//public Stream<Measurement> getAllMeasurementAsStream();
 	//@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId")
 	@Query("SELECT m FROM Measurement m ")
 	public Iterable<Measurement> findAllFromServer();

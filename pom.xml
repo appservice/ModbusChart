@@ -5,9 +5,9 @@
 
 	<groupId>eu.luckyApp</groupId>
 	<artifactId>modbus-charts</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
-	<!-- <packaging>jar</packaging> -->
-	<packaging>war</packaging>
+	<version>0.0.5-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<!-- <packaging>war</packaging> -->
 
 	<name>ModbusChart</name>
 	<description>Application for Item Service</description>
@@ -36,18 +36,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 
-			<!-- ===========for wildfly=========== -->
-			<exclusions>
-				<exclusion>
-					<artifactId>org.springframework.boot</artifactId>
-					<groupId>spring-boot-starter-tomcat</groupId>
-				</exclusion>
-				<exclusion>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-websocket</artifactId>
-				</exclusion>
-			</exclusions>
-			<!-- ================================== -->
+			<!-- ===========for wildfly=========== <exclusions> <exclusion> <artifactId>org.springframework.boot</artifactId> 
+				<groupId>spring-boot-starter-tomcat</groupId> </exclusion> <exclusion> <groupId>org.apache.tomcat.embed</groupId> 
+				<artifactId>tomcat-embed-websocket</artifactId> </exclusion> </exclusions> 
+				================================== -->
 		</dependency>
 
 
@@ -67,7 +59,8 @@
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP-java6</artifactId>
-			<version>2.3.0</version>
+			<version>2.3.8</version>
+			<scope>compile</scope>
 		</dependency>
 
 
@@ -114,7 +107,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency> 
+		</dependency>
 		<!-- UI web -->
 		<!-- <dependency> <groupId>org.webjars</groupId> <artifactId>bootstrap</artifactId> 
 			<version>3.3.2</version> </dependency> <dependency> <groupId>org.webjars</groupId> 
@@ -144,8 +137,10 @@
 
 	<build>
 		<plugins>
-			<!-- <plugin> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-maven-plugin</artifactId> 
-				</plugin> -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

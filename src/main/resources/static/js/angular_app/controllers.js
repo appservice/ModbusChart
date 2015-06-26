@@ -10,7 +10,8 @@ angular.module('myApp.controllers', [])
 .controller('CustomPeriodChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
 
 	$scope.chartTitle = 'Wykres z n dni';
-
+	$scope.myData = [];
+	$scope.maxSeriesNumber = 7;
 	$scope.showChart = false;
 
 	var today = new Date();
@@ -21,14 +22,15 @@ angular.module('myApp.controllers', [])
 	//
 
 	$scope.createChart = function() {
-		console.log($scope.fromDate);
+	//	console.log($scope.fromDate);
 		var startDate = new Date($scope.fromDate);
 		var endDate = new Date($scope.untilDate);
 
-		$scope.myData = [];
-		$scope.maxSeriesNumber = 8;
-		$scope.isLoading = true;
 		$scope.chartTitle = 'Wykres od: ' + startDate.toLocaleString() + ' do ' + endDate.toLocaleString();
+
+
+
+		$scope.isLoading = true;
 
 		Restangular.one('rest/servers/1/').customGET('measurements', {
 			"startDate" : startDate.getTime(),
@@ -37,6 +39,7 @@ angular.module('myApp.controllers', [])
 
 		.then(function(data) {
 			$scope.myData = data.plain();
+
 
 			$scope.isLoading = false;
 
@@ -77,7 +80,7 @@ angular.module('myApp.controllers', [])
 .controller('TwoHoursChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 8;
+	$scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 2 godzin';
 
@@ -103,7 +106,7 @@ angular.module('myApp.controllers', [])
 .controller('EightHoursChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 8;
+	$scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 8 godzin';
 
@@ -130,7 +133,7 @@ angular.module('myApp.controllers', [])
 .controller('DayChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 8;
+	$scope.maxSeriesNumber = 7;
 	$scope.chartTitle = 'Wykres z ostatnich 24 godzin';
 	$scope.isLoading = true;
 
@@ -158,7 +161,7 @@ angular.module('myApp.controllers', [])
 .controller('SevenDaysChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 8;
+	$scope.maxSeriesNumber = 7;
 	$scope.chartTitle = 'Wykres z ostatnich 7 dni';
 	$scope.isLoading = true;
 
@@ -184,7 +187,7 @@ angular.module('myApp.controllers', [])
  */
 .controller('ThirtyOneDaysChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 8;
+	$scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 31 dni';
 
@@ -212,55 +215,73 @@ angular.module('myApp.controllers', [])
 .controller('ChartOnlineController', [ '$scope', 'Restangular', 'poller', function($scope, Restangular, poller) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 8;
-	// $scope.mySeriesNumber=8;
-	// $scope.height='600px';
+	$scope.maxSeriesNumber = 7;
+	
+	//don't show befoure get the data from server
+	$scope.is_loaded=false;
 
 	Restangular.one('rest/servers', 1).get().then(function(myServer) {
 		//console.log(myServer);
 		$scope.myServer = myServer;
-		if ($scope.myServer != null) {
-			// console.log($scope.myServer.id);
-			$scope.mySeriesNumber = myServer.readedDataCount || 0;
-			$scope.serverTimeIterval = myServer.timeInterval;
-			var myDate = new Date();
-			var dataTableSize = 60;
+		
+		if ($scope.myServer != null) {			
+			$scope.is_loaded=true;
 			
-			var emptyValues=[];
-			for(var emp_i=0;emp_i<$scope.mySeriesNumber;emp_i++){
-				emptyValues[emp_i]=null;
-			}
-			for (j = 0; j < dataTableSize; j++) {
-				$scope.myData.push({
-					"date" : myDate.getTime() - (dataTableSize - j) * $scope.serverTimeIterval,
-					"values" : emptyValues
-				});
+			$scope.maxSeriesNumber = myServer.readedDataCount; //|| 0;
+			$scope.serverTimeIterval = myServer.timeInterval;
 
-			}
+			var dataTableSize = 60;			
 
+
+			var isFirstData=true;
+			
 			// ----------------poller----------------
-
-			var myPoller = poller.get($scope.myServer.one("measurements/last"), { // Restangular.getOne('servers/2/measurements/last').getList()
+ 
+			var myPoller = poller.get($scope.myServer.one("measurement-online"), { 
+	
 				action : 'get',
 				delay : $scope.serverTimeIterval,
 			// catchError : true
 			});
 
-			myPoller.promise.then(null, null, function(myData) {
+			myPoller.promise.then(null, null, function(data) {
+				
 
 				// check the empty response
-				if (myData === undefined) {
+				if (data === undefined) {
 					console.log("Brak pomiarów!");
 					myPoller.stop();
 				} else {
+					
+					//fill measurements table by empty measurements 
+					if(isFirstData){
+						var emptyValues=[];
+						for(var emp_i=0;emp_i<$scope.mySeriesNumber;emp_i++){
+							emptyValues[emp_i]=null;
+						}
+						for (var j = 0; j < dataTableSize; j++) {
+							$scope.myData.push({
+								"date" : data.date - (dataTableSize - j) * $scope.serverTimeIterval,
+								"values" : emptyValues
+							});
+
+						}
+						
+						isFirstData=false;
+					}
 
 					// if response is not empty and server is run
 
+					$scope.dataToShow=data.plain();
+					//console.log($scope.dataToShow);
 					
-					if ($scope.myData[$scope.myData.length - 1].date != myData.date||$scope.myData[$scope.myData.length-2].date!=myData.date) {
+					if ($scope.myData[$scope.myData.length - 1].date != data.date||$scope.myData[$scope.myData.length-2].date!=data.date) {
 
+						if($scope.myData.length>dataTableSize-1)
 						$scope.myData.shift();
-						$scope.myData.push(myData.plain());
+					
+						$scope.myData.push(data.plain());
+						//console.log($scope.myData);
 
 					} else {
 
@@ -272,6 +293,8 @@ angular.module('myApp.controllers', [])
 		}
 
 	});
+	
+	
 
 	// });
 
@@ -303,7 +326,7 @@ angular.module('myApp.controllers', [])
 						"type" : "FLOAT",
 						"name" : "FLOAT (32 bit)"
 					},
-					// {"type":"INTEGER","name":"INTEGER (16 bit)"}
+					{"type":"INTEGER","name":"INTEGER (16 bit)"}
 					];
 
 					var errorResponseFunctoin = function(response) {
@@ -362,6 +385,7 @@ angular.module('myApp.controllers', [])
 					// --------update server-----------------
 					$scope.preEditServer = function(server) {
 						$scope.updatedServer = server;
+						console.log(server);
 					}
 
 					$scope.updateServer = function(server) {
@@ -377,7 +401,7 @@ angular.module('myApp.controllers', [])
 						var id = server.id;
 						server.post('executor').then(
 								function() {
-									console.log("run");
+									console.log("started");
 
 									// -----------checking if the server is
 									// running or occurred error
@@ -403,7 +427,7 @@ angular.module('myApp.controllers', [])
 												});
 
 									}
-									$timeout(executeGet, 1000);
+									$timeout(executeGet, 2000);
 
 								}, errorResponseFunctoin
 

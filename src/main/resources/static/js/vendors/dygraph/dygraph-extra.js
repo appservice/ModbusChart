@@ -41,7 +41,7 @@ Dygraph.Export.DEFAULT_ATTRS = {
     legendFontColor: "black",
 
     // Default position for vertical labels
-    vLabelLeft: 20,
+    vLabelLeft: 10,
 
     legendHeight: 40,    // Height of the legend area
 	legendMargin: 30,

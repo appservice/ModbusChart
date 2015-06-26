@@ -4,6 +4,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
 import eu.luckyApp.rest.ExcelRS;
+import eu.luckyApp.rest.ExecutorRS;
 import eu.luckyApp.rest.MearuementRS;
 import eu.luckyApp.rest.ServersService;
 
@@ -14,6 +15,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(ServersService.class);
 		register(MearuementRS.class);
 		register(ExcelRS.class);
+		//register(ExecutorRS.class);
 	
 	}
 

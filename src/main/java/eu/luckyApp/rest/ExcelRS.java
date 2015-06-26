@@ -23,14 +23,12 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.luckyApp.model.Measurement;
-import eu.luckyApp.model.MeasurementRepository;
+import eu.luckyApp.repository.MeasurementRepository;
 
 @Path("/servers/{id}/measurements/download")
 public class ExcelRS {
@@ -105,7 +103,7 @@ public class ExcelRS {
 	private void buildExcelDokument(OutputStream os, Long serverId) throws InvalidFormatException, IOException {
 		// OutpuStream os=new FileOutputStream();
 
-		workbook = new SXSSFWorkbook(200);
+		workbook = new SXSSFWorkbook(100);
 		Sheet sheet = workbook.createSheet("Zeszyt 1");
 
 		//setExcelHeader(sheet);
@@ -122,7 +120,7 @@ public class ExcelRS {
 
 	private void setExcelHeader(Sheet sheet, int lastColumnNumber) {
 		
-		
+	
 		Row excelHeader = sheet.createRow(0);
 		Font headerFont = workbook.createFont();
 		headerFont.setBold(true);

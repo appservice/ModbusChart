@@ -146,6 +146,16 @@ margin-right:5px;
 }
 
 
+  table { table-layout: fixed;}
+ table th, table td { overflow: hidden; } 
+ 
+  #div_g{
+  margin-left: 15px
+  }
+ #div_g .dygraph-ylabel{text-shadow: -2px 2px 2px gray; 
+ margin-top: -15px}
+ 
+ #div_g .dygraph-title {font-size:25px; text-shadow: 1px 1px 1px gray; }
 
  
 /* .squaredOne {

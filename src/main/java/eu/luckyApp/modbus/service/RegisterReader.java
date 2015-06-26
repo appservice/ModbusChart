@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Observable;
 
 import net.wimpi.modbus.Modbus;
+import net.wimpi.modbus.ModbusException;
 import net.wimpi.modbus.procimg.Register;
 import net.wimpi.modbus.util.ModbusUtil;
 
@@ -24,8 +25,8 @@ public class RegisterReader extends Observable implements Runnable {
 	private MyModbusTCPMaster modbusMaster;
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
-
 	
+	private static final double WSPOLCZYNNIK=0.0027466659;
 
 	public ServerEntity getServerEntity() {
 		return serverEntity;
@@ -37,40 +38,33 @@ public class RegisterReader extends Observable implements Runnable {
 
 	@Override
 	public void run() {
-		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
+		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(),
+				serverEntity.getPort());
 		try {
 			modbusMaster.connect();
 
 			// -----------read and save to DB float data--------------
 			// LOG.warn(serverEntity.getReadedDataType());
-			LOG.info("READED TYPE FROM MODBUS: " + new Date() + " " + serverEntity.getReadedDataType());
+			LOG.info("READED TYPE FROM MODBUS: " + new Date() + " "
+					+ serverEntity.getReadedDataType());
 
-			if (serverEntity.getReadedDataType().equalsIgnoreCase("FLOAT")) {
-				//modbusMaster.re
-				
-				Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,serverEntity.getFirstRegisterPos(), serverEntity.getReadedDataCount() * 2);
 
-				List<Double> resultList = new ArrayList<>();
-
-				int len = registers.length;
-				for (int i = 0; i < len; i += 2) {
-					byte[] tmp = new byte[4];
-					System.arraycopy(registers[i + 1].toBytes(), 0, tmp, 0, 2);
-					System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
-					Float myFloatData = ModbusUtil.registersToFloat(tmp);
-					Double parsedToDobuleData = Double.parseDouble(myFloatData.toString());
-					resultList.add(parsedToDobuleData);
-
-				}
-				//send data to observer
-				this.setChanged();
-				this.notifyObservers(resultList);
+			
+			switch (serverEntity.getReadedDataType().toUpperCase()) {
+			case "FLOAT":
+				readFloatData();
+				break;
+			case "INTEGER":
+				readIntegerData();
+				break;
+			default:
+				break;
 
 			}
 
 		} catch (Exception e) {
-			
-			//send exception to observer
+
+			// send exception to observer
 			this.setChanged();
 			this.notifyObservers(e);
 		} finally {
@@ -79,4 +73,52 @@ public class RegisterReader extends Observable implements Runnable {
 
 	}
 
+	// -------------------------------------------------------------
+	private void readFloatData() throws ModbusException {
+
+		Register[] registers = modbusMaster.readMultipleRegisters(
+				Modbus.DEFAULT_UNIT_ID, serverEntity.getFirstRegisterPos(),
+				serverEntity.getReadedDataCount() * 2);
+
+		List<Double> resultList = new ArrayList<>();
+
+		int len = registers.length;
+		for (int i = 0; i < len; i += 2) {
+			byte[] tmp = new byte[4];
+			System.arraycopy(registers[i + 1].toBytes(), 0, tmp, 0, 2);
+			System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
+			Float myFloatData = ModbusUtil.registersToFloat(tmp);
+			Double parsedToDobuleData = Double.parseDouble(myFloatData
+					.toString());
+			resultList.add(parsedToDobuleData*serverEntity.getScaleFactor());
+
+		}
+		// send data to observer
+		this.setChanged();
+		this.notifyObservers(resultList);
+	}
+
+	// ----------------------------------------------------------------
+	private void readIntegerData() throws ModbusException {
+		Register[] registers = modbusMaster.readMultipleRegisters(
+				Modbus.DEFAULT_UNIT_ID, serverEntity.getFirstRegisterPos(),
+				serverEntity.getReadedDataCount());
+
+		List<Double> resultList = new ArrayList<>();
+
+		int len = registers.length;
+
+		for (int i = 0; i < len; i++) {
+
+			int value = registers[i].getValue();
+			
+			
+			
+			resultList.add(((double) value)*serverEntity.getScaleFactor());
+		}
+		// send data to observer
+		this.setChanged();
+		this.notifyObservers(resultList);
+
+	}
 }

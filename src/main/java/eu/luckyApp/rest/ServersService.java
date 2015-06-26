@@ -26,40 +26,42 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.Trigger;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.model.Measurement;
-import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
-import eu.luckyApp.model.ServerRepository;
 import eu.luckyApp.model.ServerRunningChecker;
+import eu.luckyApp.repository.MeasurementRepository;
+import eu.luckyApp.repository.ServerRepository;
 
 @Component
 @Path("/servers")
 public class ServersService implements Observer {
 
-	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
-	/*
-	 * @PersistenceContext private EntityManager em;
-	 */
+	private static final Logger LOG = Logger.getLogger(ServersService.class
+			.getName());
+
 	@Autowired
 	private ServerRepository serverRepository;
 
 	@Autowired
-	MeasurementRepository mesasurementRepo;
+	MeasurementRepository mRepository;
 
 	@Autowired
 	private RegisterReader registerReader;
 
 	private String errorMessage;
 
+	private Measurement measurementOnline;
+
+	private int mCounter;
+
+
+
 	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
+
+
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -67,7 +69,6 @@ public class ServersService implements Observer {
 
 		return serverRepository.findAll();
 	}
-
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -85,7 +86,8 @@ public class ServersService implements Observer {
 
 		serverRepository.save(server);
 		Long serverId = server.getId();
-		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId).build();
+		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId)
+				.build();
 
 		return Response.created(createdUri).entity(server).build();
 	}
@@ -104,20 +106,19 @@ public class ServersService implements Observer {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
-		//mesasurementRepo.findAll();
-		mesasurementRepo.deleteAllValues();
-		mesasurementRepo.deleteAllInBatch();
+		// mesasurementRepo.findAll();
+		mRepository.deleteAllValues();
+		mRepository.deleteAllInBatch();
 		serverRepository.delete(server);
 		return Response.noContent().build();
 	}
 
 	@DELETE
 	@Path("/{id}")
-	@Transactional
 	public Response deleteServerById(@PathParam("id") long id) {
 		LOG.warn(id);
-		mesasurementRepo.deleteAllValues();
-        mesasurementRepo.deleteAllInBatch();
+		mRepository.deleteAllValues();
+		mRepository.deleteAllInBatch();
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}
@@ -128,24 +129,26 @@ public class ServersService implements Observer {
 
 		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
-		LOG.info("schedulersMap:"+this.schedulersMap);
-		if ((this.schedulersMap.get(id)) == null) {
-			
-			//save start measurement  with null values
-			Measurement startMeasurement=new Measurement();
-			//startMeasurement.setServer(server);
-			startMeasurement.setDate(new Date());
-			mesasurementRepo.save(startMeasurement);
-			
-			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-			//TaskScheduler sched=new ThreadPoolTaskScheduler();
-			//sched.schedule(registerReader, new CronTrigger(""));
-			this.schedulersMap.put(id, scheduler);
-			registerReader.addObserver(this);
+		if ((schedulersMap.get(id)) == null) {
 
-			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
-			LOG.info("schedulersMap:"+this.schedulersMap);
-			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
+			registerReader.addObserver(this);
+			// save start measurement with null values
+			Measurement startMeasurement = new Measurement();
+			// startMeasurement.setServer(server);
+			startMeasurement.setDate(new Date());
+			mRepository.save(startMeasurement);
+
+			ScheduledExecutorService scheduler = Executors
+					.newScheduledThreadPool(4);
+			// TaskScheduler sched=new ThreadPoolTaskScheduler();
+			// sched.schedule(registerReader, new CronTrigger(""));
+			schedulersMap.put(id, scheduler);
+
+			scheduler.scheduleAtFixedRate(registerReader, 0,
+					server.getTimeInterval(), TimeUnit.MILLISECONDS);
+			LOG.info("schedulersMap after add:" + schedulersMap);
+			LOG.warn("Odczyt włączony. " + server.getIp() + ":"
+					+ server.getPort());
 
 			return Response.ok().build();
 		}
@@ -156,16 +159,17 @@ public class ServersService implements Observer {
 	@DELETE
 	@Path("/{id}/executor")
 	public Response stopServer(@PathParam("id") Long id) {
+
 		ServerEntity server = serverRepository.findOne(id);
-		LOG.info(this.schedulersMap);
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
-		LOG.info(this.schedulersMap.get(id));
+
 		if (scheduler != null) {
 			scheduler.shutdown();
-			this.schedulersMap.remove(id);
+			schedulersMap.remove(id);
 			// registerReader.setConnected(false);
 			registerReader.deleteObserver(this);
-			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
+			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":"
+					+ server.getPort());
 			return Response.ok().build();
 		} else {
 
@@ -186,9 +190,8 @@ public class ServersService implements Observer {
 
 		ServerRunningChecker serverRunningChecker = new ServerRunningChecker();
 		serverRunningChecker.setServerId(id);
-		LOG.info("scheduler in get"+this.schedulersMap);
 
-		if ((this.schedulersMap.get(id)) != null) {
+		if ((schedulersMap.get(id)) != null) {
 			serverRunningChecker.setConnectedToServer(true);
 
 		} else {
@@ -203,35 +206,54 @@ public class ServersService implements Observer {
 		ServerEntity server = ((RegisterReader) o).getServerEntity();
 
 		if (dataObject instanceof List) {
+
 			List<Double> myData = (List<Double>) dataObject;
-			Measurement measurement = new Measurement();
-			measurement.setDate(new Date());
-			//measurement.setServer(server);
-			
-			measurement.getMeasuredValue().addAll(myData);
-			//server.getMeasurements().add(measurement);
-			// mesasurementRepo.
-			Measurement m = mesasurementRepo.save(measurement);
-			LOG.info("dodano: " + m);
-			LOG.info("sched:"+this.schedulersMap);
+			// Measurement measurement = new Measurement();
+			// measurement.setDate(new Date());
+			// measurement.setServer(server);
+
+			measurementOnline = new Measurement();
+			measurementOnline.setDate(new Date());
+
+			// measurement.getMeasuredValue().addAll(myData);
+			measurementOnline.getMeasuredValue().addAll(myData);
+
+			// server.getMeasurements().add(measurement);
+			// Measurement m = mRepository.save(measurement);
+
+			if (mCounter % server.getSavedMeasurementNumber() == 0) {
+
+				Measurement m = mRepository.save(measurementOnline);
+				LOG.info("dodano: " + m);
+				mCounter=0;
+			}
+			mCounter++;
 			this.errorMessage = "";
-			
 
 		}
 
 		if (dataObject instanceof Exception) {
 			Exception ex = (Exception) dataObject;
-			LOG.error("Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |" + ex.getMessage());
+			LOG.error("Uwaga błąd połączenia/odczytu z: " + server.getIp()
+					+ ":" + server.getPort() + " |" + ex.getMessage());
 			this.errorMessage = ex.getMessage();
 			Long id = server.getId();
 
 			ScheduledExecutorService scheduler = schedulersMap.get(id);
 
 			scheduler.shutdown();
-			this.schedulersMap.remove(id);
-			// registerReader.setConnected(false);
+			schedulersMap.remove(id);
 			registerReader.deleteObserver(this);
 		}
+
+	}
+
+	@Path("/{id}/measurement-online")
+	@Produces(MediaType.APPLICATION_JSON)
+	@GET
+	public Measurement getMasurementsOline() {
+
+		return measurementOnline;
 
 	}
 

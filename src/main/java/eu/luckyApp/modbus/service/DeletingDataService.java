@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.luckyApp.model.Measurement;
-import eu.luckyApp.model.MeasurementRepository;
+import eu.luckyApp.repository.MeasurementRepository;
 
 
 /**

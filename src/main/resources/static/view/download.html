@@ -22,7 +22,7 @@
     <table class="table">
       <tr>
         <td><h4>Dane z ostatnich 2 godzin</h4></td>
-        <td><a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{2*60*60*1000}}"">Pobierz <i class="glyphicon glyphicon-save-file"></i></a></td>
+        <td><a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{2*60*60*1000}}">Pobierz <i class="glyphicon glyphicon-save-file"></i></a></td>
       </tr>
       <tr>
         <td><h4>Dane z ostatnich 8 godzin</h4></td>
@@ -59,9 +59,9 @@
         </td>
       </tr>
       <tr>
-        <td><h4>Dane całościowe</h4></td>
+        <td><h4>Dane z ostatnich 90 dni</h4></td>
         <td>
-          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel">
+          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{31*24*60*60*1000}}">
             Pobierz <i class="glyphicon glyphicon-save-file"></i>
           </a>
         </td>

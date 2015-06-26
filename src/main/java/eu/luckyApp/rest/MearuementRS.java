@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.luckyApp.model.Measurement;
-import eu.luckyApp.model.MeasurementRepository;
 import eu.luckyApp.model.ServerEntity;
-import eu.luckyApp.model.ServerRepository;
+import eu.luckyApp.repository.MeasurementRepository;
+import eu.luckyApp.repository.ServerRepository;
 
 @Path("/servers/{serverId}/measurements")
 public class MearuementRS {

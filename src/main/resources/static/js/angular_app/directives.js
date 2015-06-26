@@ -7,7 +7,7 @@ angular
 
 		.directive(
 				'chartDygraph',
-				function($window) {
+				function($window, Restangular) {
 					return {
 						restrict : 'E',
 						scope : { // Isolate scope
@@ -20,8 +20,10 @@ angular
 						template : '<table class="digraph-table" style="width:100%;">'
 								+ '<tr><td style="width:85%"><div id="div_g" class="div_graph" style="width:auto; height:450px;"></div></td>'
 								+ '<td class="dygraph-td-legend">'
-								+ '<button id="saveBtn"class="btn btn-default on-top" ng-click="downloadGraph();"><i class="glyphicon glyphicon-download"></i> PNG</button>'
-								+ '<button id="saveExcelBtn"class="btn btn-default on-top" data-ng-click="downloadExcel()" ><i class="glyphicon glyphicon-download"></i> EXCEL</button>'
+								+ '<button id="saveExcelBtn"class="btn btn-default on-top" style="width:90px" data-ng-click="resetZoom()" ><i class="glyphicon"></i> Reset zoom</button>'
+								+ '<button id="saveBtn"class="btn btn-default on-top" style="width:90px" ng-click="downloadGraph();"><i class="glyphicon glyphicon-download"></i> PNG</button>'
+								+ '<button id="saveExcelBtn"class="btn btn-default on-top" style="width:90px" data-ng-click="downloadExcel()" ><i class="glyphicon glyphicon-download"></i> EXCEL</button>'
+
 								+ '<div id="div_l" class="dygraph-div-legend"> </div></td></tr>'
 								+ '<tr><td colspan="2"><div class="series-container" >'
 								+ '<label data-ng-repeat="mySerie in series" ng-style="{color:mySerie.color}">' // ng-style="{color:scope.series[$index-1].color}"
@@ -44,13 +46,15 @@ angular
 							var pushData = [];
 
 							// create array of series colors
-							var colorsArray = [ "#FF0000", "#00AA00", "#0000FF", "#FF00FF", "#800080", "#FFCC00",
-									"#808080", "#000080", "#FFA500", "#0AE200" ];
+							var colorsArray = [ "#FF0000", "#00AA00", "#0000FF", "#FF00FF", "#800080", "#FFCC00", "#808080", "#000080", "#FFA500",
+									"#0AE200" ];
+
+							var firstData;
 
 							// ---create dygraph----------
 							var g = new Dygraph(divGraph, pushData, {
 								// drawPoints: true,
-								// showRoller: true,
+								showRoller : true,
 								strokeWidth : 2,
 								// colorValue:0.8,
 								// colorSaturaion:0.8,
@@ -59,32 +63,65 @@ angular
 								// valueRange: [0.0, 1.2],
 								labels : labelsTable,
 								animatedZooms : true,
+								labelsKMG2 : true,
 								// legend:"follow",
 								labelsDiv : div_l,
-								legend : 'auto',
+								legend : 'auto',// 'always',//
 								title : scope.chartTitle,
-								ylabel : scope.yAxisTitle,// "Przepływ
+								ylabel : scope.yAxisTitle,
+								yLabelWidth:18,
+								digitsAfterDecimal:3,// "Przepływ
 								// [m3/s]",
 								// xlabel:"Czas",
 								drawGapEdgePoints : true,
+
+								zoomCallback : function(minX, maxX, yRanges) {
+
+									function myRangeSelection(range) {
+
+										var oldXRange = scope.data[scope.data.length - 1].date - scope.data[0].date;
+										if ((oldXRange > range) && (maxX - minX < range)) { // ||oldXRange<range
+											Restangular.one('rest/servers/1/').customGET('measurements', {
+												"startDate" : parseInt(minX),
+												"endDate" : parseInt(maxX)
+											}).then(function(data) {
+												scope.data = data.plain();
+											});
+											console.log("range changed");
+
+										}
+
+									}
+									myRangeSelection(24 * 3600 * 1000);
+									myRangeSelection(7 * 24 * 3600 * 1000);
+
+								}
 
 							// showRangeSelector: true,
 							// drawPoints: true,
 
 							});
 
+							// ------- unzoom function--------
+							scope.resetZoom = function() {
+								scope.data = firstData;
+								g.updateOptions({
+									dateWindow : null,
+									valueRange : null
+								});
+							}
+
 							// -----grab screen function-------
 							var imgExport = element.append('<img style="visibility:hidden"></img>');
 							scope.downloadGraph = function() {
 								console.log("download as file");
-								 var myNav = navigator.userAgent.toLowerCase();
+								var myNav = navigator.userAgent.toLowerCase();
 								// alert(myNav);
 								var startDate = new Date(g.xAxisRange()[0]);
 
 								var endDate = new Date(g.xAxisRange()[1]);
 
-								var myTitle = 'Wykres od: ' + startDate.toLocaleString() + ' do: '
-										+ endDate.toLocaleString();
+								var myTitle = 'Wykres od: ' + startDate.toLocaleString() + ' do: ' + endDate.toLocaleString();
 								if (g.xAxisRange()[0] > 0)
 									g.updateOptions({
 										title : myTitle
@@ -97,21 +134,16 @@ angular
 									title : scope.chartTitle
 								});
 							}
-							
-							//----grab excel function----------
-							scope.downloadExcel=function(){
-							
-							
+
+							// ----grab excel function----------
+							scope.downloadExcel = function() {
+
 								var startDate = parseInt(g.xAxisRange()[0]);
 								var endDate = parseInt(g.xAxisRange()[1]);
-						
-								
-								var link="/ModbusChart/rest/servers/1/measurements/download/excel?startDate="+startDate+"&endDate="+endDate;
-								$window.location.href=link;
-					
+
+								var link = "/ModbusChart/rest/servers/1/measurements/download/excel?startDate=" + startDate + "&endDate=" + endDate;
+								$window.location.href = link;
 							}
-							
-					
 
 							// -------generete series--------
 							scope.series = [];
@@ -132,24 +164,44 @@ angular
 							};
 
 							scope.$watchCollection("data", function(newData, oldData) {
-							//	if (newData.length > 0) {
-								if(newData!=oldData){
+
+								if (newData != oldData) {
+
+								//	console.log(newData);
 									// add value to number of
 									// columns in first row
 									// equil number of labels
-									while (newData[0].values.length < scope.maxSeriesNumber) {
-										newData[0].values.push("NaN");
+									if (firstData == null) {
+										firstData = newData;
 									}
+
+									// console.log(newData);
+									if (newData.length > 0)
+										while (newData[0].values.length < scope.maxSeriesNumber) {
+											newData[0].values.push("NaN");
+										}
+
 									g.updateOptions({
-										'file' : adaptedData(newData)
+										'file' : adaptedData(newData),
+										title : scope.chartTitle
 									});
-	
+
 								}
-								//}
+								// }
 
 							});
-							
-							
+
+							// scope.$watch("maxSeriesNumber",function(newData,oldData){
+							//							  
+							// console.log("new data:"+newData);
+							// console.log("oldData: "+oldData);
+							// //scope.maxSeriesNumber=newData;
+							// if(newData!=oldData){ for(var
+							// di=0;di<newData-oldData;di++){
+							// labelsTable.push("Czujnik "); };
+							// g.updateOptions({'labels':labelsTable,}); }
+							//							  
+							// });
 
 						}
 
@@ -157,8 +209,8 @@ angular
 
 					// ------function which adapted my data to Dygraph
 					function adaptedData(data) {
-						
-						//var sTime=new Date().getTime();
+
+						// var sTime=new Date().getTime();
 
 						var pushData = [];
 
@@ -170,67 +222,36 @@ angular
 							}
 							pushData.push(myData);
 						}
-					//	var eTime=new Date().getTime();
-
-						//console.log(eTime-sTime);
 
 						return pushData;
 
-					};
-					
-					
+					}
+					;
 
 				})
 
-		// =============================================================================================
+// =============================================================================================
 
-				
-				//============gauge directive===============================
-				.directive('ngGauge', function() {
-					return{
-						restrict:'E',
-						scope:{
-							name:'='
-							//data:'=?',
-							//seriesNumber:'=?'
-							
-						},
-						template:'<canvas class="canv_gauge" id="c1" ></canvas>',//<div ng-repeat="myGauge in list">ziuta +{{$index}}</div>
-				link:function(scope, element, attrs) {
-					
-					var canvGauge = element.find(".canv_gauge");
-					console.log(canvGauge);
-					
-					scope.list = [1,2];
-							scope.gaugesTable=[];
-						//	scope.servi
-							console.log(scope.seriesNumber);
-							/*for(var i=0;i<1;i++){*/
-								//console.log(i);
-							console.log(scope.name);
-					
-							//console.log(gauge);
-						//	scope.gaugesTable.push(gauge);
-							
-						/*}*/
-							console.log(scope.list);
-						},
-						controller:function($scope){
-							var gauge=new Gauge({
-								renderTo:$scope.name,
-					/*			width:180,
-								height:180,
-								title:'Czujnik'*/
-								
-							});
-							
-						//	gauge.onready=function(){
-									//gauge.setValue(Math.random()*100);
-							//		};
-							
-							gauge.draw();
-						}
-						
-					}
-					
-				});
+/*
+ * //============gauge directive===============================
+ * .directive('ngGauge', function() { return{ restrict:'E', scope:{ name:'='
+ * //data:'=?', //seriesNumber:'=?' }, template:'<canvas class="canv_gauge"
+ * id="c1" ></canvas>',//<div ng-repeat="myGauge in list">ziuta +{{$index}}</div>
+ * link:function(scope, element, attrs) {
+ * 
+ * var canvGauge = element.find(".canv_gauge"); console.log(canvGauge);
+ * 
+ * scope.list = [1,2]; scope.gaugesTable=[]; // scope.servi
+ * console.log(scope.seriesNumber); for(var i=0;i<1;i++){ //console.log(i);
+ * console.log(scope.name);
+ * 
+ * //console.log(gauge); // scope.gaugesTable.push(gauge); }
+ * console.log(scope.list); }, controller:function($scope){ var gauge=new
+ * Gauge({ renderTo:$scope.name, width:180, height:180, title:'Czujnik'
+ * 
+ * }); // gauge.onready=function(){ //gauge.setValue(Math.random()*100); // };
+ * 
+ * gauge.draw(); } }
+ * 
+ * });
+ */

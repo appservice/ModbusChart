@@ -11,24 +11,25 @@
     <h3>Ustawienia</h3>
   </div>
   <div class="row">
-    <div class="col-lg-12">
-      <div class="jumbotron " style="min-width: 400px" >
+    <div class="col-md-12">
+      <div class="jumbotron " style="min-width: 45em;" >
         <h2>Serwer</h2>
 
-        <table class="table">
-          <tr>
+        <table class="table table-striped table-bordered" style="min-width: 250pt;">
+          <tr >
            <!--  <th>LP</th> -->
             <th>Nazwa</th>
             <th>IP</th>
             <th>Port</th>
             <th>Interwał</th>
+             <th>Co który pomiar zapisać</th>
+            
             <th>Typ danych</th>
+             <th>Współczynnik skali</th>
             <th>Ilość czujników</th>
             <th>Adres rejestru</th>
 
-            <th></th>
-            <th></th>
-            <th></th>
+    
           </tr>
 
           <tr data-ng-repeat="server in serversList">
@@ -37,7 +38,9 @@
             <td>{{server.ip}}</td>
             <td>{{server.port}}</td>
             <td>{{server.timeInterval}}</td>
+            <td>{{server.savedMeasurementNumber}}</td>
             <td>{{server.readedDataType}}</td>
+            <td>{{server.scaleFactor}}</td>
             <td>{{server.readedDataCount}}</td>
             <td>{{server.firstRegisterPos}}</td>
             <!-- <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td> -->
@@ -56,9 +59,9 @@
           data-ng-click="preEditServer(serversList[0])">
           Edytuj <i class="glyphicon glyphicon-edit"></i>
         </button>
-        <button class="btn btn-primary" data-ng-show="isButtonDisabled" data-ng-click="removeServer(serversList[0])">
+   <!--     <button class="btn btn-primary" data-ng-show="isButtonDisabled" data-ng-click="removeServer(serversList[0])">
           Usuń <i class="glyphicon glyphicon-remove"></i>
-        </button>
+        </button>-->  
         <span>
           <button class="btn btn-danger " data-ng-show="isButtonDisabled" data-ng-click="runServer(serversList[0])">
             Włącz <i class="glyphicon glyphicon-play"></i>
@@ -131,6 +134,15 @@
               <span class="alert-danger" data-ng-show="newServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
               <span class="alert-danger" data-ng-show="newServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
               <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="newServer.timeInterval" required min="100">
+            
+            
+              <!-- sampler -->
+              <label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
+              <span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.min">Minimalna wartość to 1!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number" data-ng-model="newServer.savedMeasurementNumber" required min="1">
+
 
               <!-- readedDataTypes -->
               <label for="input_type" class="control-label">Typ danych:</label>
@@ -138,6 +150,12 @@
               <select name="readedDataType" id="input_type" class="form-control" data-ng-model="newServer.readedDataType"
                 data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
               </select>
+              
+              	  <!-- saleFactor -->
+			  <label for="input_saved_scale_factor" class="control-label">Współczynnik skalowania:</label>
+              <span class="alert-danger" data-ng-show="newServerForm.savedScaleFactor.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.savedScaleFactor.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor" data-ng-model="newServer.scaleFactor" required >
 
               <!-- readeDataCount -->
               <label for="input_count" class="control-label">Ilość czujników:</label>
@@ -200,18 +218,32 @@
 
               <!-- interwal -->
               <label for="input_time" class="control-label">Interwał [ms]:</label>
-              <span class="alert-danger" data-ng-show="updatedServerFormr.interval.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.required"> Wymagany!</span>
               <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
               <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
               <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval" required min="100">
 
+              <!-- sampler -->
+              <label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.min">Minimalna wartość to 1!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number" data-ng-model="updatedServer.savedMeasurementNumber" required min="1">
+             
               <!-- readedDataTypes -->
               <label for="input_type" class="control-label">Typ danych:</label>
               <span class="alert-danger" data-ng-show="updatedServerForm.readedDataType.$error.required"> Wymagany!</span>
               <select name="readedDataType" id="input_type" class="form-control" data-ng-model="updatedServer.readedDataType"
                 data-ng-options="dataTypes.type as dataTypes.name for dataTypes in readedDataTypes" required>
               </select>
-
+			  
+			  <!-- saleFactor -->
+			  <label for="input_saved_scale_factor" class="control-label">Współczynnik skalowania:</label>
+              <span class="alert-danger" data-ng-show="updatedServerForm.savedScaleFactor.$error.required"> Wymagany!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.savedScaleFactor.$error.number">Zły format danych! Wymagana liczba!</span>
+              <input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor" data-ng-model="updatedServer.scaleFactor" required >
+				
+				
               <!-- readeDataCount -->
               <label for="input_count" class="control-label">Ilość czujników:</label>
               <span class="alert-danger" data-ng-show="updatedServerForm.readedDataCount.$error.required"> Wymagany!</span>

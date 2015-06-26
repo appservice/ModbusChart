@@ -41,6 +41,8 @@ public class ServerEntity {
 
 	// @Enumerated
 	private String readedDataType;
+	
+	private int savedMeasurementNumber;
 
 	////@JsonIgnore
 ///	@OneToMany(/*mappedBy = "server",*/ fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST/*,CascadeType.REMOVE*/},orphanRemoval=true)
@@ -48,6 +50,16 @@ public class ServerEntity {
 	// ,orphanRemoval=true
 	// CascadeType.ALLCascadeType.MERGE,CascadeType.REMOVE,CascadeType.REFRESH}
 //	private Collection<Measurement> measurements = new ArrayList<>();
+
+	public double scaleFactor;
+	
+	public double getScaleFactor() {
+		return scaleFactor;
+	}
+
+	public void setScaleFactor(double scaleFactor) {
+		this.scaleFactor = scaleFactor;
+	}
 
 	private String description;
 
@@ -136,7 +148,15 @@ public class ServerEntity {
 		return "ServerEntity [id=" + id + ", resourceName=" + name
 				+ ", ipAddress=" + ip + ", port=" + port + ", timeInterval="
 				+ timeInterval + ", readRegister=" + firstRegisterPos
-				+ ", description=" + description + "]";
+				+ ", description=" + description + ", scaleFactor"+scaleFactor+"]";
+	}
+
+	public int getSavedMeasurementNumber() {
+		return savedMeasurementNumber;
+	}
+
+	public void setSavedMeasurementNumber(int savedMeasurementNumber) {
+		this.savedMeasurementNumber = savedMeasurementNumber;
 	}
 
 }
