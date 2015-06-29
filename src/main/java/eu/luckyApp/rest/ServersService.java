@@ -50,6 +50,9 @@ public class ServersService implements Observer {
 
 	@Autowired
 	private RegisterReader registerReader;
+	
+	@Autowired
+	private MeasurementRS measurementRS;
 
 	private String errorMessage;
 
@@ -72,8 +75,8 @@ public class ServersService implements Observer {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{id}")
-	public ServerEntity getServer(@PathParam("id") long id) {
+	@Path("/{serverId}")
+	public ServerEntity getServer(@PathParam("serverId") long id) {
 
 		ServerEntity server = serverRepository.findOne(id);
 
@@ -93,7 +96,7 @@ public class ServersService implements Observer {
 	}
 
 	@PUT
-	@Path("/{id}")
+	@Path("/{serverId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateServer(ServerEntity server) {
 		serverRepository.save(server);
@@ -103,7 +106,7 @@ public class ServersService implements Observer {
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{serverId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
 		// mesasurementRepo.findAll();
@@ -114,8 +117,8 @@ public class ServersService implements Observer {
 	}
 
 	@DELETE
-	@Path("/{id}")
-	public Response deleteServerById(@PathParam("id") long id) {
+	@Path("/{serverId}")
+	public Response deleteServerById(@PathParam("serverId") long id) {
 		LOG.warn(id);
 		mRepository.deleteAllValues();
 		mRepository.deleteAllInBatch();
@@ -124,8 +127,8 @@ public class ServersService implements Observer {
 	}
 
 	@POST
-	@Path("/{id}/executor")
-	public Response runServer(@PathParam("id") long id) {
+	@Path("/{serverId}/executor")
+	public Response runServer(@PathParam("serverId") long id) {
 
 		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
@@ -157,8 +160,8 @@ public class ServersService implements Observer {
 	}
 
 	@DELETE
-	@Path("/{id}/executor")
-	public Response stopServer(@PathParam("id") Long id) {
+	@Path("/{serverId}/executor")
+	public Response stopServer(@PathParam("serverId") Long id) {
 
 		ServerEntity server = serverRepository.findOne(id);
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
@@ -184,9 +187,9 @@ public class ServersService implements Observer {
 	 * @return true if executor is scheduling task
 	 */
 	@GET
-	@Path("/{id}/executor")
+	@Path("/{serverId}/executor")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ServerRunningChecker isConntectedToServer(@PathParam("id") Long id) {
+	public ServerRunningChecker isConntectedToServer(@PathParam("serverId") Long id) {
 
 		ServerRunningChecker serverRunningChecker = new ServerRunningChecker();
 		serverRunningChecker.setServerId(id);
@@ -248,13 +251,18 @@ public class ServersService implements Observer {
 
 	}
 
-	@Path("/{id}/measurement-online")
+@Path("/{serverId}/measurement-online")
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Measurement getMasurementsOline() {
 
 		return measurementOnline;
 
+	}
+	
+	@Path("/{serverId}/measurements")
+	public MeasurementRS showMeasurementRs(){
+		return measurementRS;
 	}
 
 }

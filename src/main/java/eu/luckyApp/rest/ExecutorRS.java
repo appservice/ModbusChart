@@ -30,8 +30,8 @@ import eu.luckyApp.model.ServerRunningChecker;
 import eu.luckyApp.repository.MeasurementRepository;
 import eu.luckyApp.repository.ServerRepository;
 
-@Component
-@Path("/")
+//@Component
+//@Path("/")
 public class ExecutorRS implements Observer {
 	
 	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());

@@ -5,72 +5,87 @@
 <title>Pobierz dane</title>
 </head>
 <body>
-  <div class="page-header">
-    <h3>Pobierz dane</h3>
-  </div>
+	<div class="page-header">
+		<h3>Pobierz dane</h3>
+	</div>
 
-  <div class="jumbotron">
+	<div class="jumbotron">
 
-    <h3>
-      Pobierz dane w formie arkusza kalkualcyjengo excel.
-      <!-- <button class="btn btn-default" data-ng-click="downloadData()">Pobierz</button> -->
+		<h3>
+			Pobierz dane w formie arkusza kalkualcyjengo excel.
+			<!-- <button class="btn btn-default" data-ng-click="downloadData()">Pobierz</button> -->
 
-    </h3>
-  </div>
+		</h3>
+	</div>
 
-  <div class="jumbotron">
-    <table class="table">
-      <tr>
-        <td><h4>Dane z ostatnich 2 godzin</h4></td>
-        <td><a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{2*60*60*1000}}">Pobierz <i class="glyphicon glyphicon-save-file"></i></a></td>
-      </tr>
-      <tr>
-        <td><h4>Dane z ostatnich 8 godzin</h4></td>
-        <td>
-          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{8*60*60*1000}}">
-            Pobierz <i class="glyphicon glyphicon-save-file"></i>
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td><h4>Dane z ostatnich 24 godzin</h4></td>
-        <td>
-          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{24*60*60*1000}}">
-            Pobierz <i class="glyphicon glyphicon-save-file"></i>
-          </a>
-        </td>
-      </tr>
+	<div class="jumbotron">
+		<table class="table">
 
-      <tr>
-        <td><h4>Dane z ostatnich 7 dni</h4></td>
-        <td>
-          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{7*24*60*60*1000}}">
-            Pobierz <i class="glyphicon glyphicon-save-file"></i>
-          </a>
-        </td>
-      </tr>
-      
-      <tr>
-        <td><h4>Dane z ostatnich 31 dni</h4></td>
-        <td>
-          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{31*24*60*60*1000}}">
-            Pobierz <i class="glyphicon glyphicon-save-file"></i>
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td><h4>Dane z ostatnich 90 dni</h4></td>
-        <td>
-          <a class="btn btn-primary" data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{31*24*60*60*1000}}">
-            Pobierz <i class="glyphicon glyphicon-save-file"></i>
-          </a>
-        </td>
-      </tr>
+			<tr>
+				<td><h3>Próbkowanie co 1 min</h3></td>
+				<td></td>
+			</tr>
+			<tr>
+			<tr>
+				<td><h4>Dane z ostatnich 2 godzin</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{2*60*60*1000}}">Pobierz
+						<i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
+			<tr>
+				<td><h4>Dane z ostatnich 8 godzin</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{8*60*60*1000}}">
+						Pobierz <i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
+			<tr>
+				<td><h4>Dane z ostatnich 24 godzin</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{24*60*60*1000}}">
+						Pobierz <i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
 
+			<tr>
+				<td><h4>Dane z ostatnich 7 dni</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{7*24*60*60*1000}}">
+						Pobierz <i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
 
+			<tr>
+				<td><h4>Dane z ostatnich 31 dni</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{31*24*60*60*1000}}">
+						Pobierz <i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
+						<tr>
+				<td><h3>Próbkowanie co 30 min</h3></td>
+				<td></td>
+			</tr>
+			
+			<tr>
+				<td><h4>Dane z ostatnich 90 dni</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{90*24*60*60*1000}}">
+						Pobierz <i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
 
-    </table>
-    <!-- 
+			<tr>
+				<td><h4>Dane całościowe</h4></td>
+				<td><a class="btn btn-primary"
+					data-ng-href="rest/servers/1/measurements/download/excel?timePeriod={{380*24*60*60*1000}}">
+						Pobierz <i class="glyphicon glyphicon-save-file"></i>
+				</a></td>
+			</tr>
+
+		</table>
+		<!-- 
     <h4>
       Pobierz dane <strong>całosciowe</strong> w formie arkusza kalkualcyjengo
       <button class="btn btn-default" data-ng-click="downloadData()">Pobierz</button>
@@ -79,7 +94,7 @@
        
       </span>
     </h4> -->
-  </div>
+	</div>
 
 
 </body>

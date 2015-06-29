@@ -11,7 +11,7 @@ angular.module('myApp.controllers', [])
 
 	$scope.chartTitle = 'Wykres z n dni';
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 7;
+	//$scope.maxSeriesNumber = 8;
 	$scope.showChart = false;
 
 	var today = new Date();
@@ -77,23 +77,17 @@ angular.module('myApp.controllers', [])
  * 2 hours chart controller
  * ================================================================================================
  */
-.controller('TwoHoursChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
+.controller('TwoHoursChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 7;
+//	$scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 2 godzin';
 
-	Restangular.one('rest/servers/1/').customGET('measurements', {
-		"timePeriod" : 2 * 60 * 60 * 1000
-	}).then(function(data) {
-		$scope.myData = data.plain();
-		$scope.isLoading = false;
-
-	}, function(error) {
-		$scope.isLoading = false;
-		$scope.errorView(error);
-		console.log(error);
+	DataDownloader.getData(2* 60 * 60 * 1000).then(function(data){
+		$scope.isLoading=false;
+		$scope.myData=data;
+		
 	});
 
 } ])
@@ -103,24 +97,17 @@ angular.module('myApp.controllers', [])
  * 8 hours chart controller
  * ================================================================================================
  */
-.controller('EightHoursChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
+.controller('EightHoursChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 7;
+//	$scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 8 godzin';
 
-	Restangular.one('rest/servers/1/').customGET('measurements', {
-		"timePeriod" : 8 * 60 * 60 * 1000
-	}).then(function(data) {
-		$scope.myData = data.plain();
-		$scope.isLoading = false;
-
-	}, function(error) {
-		$scope.isLoading = false;
-		$scope.errorView(error);
-
-		console.log(error);
+	DataDownloader.getData(8* 60 * 60 * 1000).then(function(data){
+		$scope.isLoading=false;
+		$scope.myData=data;
+		
 	});
 
 } ])
@@ -130,25 +117,17 @@ angular.module('myApp.controllers', [])
  * Day chart controller
  * ================================================================================================
  */
-.controller('DayChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
+.controller('DayChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 7;
+//	$scope.maxSeriesNumber = 7;
 	$scope.chartTitle = 'Wykres z ostatnich 24 godzin';
 	$scope.isLoading = true;
 
-	Restangular.one('rest/servers/1/').customGET('measurements', {
-		"timePeriod" : 24 * 60 * 60 * 1000
-	}).then(function(data) {
-		$scope.myData = data.plain();
-		console.log("Data count: ")
-		$scope.isLoading = false;
-
-	}, function(error) {
-		$scope.isLoading = false;
-		$scope.errorView(error);
-
-		console.log(error);
+	DataDownloader.getData(24 * 60 * 60 * 1000).then(function(data){
+		$scope.isLoading=false;
+		$scope.myData=data;
+		
 	});
 
 } ])
@@ -158,24 +137,17 @@ angular.module('myApp.controllers', [])
  * 7 days chart controller
  * ================================================================================================
  */
-.controller('SevenDaysChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
+.controller('SevenDaysChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 7;
+//	$scope.maxSeriesNumber = 7;
 	$scope.chartTitle = 'Wykres z ostatnich 7 dni';
 	$scope.isLoading = true;
 
-	Restangular.one('rest/servers/1/').customGET('measurements', {
-		"timePeriod" : 7 * 24 * 60 * 60 * 1000
-	}).then(function(data) {
-		$scope.myData = data.plain();
-		$scope.isLoading = false;
-
-	}, function(error) {
-		$scope.isLoading = false;
-		$scope.errorView(error);
-
-		console.log(error);
+	DataDownloader.getData(7 * 24 * 60 * 60 * 1000).then(function(data){
+		$scope.isLoading=false;
+		$scope.myData=data;
+		
 	});
 
 } ])
@@ -185,25 +157,19 @@ angular.module('myApp.controllers', [])
  * 31 days chart controller
  * ================================================================================================
  */
-.controller('ThirtyOneDaysChartController', [ '$scope', 'Restangular', function($scope, Restangular) {
+.controller('ThirtyOneDaysChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 	$scope.myData = [];
-	$scope.maxSeriesNumber = 7;
+//	$scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 31 dni';
 
-	Restangular.one('rest/servers/1/').customGET('measurements', {
-		"timePeriod" : 31 * 24 * 60 * 60 * 1000
-	}).then(function(data) {
-		$scope.myData = data.plain();
-		console.log("data count: "+$scope.myData.length);
-		$scope.isLoading = false;
 
-	}, function(error) {
-		$scope.isLoading = false;
-		$scope.errorView(error);
-
-		console.log(error);
-	});
+DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
+	$scope.isLoading=false;
+	$scope.myData=data;
+	
+});
+	
 
 } ])
 

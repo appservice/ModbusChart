@@ -26,11 +26,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.MeasurementRepository;
 
-@Path("/servers/{id}/measurements/download")
+@Component
+@Path("/")     //servers/{id}/measurements/download
 public class ExcelRS {
 
 	public static final Logger LOG = Logger.getLogger(ExcelRS.class);
@@ -77,8 +79,18 @@ public class ExcelRS {
 
 		if (timePeriod != 0) {
 			Date now = new Date();
-			Date beginDate = new Date(now.getTime() - timePeriod);
+			long differenceDate=now.getTime() - timePeriod;
+			Date beginDate = new Date(differenceDate);
+			LOG.warn("now:"+now.getTime()+" time period:"+timePeriod+" difference:"+differenceDate);
+			// 31 days in milisseconds
+			long thirtyOneDays=31*24*60*60*1000L;
+			
+			if(timePeriod>thirtyOneDays){
+				LOG.warn("thirtyOneDays "+thirtyOneDays+" modulo 30");
+				return measurementRepository.findAllFromServerByStartDate(/*serverId, */beginDate,30);
 
+			}
+			LOG.warn("modulo 1");
 			return measurementRepository.findAllFromServerByStartDate(/*serverId, */beginDate,1);
 
 		} else
@@ -90,7 +102,13 @@ public class ExcelRS {
 		} else
 		// with startDate and endDate parameters
 		if (startDate < endDate) {
-
+			if(endDate-startDate>31*24 * 60*60 * 1000L){
+				
+					return	measurementRepository.findAllFromServerByDates(
+						/* serverId, */new Date(startDate), new Date(endDate),30);
+						
+				}
+			
 			return measurementRepository.findAllFromServerByDates(/*serverId,*/ new Date(startDate), new Date(endDate),1);
 		} else
 			return measurementRepository.findAllFromServer(/*serverId*/);
@@ -162,9 +180,7 @@ public class ExcelRS {
 		}
 		setExcelHeader(sheet,lastColumnNumber);
 
-		LOG.info("serverId: " + serverId);
-		// Iterable<Measurement> measurements =
-		// measurementRepository.findAllFromServer(1l);
+
 
 		// --------------dateStyle---------------------------
 		CellStyle dateStyle = workbook.createCellStyle();

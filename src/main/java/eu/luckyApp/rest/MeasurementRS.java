@@ -1,8 +1,6 @@
 package eu.luckyApp.rest;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -17,19 +15,22 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import eu.luckyApp.model.Measurement;
-import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.repository.MeasurementRepository;
-import eu.luckyApp.repository.ServerRepository;
 
-@Path("/servers/{serverId}/measurements")
-public class MearuementRS {
-	private static final Logger LOG = Logger.getLogger(MearuementRS.class);
+@Component
+@Path("/")//{serverId}/measurements
+public class MeasurementRS {
+	private static final Logger LOG = Logger.getLogger(MeasurementRS.class);
 
 	@Autowired
 	MeasurementRepository measurementRepository;
-
+	
+	@Autowired
+	ExcelRS excelRs;
+	
 	// @Autowired
 	// ServerRepository serverRepository;
 
@@ -58,11 +59,11 @@ public class MearuementRS {
 			if (timePeriod != 0) {
 				Date now = new Date();
 				Date beginDate = new Date(now.getTime() - timePeriod);
-				if (timePeriod < 24 * 60 *60* 1000) {
+				if (timePeriod < 24 * 60 * 60 * 1000) {
 					return Response.ok(
 							measurementRepository.findAllFromServerByStartDate(
 							/* serverId, */beginDate, 1)).build();
-				} else if (timePeriod < 1000 * 60*60 * 24 * 7) {
+				} else if (timePeriod < 1000 * 60 * 60 * 24 * 7) {
 					return Response.ok(
 							measurementRepository.findAllFromServerByStartDate(
 							/* serverId, */beginDate, 5)).build();
@@ -88,20 +89,23 @@ public class MearuementRS {
 
 				LOG.info("function getAllByDate is working with parameters: beginDate: "
 						+ startDate + " endDate: " + endDate);
-				if(endDate-startDate<24 * 60*60 * 1000){
-				return Response.ok(
-						measurementRepository.findAllFromServerByDates(
-						/* serverId, */new Date(startDate), new Date(endDate),1))
-						.build();
-				}else if(endDate-startDate<24 * 60*60 * 1000*7){
-					return Response.ok(measurementRepository.findAllFromServerByDates(
-							new Date(startDate), new Date(endDate),5)).build();
+				if (endDate - startDate < 24 * 60 * 60 * 1000) {
+					return Response.ok(
+							measurementRepository.findAllFromServerByDates(
+							/* serverId, */new Date(startDate), new Date(
+									endDate), 1)).build();
+				} else if (endDate - startDate < 24 * 60 * 60 * 1000 * 7) {
+					return Response.ok(
+							measurementRepository.findAllFromServerByDates(
+									new Date(startDate), new Date(endDate), 5))
+							.build();
+				} else {
+					return Response
+							.ok(measurementRepository.findAllFromServerByDates(
+									new Date(startDate), new Date(endDate), 30))
+							.build();
 				}
-				else {
-					return Response.ok(measurementRepository.findAllFromServerByDates(
-							new Date(startDate), new Date(endDate),30)).build();
-				}
-				//}
+				// }
 			}
 		} catch (Exception ex) {
 			LOG.error(ex.getMessage());
@@ -111,9 +115,9 @@ public class MearuementRS {
 	}
 
 	@GET
-	@Path("/{id}")
+	@Path("/{measurementId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Measurement getOne(@PathParam("id") Long id) {
+	public Measurement getOne(@PathParam("measurementId") Long id) {
 		return measurementRepository.findOne(id);
 	}
 
@@ -133,18 +137,9 @@ public class MearuementRS {
 		return Response.noContent().build();
 	}
 
-	@GET
-	@Path("/by-hours")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Iterable<Measurement> getAllInEveryHour(
-			@PathParam("serverId") Long serverId) {
-		LOG.warn("test");
-		return measurementRepository.findAllInEveryHour(/* serverId */);
-	}
-
 	@DELETE
-	@Path("/{id}")
-	public Response deleteOne(@PathParam("id") Long id) {
+	@Path("/{measurementId}")
+	public Response deleteOne(@PathParam("measurementId") Long id) {
 		measurementRepository.delete(id);
 
 		return Response.noContent().build();
@@ -158,41 +153,15 @@ public class MearuementRS {
 		if (startDate > 0 && endDate > 0) {
 			Iterable<Measurement> deletedMeasurements = measurementRepository
 					.findAllFromServerByDates(/* serverId, */new Date(startDate),
-							new Date(endDate),1);
+							new Date(endDate), 1);
 			measurementRepository.delete(deletedMeasurements);
 			return Response.noContent().build();
 		} else
 			return Response.status(Status.BAD_REQUEST).build();
 	}
 
-	private Iterable<Measurement> getCollectionByAverage(int rowNumbers,
-			Iterable<Measurement> fullList) {
-
-		List<Measurement> response = new ArrayList<Measurement>();
-		double avgValue;
-		int i = 0;
-		for (Measurement m : fullList) {
-
-			avgValue = +m.getMeasuredValue().get(0);
-			if (i == rowNumbers) {
-				long j = 1;
-				Measurement myMeasuremnt = new Measurement();
-				myMeasuremnt.setDate(m.getDate());
-				myMeasuremnt.setId(j);
-
-				// myMeasuremnt.setMeasuredValue(new List<>);
-
-				j++;
-				// myMeasuremnt.setServer(m.getServer());
-				response.add(myMeasuremnt);
-			}
-			i++;
-
-			// for(int i=0;i<m.getMeasuredValue().size()-1;i++)
-			// avgValue=m.getMeasuredValue().get(i);
-
-		}
-		return response;
-
+	@Path("/download")
+	public ExcelRS returnExcelRs(){
+		return excelRs;
 	}
 }

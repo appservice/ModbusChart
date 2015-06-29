@@ -1,6 +1,7 @@
 package eu.luckyApp.repository;
 
 import java.util.Date;
+import java.util.stream.Stream;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -41,6 +42,11 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Long> 
 	@Modifying
 	@Query(nativeQuery=true,value="DELETE FROM Value")
 	public void deleteAllValues();
+	
+	//-----stream result--------
+	@Query("SELECT m FROM Measurement m")
+	public Stream<Measurement>findAllFromServerStream();
+	
 	
 	/*@Modifying
 	@Query(nativeQuery=true,value="DELETE FROM MEASUREMENT;")

@@ -33,6 +33,8 @@ angular
 						,
 
 						link : function(scope, element, attrs) {
+							
+							
 
 							var divGraph = element.find(".div_graph")[0];
 
@@ -166,7 +168,7 @@ angular
 							scope.$watchCollection("data", function(newData, oldData) {
 
 								if (newData != oldData) {
-
+									scope.maxSeriesNumber=10;
 								//	console.log(newData);
 									// add value to number of
 									// columns in first row
@@ -176,12 +178,18 @@ angular
 									}
 
 									// console.log(newData);
-									if (newData.length > 0)
+									if (newData.length > 0){
+										while(newData[0].values.length>=(labelsTable.length)){
+										
+											labelsTable.push("Czujnik-"+labelsTable.length);
+										}
 										while (newData[0].values.length < scope.maxSeriesNumber) {
 											newData[0].values.push("NaN");
 										}
+									}
 
 									g.updateOptions({
+										'labels':labelsTable,
 										'file' : adaptedData(newData),
 										title : scope.chartTitle
 									});

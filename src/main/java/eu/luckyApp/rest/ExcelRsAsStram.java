@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -31,27 +32,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.MeasurementRepository;
 
-//@Path("/servers/{id}/measurements/download")
+//@Path("/servers/{id}/measurements/download/stream")
 public class ExcelRsAsStram {
 
-	public static final Logger LOG = Logger.getLogger(ExcelRS.class);
+	public static final Logger LOG = Logger.getLogger(ExcelRsAsStram.class);
 
-	//@Autowired
+//	@Autowired
 	MeasurementRepository measurementRepository;
 
 	private SXSSFWorkbook workbook;
 	private int lastColumnNumber;
 	private Long serverId;
-	private Iterable<Measurement> measurements;
-
+	//private Stream<Measurement> measurements;
+	private int  rowNumber=1;
 //	@GET
 //	@Path("/excel")
 //	@Produces("application/vnd.ms-excel")
 	public Response getFile(@PathParam("id") Long id, @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate,
 			@DefaultValue("0") @QueryParam("timePeriod") Long timePeriod) {
 		this.serverId = id;
+	LOG.info("wystartowala");	
 
-		this.measurements = checkQueryParams(startDate, endDate, timePeriod);
+	//	this.measurements = checkQueryParams(startDate, endDate, timePeriod);
 
 		// -------------StreaminOutput---------- to return excel file in
 		// outputStream----------
@@ -74,27 +76,27 @@ public class ExcelRsAsStram {
 	}
 
 	// ---------------------checkQueryParams---------------------------------------------
-	private Iterable<Measurement> checkQueryParams(long startDate, long endDate, Long timePeriod) {
+	private Stream<Measurement> checkQueryParams(long startDate, long endDate, Long timePeriod) {
 
 		if (timePeriod != 0) {
 			Date now = new Date();
 			Date beginDate = new Date(now.getTime() - timePeriod);
 
-			return measurementRepository.findAllFromServerByStartDate(/*serverId, */beginDate,1);
+			return null;//measurementRepository.findAllFromServerByStartDate(/*serverId, */beginDate,1);
 
 		} else
 
 		// with startDate parameter
 		if (startDate != 0 && endDate == 0) {
-			return measurementRepository.findAllFromServerByStartDate(/*serverId,*/ new Date(startDate),1);
+			return null;//measurementRepository.findAllFromServerByStartDate(/*serverId,*/ new Date(startDate),1);
 
 		} else
 		// with startDate and endDate parameters
 		if (startDate < endDate) {
 
-			return measurementRepository.findAllFromServerByDates(/*serverId,*/ new Date(startDate), new Date(endDate),1);
+			return null;//measurementRepository.findAllFromServerByDates(/*serverId,*/ new Date(startDate), new Date(endDate),1);
 		} else
-			return measurementRepository.findAllFromServer(/*serverId*/);
+			return measurementRepository.findAllFromServerStream(/*serverId*/);
 	}
 
 	
@@ -154,14 +156,17 @@ public class ExcelRsAsStram {
 
 	private void setExcelRows(Sheet sheet, Long serverId) {
 		
-		Iterator<Measurement> it1 = measurements.iterator();
+	//	Iterator<Measurement> it1 = measurements.iterator();
+		
 
 		//checking the last column number
-		while(it1.hasNext()){
+/*		while(it1.hasNext()){
 			int i=it1.next().getMeasuredValue().size();
 			lastColumnNumber = Math.max(lastColumnNumber, i + 1);
-		}
+		}*/
+		lastColumnNumber=10;
 		setExcelHeader(sheet,lastColumnNumber);
+		LOG.info("dziala");
 
 		LOG.info("serverId: " + serverId);
 		// Iterable<Measurement> measurements =
@@ -183,13 +188,20 @@ public class ExcelRsAsStram {
 		valueStyle.setBorderTop(CellStyle.BORDER_THIN);
 		valueStyle.setBorderBottom(CellStyle.BORDER_THIN);
 
-		int rowNumber = 1;
-		Iterator<Measurement> iterator = measurements.iterator();
+		//int  rowNumber = 1;
+		//Iterator<Measurement> iterator = measurements.iterator();
 
-		while (iterator.hasNext()) {
-			Row row = sheet.createRow(rowNumber);
-			Measurement m = iterator.next();
-
+		//while (iterator.hasNext()) {
+		
+		LOG.info("stream function befoure");
+		try(Stream<Measurement> stream=measurementRepository.findAllFromServerStream()){
+			
+			LOG.info("stream function");
+			stream.limit(10).forEach(m->{
+				LOG.info(m.getId()+" "+m.getDate());
+			/*Row row = sheet.createRow(rowNumber);
+	
+			
 			// -----id cell---------
 			Cell idCell = row.createCell(0);
 			idCell.setCellValue(rowNumber);
@@ -198,22 +210,26 @@ public class ExcelRsAsStram {
 			// -----data cell-----------
 			Cell dateCell = row.createCell(1);
 			dateCell.setCellValue(m.getDate());
-			dateCell.setCellStyle(dateStyle);
+			dateCell.setCellStyle(dateStyle);*/
 			// time.setCellType(Cell.);
 
 			// ----------measuring cells---------------------
-			for (int i = 0; i < m.getMeasuredValue().size(); i++) {
+/*			for (int i = 0; i < m.getMeasuredValue().size(); i++) {
 
 				Cell valueCell = row.createCell(i + 2); // 2 position in right
-				valueCell.setCellValue(m.getMeasuredValue().get(i));
+				//valueCell.setCellValue(m.getMeasuredValue().get(i));
 				valueCell.setCellStyle(valueStyle);
 
 				// set lastColumnNumber
 				//lastColumnNumber = Math.max(lastColumnNumber, i + 2);
-			}
+			}*/
 
-			rowNumber++;
+		//	rowNumber++;
+			}) ;
+		}catch(Exception e){
+			LOG.error(e.getMessage());
 		}
+		//}
 		sheet.autoSizeColumn(0);
 		sheet.autoSizeColumn(1);
 		sheet.createFreezePane(0, 1);
