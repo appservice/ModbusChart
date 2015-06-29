@@ -168,7 +168,7 @@ angular
 							scope.$watchCollection("data", function(newData, oldData) {
 
 								if (newData != oldData) {
-									scope.maxSeriesNumber=10;
+									
 								//	console.log(newData);
 									// add value to number of
 									// columns in first row
