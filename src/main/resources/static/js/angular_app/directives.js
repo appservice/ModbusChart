@@ -33,8 +33,6 @@ angular
 						,
 
 						link : function(scope, element, attrs) {
-							
-							
 
 							var divGraph = element.find(".div_graph")[0];
 
@@ -71,8 +69,8 @@ angular
 								legend : 'auto',// 'always',//
 								title : scope.chartTitle,
 								ylabel : scope.yAxisTitle,
-								yLabelWidth:18,
-								digitsAfterDecimal:3,// "Przepływ
+								yLabelWidth : 18,
+								digitsAfterDecimal : 3,// "Przepływ
 								// [m3/s]",
 								// xlabel:"Czas",
 								drawGapEdgePoints : true,
@@ -168,8 +166,8 @@ angular
 							scope.$watchCollection("data", function(newData, oldData) {
 
 								if (newData != oldData) {
-									
-								//	console.log(newData);
+
+
 									// add value to number of
 									// columns in first row
 									// equil number of labels
@@ -178,10 +176,18 @@ angular
 									}
 
 									// console.log(newData);
-									if (newData.length > 0){
-										while(newData[0].values.length>=(labelsTable.length)){
-										
-											labelsTable.push("Czujnik-"+labelsTable.length);
+									if (newData.length > 0) {
+										while (newData[0].values.length >= (labelsTable.length)) {
+											labelsTable.push("Czujnik-" + labelsTable.length);
+
+											var legendSeries2 = {};
+											legendSeries2.id = labelsTable.length - 2;
+											legendSeries2.isVisible = true;
+											legendSeries2.label = labelsTable[labelsTable.length - 1];
+											legendSeries2.color = colorsArray[labelsTable.length - 2];
+											scope.series.push(legendSeries2);
+											// console.log(legendSeries2);
+
 										}
 										while (newData[0].values.length < scope.maxSeriesNumber) {
 											newData[0].values.push("NaN");
@@ -189,7 +195,7 @@ angular
 									}
 
 									g.updateOptions({
-										'labels':labelsTable,
+										'labels' : labelsTable,
 										'file' : adaptedData(newData),
 										title : scope.chartTitle
 									});
@@ -198,18 +204,6 @@ angular
 								// }
 
 							});
-
-							// scope.$watch("maxSeriesNumber",function(newData,oldData){
-							//							  
-							// console.log("new data:"+newData);
-							// console.log("oldData: "+oldData);
-							// //scope.maxSeriesNumber=newData;
-							// if(newData!=oldData){ for(var
-							// di=0;di<newData-oldData;di++){
-							// labelsTable.push("Czujnik "); };
-							// g.updateOptions({'labels':labelsTable,}); }
-							//							  
-							// });
 
 						}
 

@@ -16,8 +16,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(ServersService.class);
 		register(MeasurementRS.class);
 		register(ExcelRS.class);
-		//register(ExecutorRS.class);
-	//	register(ExcelRsAsStram.class);
+
 	
 	}
 
