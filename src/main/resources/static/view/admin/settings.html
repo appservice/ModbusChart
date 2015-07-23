@@ -131,9 +131,9 @@
               <!-- interwal -->
               <label for="input_time" class="control-label">Interwał [ms]:</label>
               <span class="alert-danger" data-ng-show="newServerForm.interval.$error.required"> Wymagany!</span>
-              <span class="alert-danger" data-ng-show="newServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
+              <span class="alert-danger" data-ng-show="newServerForm.interval.$error.min">Minimalny intewał to 20 ms!</span>
               <span class="alert-danger" data-ng-show="newServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
-              <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="newServer.timeInterval" required min="100">
+              <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="newServer.timeInterval" required min="20">
             
             
               <!-- sampler -->
@@ -219,9 +219,9 @@
               <!-- interwal -->
               <label for="input_time" class="control-label">Interwał [ms]:</label>
               <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.required"> Wymagany!</span>
-              <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.min">Minimalny intewał to 100 ms!</span>
+              <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.min">Minimalny intewał to 20 ms!</span>
               <span class="alert-danger" data-ng-show="updatedServerForm.interval.$error.number">Zły format danych! Wymagana liczba!</span>
-              <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval" required min="100">
+              <input name="interval" type="number" class="form-control" id="input_time" data-ng-model="updatedServer.timeInterval" required min="20">
 
               <!-- sampler -->
               <label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>

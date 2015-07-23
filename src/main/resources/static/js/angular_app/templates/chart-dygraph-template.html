@@ -1,0 +1,42 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body> -->
+
+<table class="digraph-table" style="width: 100%;">
+	<tr>
+		<td style="width: 85%">
+			<div id="div_g" class="div_graph" style="width: auto; height: 450px;"></div>
+		</td>
+		<td class="dygraph-td-legend">
+			<button id="saveExcelBtn" class="btn btn-default on-top" style="width: 90px" data-ng-click="resetZoom()">
+			<!-- 	<i class="glyphicon glyphicon-zoom-out"></i> zoom --><small>Reset zoom</small>
+			</button>
+			<button id="saveBtn" class="btn btn-default on-top" style="width: 90px;text-align:justify; " ng-click="downloadGraph();">
+				<i class="glyphicon glyphicon-picture"></i> PNG
+			</button>
+			<button id="saveExcelBtn" class="btn btn-default on-top" style="width: 90px;text-align:justify;" data-ng-click="downloadExcel()">
+				<i class="glyphicon glyphicon-download"></i> EXCEL
+			</button>
+
+			<div id="div_l" class="dygraph-div-legend"></div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<div class="series-container">
+				<label data-ng-repeat="mySerie in series" ng-style="{color:mySerie.color}">
+					<input id="chk-{{mySerie.id}}" type="checkbox" checked="checked" data-ng-click="showVisible(mySerie);">
+					<strong>{{mySerie.label}}</strong>
+					</input>
+				</label>
+			</div>
+		</td>
+	</tr>
+</table>
+
+<!-- </body>
+</html> -->

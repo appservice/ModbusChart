@@ -63,6 +63,10 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		url:'/custom-period-chart',
 		templateUrl:'view/custom-period-chart.html',
 		controller:'CustomPeriodChartController'
+	}).state('websocket',{
+		url:'/websocket',
+		templateUrl:'view/websocket.html',
+		controller:'WebsocketController'
 	});
 	
 });

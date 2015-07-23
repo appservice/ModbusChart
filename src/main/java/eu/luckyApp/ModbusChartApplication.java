@@ -48,11 +48,11 @@ public class ModbusChartApplication extends SpringBootServletInitializer {
 	}
 
 	//VVVVVVVVVVVVVVVVVVVV skasuj gdy wildfly
-	  @Override protected SpringApplicationBuilder configure(
+	/*  @Override protected SpringApplicationBuilder configure(
 	  SpringApplicationBuilder application) { return
 	 application.sources(applicationClass); }
 	  
-	  private static Class<ModbusChartApplication>applicationClass=ModbusChartApplication.class;
+	  private static Class<ModbusChartApplication>applicationClass=ModbusChartApplication.class;*/
 	//^^^^^^^^^^^^^^^^^^^^^^^^
 
 

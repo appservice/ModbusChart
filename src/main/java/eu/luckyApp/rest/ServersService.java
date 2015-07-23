@@ -26,6 +26,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import eu.luckyApp.modbus.service.RegisterReader;
@@ -34,13 +36,16 @@ import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRunningChecker;
 import eu.luckyApp.repository.MeasurementRepository;
 import eu.luckyApp.repository.ServerRepository;
+import eu.luckyApp.websocket.MeasureEvent;
 
 @Component
 @Path("/servers")
-public class ServersService implements Observer {
+public class ServersService implements Observer,ApplicationEventPublisherAware{
 
 	private static final Logger LOG = Logger.getLogger(ServersService.class
 			.getName());
+	
+	private ApplicationEventPublisher publisher;
 
 	@Autowired
 	private ServerRepository serverRepository;
@@ -132,9 +137,11 @@ public class ServersService implements Observer {
 
 		ServerEntity server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
+		
 		if ((schedulersMap.get(id)) == null) {
-
+			registerReader.startConnection();
 			registerReader.addObserver(this);
+		
 			// save start measurement with null values
 			Measurement startMeasurement = new Measurement();
 			// startMeasurement.setServer(server);
@@ -143,10 +150,14 @@ public class ServersService implements Observer {
 
 			ScheduledExecutorService scheduler = Executors
 					.newScheduledThreadPool(4);
+			
 			// TaskScheduler sched=new ThreadPoolTaskScheduler();
 			// sched.schedule(registerReader, new CronTrigger(""));
+			
+			
 			schedulersMap.put(id, scheduler);
-
+			
+			
 			scheduler.scheduleAtFixedRate(registerReader, 0,
 					server.getTimeInterval(), TimeUnit.MILLISECONDS);
 			LOG.info("schedulersMap after add:" + schedulersMap);
@@ -171,6 +182,7 @@ public class ServersService implements Observer {
 			schedulersMap.remove(id);
 			// registerReader.setConnected(false);
 			registerReader.deleteObserver(this);
+			registerReader.stopConnection();
 			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":"
 					+ server.getPort());
 			return Response.ok().build();
@@ -220,6 +232,10 @@ public class ServersService implements Observer {
 
 			// measurement.getMeasuredValue().addAll(myData);
 			measurementOnline.getMeasuredValue().addAll(myData);
+			
+			
+			MeasureEvent measureEvent=new MeasureEvent(measurementOnline);
+			publisher.publishEvent(measureEvent);
 
 			// server.getMeasurements().add(measurement);
 			// Measurement m = mRepository.save(measurement);
@@ -263,6 +279,14 @@ public class ServersService implements Observer {
 	@Path("/{serverId}/measurements")
 	public MeasurementRS showMeasurementRs(){
 		return measurementRS;
+	}
+
+	
+	//set publisher
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+		this.publisher=publisher;
+		
 	}
 
 }

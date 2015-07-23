@@ -11,7 +11,7 @@ angular.module('myApp.controllers', [])
 
 	$scope.chartTitle = 'Wykres z n dni';
 	$scope.myData = [];
-	//$scope.maxSeriesNumber = 8;
+	// $scope.maxSeriesNumber = 8;
 	$scope.showChart = false;
 
 	var today = new Date();
@@ -22,13 +22,11 @@ angular.module('myApp.controllers', [])
 	//
 
 	$scope.createChart = function() {
-	//	console.log($scope.fromDate);
+		// console.log($scope.fromDate);
 		var startDate = new Date($scope.fromDate);
 		var endDate = new Date($scope.untilDate);
 
 		$scope.chartTitle = 'Wykres od: ' + startDate.toLocaleString() + ' do ' + endDate.toLocaleString();
-
-
 
 		$scope.isLoading = true;
 
@@ -39,7 +37,6 @@ angular.module('myApp.controllers', [])
 
 		.then(function(data) {
 			$scope.myData = data.plain();
-
 
 			$scope.isLoading = false;
 
@@ -59,16 +56,7 @@ angular.module('myApp.controllers', [])
 
 	}
 
-	/*
-	 * $scope.myMeasurements=[];
-	 * 
-	 * var baseMeasurements=Restangular.all('rest/servers/1/measurements');
-	 * 
-	 * baseMeasurements.getList({"startDate":$scope.fromDate.getTime(),"endDate":$scope.untilDate.getTime()+1000*3600*24}).then(function(data){
-	 * $scope.myMeasurements=data;
-	 * 
-	 * });
-	 */
+
 
 } ])
 
@@ -80,14 +68,14 @@ angular.module('myApp.controllers', [])
 .controller('TwoHoursChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-//	$scope.maxSeriesNumber = 7;
+	// $scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 2 godzin';
 
-	DataDownloader.getData(2* 60 * 60 * 1000).then(function(data){
-		$scope.isLoading=false;
-		$scope.myData=data;
-		
+	DataDownloader.getData(2 * 60 * 60 * 1000).then(function(data) {
+		$scope.isLoading = false;
+		$scope.myData = data;
+
 	});
 
 } ])
@@ -100,14 +88,14 @@ angular.module('myApp.controllers', [])
 .controller('EightHoursChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-//	$scope.maxSeriesNumber = 7;
+	// $scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 8 godzin';
 
-	DataDownloader.getData(8* 60 * 60 * 1000).then(function(data){
-		$scope.isLoading=false;
-		$scope.myData=data;
-		
+	DataDownloader.getData(8 * 60 * 60 * 1000).then(function(data) {
+		$scope.isLoading = false;
+		$scope.myData = data;
+
 	});
 
 } ])
@@ -120,14 +108,14 @@ angular.module('myApp.controllers', [])
 .controller('DayChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-//	$scope.maxSeriesNumber = 7;
+	// $scope.maxSeriesNumber = 7;
 	$scope.chartTitle = 'Wykres z ostatnich 24 godzin';
 	$scope.isLoading = true;
 
-	DataDownloader.getData(24 * 60 * 60 * 1000).then(function(data){
-		$scope.isLoading=false;
-		$scope.myData=data;
-		
+	DataDownloader.getData(24 * 60 * 60 * 1000).then(function(data) {
+		$scope.isLoading = false;
+		$scope.myData = data;
+
 	});
 
 } ])
@@ -140,14 +128,14 @@ angular.module('myApp.controllers', [])
 .controller('SevenDaysChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 
 	$scope.myData = [];
-//	$scope.maxSeriesNumber = 7;
+	// $scope.maxSeriesNumber = 7;
 	$scope.chartTitle = 'Wykres z ostatnich 7 dni';
 	$scope.isLoading = true;
 
-	DataDownloader.getData(7 * 24 * 60 * 60 * 1000).then(function(data){
-		$scope.isLoading=false;
-		$scope.myData=data;
-		
+	DataDownloader.getData(7 * 24 * 60 * 60 * 1000).then(function(data) {
+		$scope.isLoading = false;
+		$scope.myData = data;
+
 	});
 
 } ])
@@ -159,17 +147,15 @@ angular.module('myApp.controllers', [])
  */
 .controller('ThirtyOneDaysChartController', [ '$scope', 'DataDownloader', function($scope, DataDownloader) {
 	$scope.myData = [];
-//	$scope.maxSeriesNumber = 7;
+	// $scope.maxSeriesNumber = 7;
 	$scope.isLoading = true;
 	$scope.chartTitle = 'Wykres z ostatnich 31 dni';
 
+	DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data) {
+		$scope.isLoading = false;
+		$scope.myData = data;
 
-DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
-	$scope.isLoading=false;
-	$scope.myData=data;
-	
-});
-	
+	});
 
 } ])
 
@@ -182,48 +168,46 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 
 	$scope.myData = [];
 	$scope.maxSeriesNumber = 7;
-	
-	//don't show befoure get the data from server
-	$scope.is_loaded=false;
+
+	// don't show befoure get the data from server
+	$scope.is_loaded = false;
 
 	Restangular.one('rest/servers', 1).get().then(function(myServer) {
-		//console.log(myServer);
+		// console.log(myServer);
 		$scope.myServer = myServer;
-		
-		if ($scope.myServer != null) {			
-			$scope.is_loaded=true;
-			
-			$scope.maxSeriesNumber = myServer.readedDataCount; //|| 0;
+
+		if ($scope.myServer != null) {
+			$scope.is_loaded = true;
+
+			$scope.maxSeriesNumber = myServer.readedDataCount; // || 0;
 			$scope.serverTimeIterval = myServer.timeInterval;
 
-			var dataTableSize = 60;			
+			var dataTableSize = 60;
 
+			var isFirstData = true;
 
-			var isFirstData=true;
-			
 			// ----------------poller----------------
- 
-			var myPoller = poller.get($scope.myServer.one("measurement-online"), { 
-	
+
+			var myPoller = poller.get($scope.myServer.one("measurement-online"), {
+
 				action : 'get',
 				delay : $scope.serverTimeIterval,
 			// catchError : true
 			});
 
 			myPoller.promise.then(null, null, function(data) {
-				
 
 				// check the empty response
 				if (data === undefined) {
 					console.log("Brak pomiarów!");
 					myPoller.stop();
 				} else {
-					
-					//fill measurements table by empty measurements 
-					if(isFirstData){
-						var emptyValues=[];
-						for(var emp_i=0;emp_i<$scope.mySeriesNumber;emp_i++){
-							emptyValues[emp_i]=null;
+
+					// fill measurements table by empty measurements
+					if (isFirstData) {
+						var emptyValues = [];
+						for (var emp_i = 0; emp_i < $scope.mySeriesNumber; emp_i++) {
+							emptyValues[emp_i] = null;
 						}
 						for (var j = 0; j < dataTableSize; j++) {
 							$scope.myData.push({
@@ -232,22 +216,22 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 							});
 
 						}
-						
-						isFirstData=false;
+
+						isFirstData = false;
 					}
 
 					// if response is not empty and server is run
 
-					$scope.dataToShow=data.plain();
-					//console.log($scope.dataToShow);
-					
-					if ($scope.myData[$scope.myData.length - 1].date != data.date||$scope.myData[$scope.myData.length-2].date!=data.date) {
+					$scope.dataToShow = data.plain();
+					// console.log($scope.dataToShow);
 
-						if($scope.myData.length>dataTableSize-1)
-						$scope.myData.shift();
-					
+					if ($scope.myData[$scope.myData.length - 1].date != data.date || $scope.myData[$scope.myData.length - 2].date != data.date) {
+
+						if ($scope.myData.length > dataTableSize - 1)
+							$scope.myData.shift();
+
 						$scope.myData.push(data.plain());
-						//console.log($scope.myData);
+						// console.log($scope.myData);
 
 					} else {
 
@@ -259,8 +243,6 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 		}
 
 	});
-	
-	
 
 	// });
 
@@ -272,7 +254,6 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
  */
 .controller('DownloadController', [ '$scope', 'Restangular', function($scope, Restangular) {
 
-	
 } ])
 
 /**
@@ -291,9 +272,10 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 					$scope.readedDataTypes = [ {
 						"type" : "FLOAT",
 						"name" : "FLOAT (32 bit)"
-					},
-					{"type":"INTEGER","name":"INTEGER (16 bit)"}
-					];
+					}, {
+						"type" : "INTEGER",
+						"name" : "INTEGER (16 bit)"
+					} ];
 
 					var errorResponseFunctoin = function(response) {
 						console.log(response.status);
@@ -319,16 +301,16 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 					// ----------remove server----------------
 					$scope.removeServer = function(server) {
 						// $scope.serversList.splice(id, 1);
-						var doRemove=confirm("Czy na pewno chcesz usunąć "+server.name+"?\n"+
-								"W przypadku usunięcia zostaną skasowane także wszystkie pomiary! ")
-						
-						if(doRemove==true){
-						
-						server.remove().then(function() {
-							var index = $scope.serversList.indexOf(server);
-							if (index > -1)
-								$scope.serversList.splice(index, 1);
-							$scope.isButtonDisabled = false;
+						var doRemove = confirm("Czy na pewno chcesz usunąć " + server.name + "?\n"
+								+ "W przypadku usunięcia zostaną skasowane także wszystkie pomiary! ")
+
+						if (doRemove == true) {
+
+							server.remove().then(function() {
+								var index = $scope.serversList.indexOf(server);
+								if (index > -1)
+									$scope.serversList.splice(index, 1);
+								$scope.isButtonDisabled = false;
 							}, errorResponseFunctoin);
 						}
 					}
@@ -341,9 +323,8 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 								function(response) {
 									$scope.serversList.push(response);
 									$scope.isButtonDisabled = true;
-									console.log("added id:" + response.id + "+ name: " + response.name + " ip: "
-											+ response.ip + " port: " + response.port + " timeInterval: "
-											+ response.timeInterval);
+									console.log("added id:" + response.id + "+ name: " + response.name + " ip: " + response.ip + " port: "
+											+ response.port + " timeInterval: " + response.timeInterval);
 
 								}, errorResponseFunctoin);
 					}
@@ -365,37 +346,33 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 					// ---------run server (run excecutor)----
 					$scope.runServer = function(server) {
 						var id = server.id;
-						server.post('executor').then(
-								function() {
-									console.log("started");
+						server.post('executor').then(function() {
+							console.log("started");
 
-									// -----------checking if the server is
-									// running or occurred error
+							// -----------checking if the server is
+							// running or occurred error
 
-									//	
+							//	
 
-									var executeGet = function() {
+							var executeGet = function() {
 
-										baseServers.customGET(id + "/executor").then(
-												function(response) {
-													// console.log(response);
-													if (response.connectedToServer) {
-														alert("Zapis do bazy danych z serwera: " + server.name
-																+ " włączony!");
+								baseServers.customGET(id + "/executor").then(function(response) {
+									// console.log(response);
+									if (response.connectedToServer) {
+										alert("Zapis do bazy danych z serwera: " + server.name + " włączony!");
 
-													} else {
-														// console.log(response);
-														alert("Wystąpił błąd podczas połączenia z serwerem: "
-																+ server.name + "\n" + response.errorMessage + "!");
-
-													}
-
-												});
+									} else {
+										// console.log(response);
+										alert("Wystąpił błąd podczas połączenia z serwerem: " + server.name + "\n" + response.errorMessage + "!");
 
 									}
-									$timeout(executeGet, 2000);
 
-								}, errorResponseFunctoin
+								});
+
+							}
+							$timeout(executeGet, 2000);
+
+						}, errorResponseFunctoin
 
 						);
 					}
@@ -440,7 +417,6 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
 
 		myPoller.promise.then(null, null, function(myData) {
 
-
 			$scope.myData = myData.plain();
 			// console.log($scope.myData);
 		});
@@ -461,6 +437,136 @@ DataDownloader.getData(31 * 24 * 60 * 60 * 1000).then(function(data){
  */
 
 .controller("HomeController", function($scope) {
-	$scope.list=[1,2,3,4,5,6,7,8];
-	$scope.canvName="c1";
+	$scope.list = [ 1, 2, 3, 4, 5, 6, 7, 8 ];
+	$scope.canvName = "c1";
 })
+
+/**
+ * =============websocket controller======================
+ */
+
+.controller("WebsocketController", function($scope) {
+
+	var currentLocation = window.location;
+	console.log(currentLocation);
+	$scope.myData = [];
+	$scope.dataToShow = null;
+	$scope.closeButtonText = "Stop";
+	var websocket = null;
+	var isFirstMessage = true;
+	var server=null;
+	var dataTableSize=60;
+
+	// $scope.onStartWebsocket=function(){
+
+	console.log("start is starting!");
+	testWebsocket();
+
+	// }
+
+	function testWebsocket() {
+		websocket = new WebSocket("ws://" + currentLocation.host + "/ModbusChart/measurementHandler");
+
+		websocket.onopen = function(evt) {
+			onOpen(evt)
+		};
+		websocket.onmessage = function(message) {
+			onMessage(message)
+		};
+		websocket.onclose = function(evt) {
+			onClose(evt)
+		};
+
+		// websocket.onmessage = function(evt) { onMessage(evt) };
+		// websocket.onerror = function(evt) { onError(evt) };
+	}
+	function onOpen(evt) {
+		console.log("on open is on");
+		// websocket.send("start");
+		// for(var i=0;i<100;i++){
+		// websocket.send("kojene messege "+i);
+		// }
+
+	}
+	function onMessage(message) {
+		// console.log("object :"+message.data);
+		// var obj=JSON.parse(message.data);
+		// if(isFirstMessage){
+
+		
+
+		var returnedData = JSON.parse(message.data);
+		if (returnedData.ip != null) {
+			server = returnedData;
+			console.log(server);
+
+			// 
+		} else {
+			var obj = angular.fromJson(message.data);
+			
+			if(isFirstMessage){
+				var emptyValues = [];
+				for (var emp_i = 0; emp_i < server.readedDataCount; emp_i++) {
+					emptyValues[emp_i] = null;
+				}
+				//console.log(obj.date - (dataTableSize )*server.timeInterval);
+				for (var j = 0; j < dataTableSize; j++) {
+					$scope.myData.push({
+						"date" : obj.date - (dataTableSize - j) * server.timeInterval,
+						"values" : emptyValues
+					});
+
+				}
+				
+				isFirstMessage = false;
+			}
+			// }else{
+
+			
+			// console.log(new Date(obj.date));
+			// console.log(obj);
+
+			if ($scope.myData.length > dataTableSize) {
+				$scope.myData.shift();
+			}
+
+			$scope.dataToShow = obj;
+			$scope.myData.push(obj);
+			$scope.$apply('myData');
+		}
+	}
+	// console.log(message);
+	// websocket.close();
+	// }
+
+	function onClose(evt) {
+		console.log("Websocket Closed");
+
+		// websocket=null;
+	}
+
+	// -----------switch off when destroy controller-----------
+	$scope.$on("$destroy", function(event) {
+		console.log("destroyed");
+		if (websocket.readyState == websocket.OPEN) {
+			websocket.close();
+			$scope.closeButtonText = "Start";
+		}
+	})
+	// -------toggle button on/off-------------------
+	$scope.onStartWebsocket = function() {
+		if (websocket.readyState != websocket.CLOSED) {
+
+			websocket.close();
+			$scope.closeButtonText = "Start";
+			// console.log("closed websocket session");
+			//
+		} else {
+			$scope.myData = [];
+			isFirstMessage = true;
+			testWebsocket();
+			$scope.closeButtonText = "Stop"
+
+		}
+	}
+});

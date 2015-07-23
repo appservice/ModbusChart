@@ -25,6 +25,7 @@ public class RegisterReader extends Observable implements Runnable {
 	private MyModbusTCPMaster modbusMaster;
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
+	private boolean  isConnected;
 	
 	private static final double WSPOLCZYNNIK=0.0027466659;
 
@@ -36,19 +37,40 @@ public class RegisterReader extends Observable implements Runnable {
 		this.serverEntity = serverEntity;
 	}
 
-	@Override
-	public void run() {
+	
+	
+	public void startConnection(){
 		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(),
 				serverEntity.getPort());
 		try {
 			modbusMaster.connect();
+			isConnected=true;
+		} catch (Exception e) {
+
+			// send exception to observer
+			this.setChanged();
+			this.notifyObservers(e);
+		}
+
+	}
+	
+	public void stopConnection(){
+		if(isConnected)
+		modbusMaster.disconnect();
+		isConnected=false;
+	}
+	
+	@Override
+	public void run() {
+
+			
 
 			// -----------read and save to DB float data--------------
 			// LOG.warn(serverEntity.getReadedDataType());
 			LOG.info("READED TYPE FROM MODBUS: " + new Date() + " "
 					+ serverEntity.getReadedDataType());
 
-
+try{
 			
 			switch (serverEntity.getReadedDataType().toUpperCase()) {
 			case "FLOAT":
@@ -67,8 +89,11 @@ public class RegisterReader extends Observable implements Runnable {
 			// send exception to observer
 			this.setChanged();
 			this.notifyObservers(e);
+			stopConnection();
+			
 		} finally {
-			modbusMaster.disconnect();
+			//stopConnection();
+			
 		}
 
 	}
