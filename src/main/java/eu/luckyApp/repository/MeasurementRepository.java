@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import eu.luckyApp.model.Measurement;
 
-@Repository
+//@Repository
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
 
 /*	@Query("SELECT m FROM Measurement m WHERE m.server.id=:serverId AND m.date BETWEEN :startDate AND :endDate")

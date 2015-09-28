@@ -146,8 +146,11 @@ margin-right:5px;
 }
 
 
-  table { table-layout: fixed;}
- table th, table td { overflow: hidden; } 
+/*   table { table-layout: fixed;}
+ table th, table td { overflow: hidden; }  */
+ 
+ .my_table table { table-layout: fixed;}
+ .my_table table th, table td { overflow: hidden; }
  
   #div_g{
   margin-left: 15px

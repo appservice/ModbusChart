@@ -2,13 +2,17 @@ package eu.luckyApp.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
 
@@ -32,7 +36,7 @@ public class ServerEntity {
 	@Max(value = 65535)
 	private int port;
 
-	private int timeInterval;
+	private long timeInterval;
 
 	private int firstRegisterPos;
 
@@ -43,6 +47,11 @@ public class ServerEntity {
 	private String readedDataType;
 	
 	private int savedMeasurementNumber;
+	
+	
+	@ElementCollection(fetch=FetchType.EAGER)	
+	@CollectionTable(name="SENSOR_NAME",joinColumns={@JoinColumn(name="ID",referencedColumnName="id")})
+	private List<String>sensorsName=new ArrayList<>();
 
 	////@JsonIgnore
 ///	@OneToMany(/*mappedBy = "server",*/ fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST/*,CascadeType.REMOVE*/},orphanRemoval=true)
@@ -50,6 +59,20 @@ public class ServerEntity {
 	// ,orphanRemoval=true
 	// CascadeType.ALLCascadeType.MERGE,CascadeType.REMOVE,CascadeType.REFRESH}
 //	private Collection<Measurement> measurements = new ArrayList<>();
+
+	/**
+	 * @return the sensorsName
+	 */
+	public List<String> getSensorsName() {
+		return sensorsName;
+	}
+
+	/**
+	 * @param sensorsName the sensorsName to set
+	 */
+	public void setSensorsName(List<String> sensorsName) {
+		this.sensorsName = sensorsName;
+	}
 
 	public double scaleFactor;
 	
@@ -103,11 +126,11 @@ public class ServerEntity {
 		this.port = port;
 	}
 
-	public int getTimeInterval() {
+	public long getTimeInterval() {
 		return timeInterval;
 	}
 
-	public void setTimeInterval(int timeInterval) {
+	public void setTimeInterval(long timeInterval) {
 		this.timeInterval = timeInterval;
 	}
 

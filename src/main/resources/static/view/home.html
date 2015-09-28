@@ -1,29 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <title>Insert title here</title>
 </head>
 <body>
-<div class="page-header"><h3> Strona domowa</h3></div>
+	<div class="page-header">
+		<h3>Strona domowa</h3>
+	</div>
 
 
 
-      <div class="jumbotron " style="min-width: 400px" >
-    <h4> Program służy do rejestrowania wielkości przepływu z czujników, zapisywania ich do bazy danych oraz graficznego
-    ich przedstawienia w formie wykresów.</h4>
-<h6>  Dane można eksportować w formie plików excel -bezpośrednio z zaznaczonych fragmentów wykresu bądź z osobnej, przygotowanej do tego celu strony. </h6>
+	<div class="jumbotron " style="min-width: 400px">
+		<h4>
+			Program służy do rejestrowania ilości zużytego powietrza w procesie produkcji.<br />
 
 
-      </div>
+		</h4>
+		<h6></h6>
 
-<!-- <span data-ng-repeat="l in list"> -->
-<!-- <ng-gauge name="canvName"></ng-gauge> -->
 
-<!-- <ng-gauge ></ng-gauge>
+	</div>
+	<div class="jumbotron">
+		Ilość zużytego powietrza podczas zmiany wyśiwetlana jest w postaci <a href="#websocket">wykresu online</a>. <br /> <br />
+		Pod wykresem w tabeli zamieszczony jest aktualna ilość pobranego powietrza podczas danej zmiany, oraz w postaci
+		kolororwych prostokątów umieszczona informacja o aktulanym stanie pracy czujnika:
+	<br/><br/>
+		<table class="table " style="width: auto;">
+			<tr>
+				<td style="background-color: blue; width: 70px"></td>
+				<td>– brak zmian (prawie stały, niski pobór) - od początku zmiany (poniżej 4m3/h).</td>
+			</tr>
+			<tr>
+				<td style="background-color: green; width: 70px"></td>
+				<td>– stałe systematyczne zmiany świadczące o pracy linii (powyżej 4m3/h).</td>
+			</tr>
+			<tr>
+				<td style="background-color: yellow; width: 70px"></td>
+				<td>– cechy sygnału jak dla niebieskiego, ale po okresie pracy (po zielonym) po ok. 1min.</td>
+			</tr>
+			<tr>
+				<td style="background-color: red; width: 70px"></td>
+				<td>– zastępuje kolor żółty po ok. 5min.</td>
+			</tr>
+
+		</table>
+
+
+		<br /> <br /> Dane archiwalne zapisywane są w postaci plików excel, które można pobrać z sekcji <a href="#/filepath"><q>Dane
+				archiwalne</q></a>.
+
+
+	</div>
+
+	<!-- <span data-ng-repeat="l in list"> -->
+	<!-- <ng-gauge name="canvName"></ng-gauge> -->
+
+	<!-- <ng-gauge ></ng-gauge>
 <ng-gauge></ng-gauge>
 <ng-gauge ></ng-gauge>
 <ng-gauge></ng-gauge> -->
-<!-- </span> -->
+	<!-- </span> -->
 </body>
 </html>

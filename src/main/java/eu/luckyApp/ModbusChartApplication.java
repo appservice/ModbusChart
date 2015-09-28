@@ -11,16 +11,26 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.context.embedded.ErrorPage;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @SpringBootApplication
 // (exclude = {ErrorMvcAutoConfiguration.class})
 // @PropertySource("application.properties")
 @EnableScheduling
+@EnableAsync
 public class ModbusChartApplication extends SpringBootServletInitializer {
 
 	//private static Class<ModbusChartApplication> applicationClass = ModbusChartApplication.class;
+	
+	
+	
 
 	private static class MyCustomizer implements
 			EmbeddedServletContainerCustomizer {
@@ -28,7 +38,7 @@ public class ModbusChartApplication extends SpringBootServletInitializer {
 		@Override
 		public void customize(ConfigurableEmbeddedServletContainer container) {
 			container.addErrorPages(new ErrorPage(HttpStatus.UNAUTHORIZED,
-					"/errors/401.html"));
+					"/login.html"));
 			container.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN,
 					"/errors/403.html"));
 			container.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND,
@@ -41,9 +51,22 @@ public class ModbusChartApplication extends SpringBootServletInitializer {
 	public EmbeddedServletContainerCustomizer containerCustomizer() {
 		return new MyCustomizer();
 	}
+	
+	@Bean
+	public InternalResourceViewResolver viewResolver() {
+		InternalResourceViewResolver viewResolver
+                           = new InternalResourceViewResolver();
+		//viewResolver.setViewClass(JstlView.class);
+		viewResolver.setPrefix("/ModbusChart/");
+		//viewResolver.setSuffix(".jsp");
+		return viewResolver;
+	}
+
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(ModbusChartApplication.class, args);
+	
 
 	}
 

@@ -13,6 +13,7 @@ public class JerseyServletRegistration {
 	public ServletRegistrationBean	jerseyServlet(){
 		ServletRegistrationBean registration=new ServletRegistrationBean(new ServletContainer(), "/rest/*");
 		registration.addInitParameter(ServletProperties.JAXRS_APPLICATION_CLASS, JerseyConfig.class.getName());
+		//registration.
 		return registration;
 		
 	}

@@ -3,6 +3,7 @@
  */
 angular.module('myApp.services', []).factory('DataDownloader', function(Restangular, $q) {
 	// var maxSeriesNumber = 8;
+	
 	return {
 		getData : function(myDatePeriod) {
 			var deferred = $q.defer();

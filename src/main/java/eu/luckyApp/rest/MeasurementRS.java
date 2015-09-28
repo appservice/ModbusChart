@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.MeasurementRepository;
 
-@Component
-@Path("/")//{serverId}/measurements
+//@Component
+//@Path("/")//{serverId}/measurements
 public class MeasurementRS {
 	private static final Logger LOG = Logger.getLogger(MeasurementRS.class);
 
@@ -48,7 +48,7 @@ public class MeasurementRS {
 
 			// without parameters
 			if (startDate == 0 && endDate == 0 && timePeriod == 0) {
-				LOG.info("function findAllFromServer is working with parameters: beginDate: "
+				LOG.debug("function findAllFromServer is working with parameters: beginDate: "
 						+ startDate + " endDate: " + endDate);
 
 				return Response
@@ -77,7 +77,7 @@ public class MeasurementRS {
 
 			// with startDate parameter
 			if (startDate != 0 && endDate == 0) {
-				LOG.info("function findAllFromServerByStartDate is working with parameters: beginDate: "
+				LOG.debug("function findAllFromServerByStartDate is working with parameters: beginDate: "
 						+ startDate + " endDate: " + endDate);
 				return Response.ok(
 						measurementRepository.findAllFromServerByStartDate(
@@ -87,7 +87,7 @@ public class MeasurementRS {
 			// with startDate and endDate parameters
 			if (startDate < endDate) {
 
-				LOG.info("function getAllByDate is working with parameters: beginDate: "
+				LOG.debug("function getAllByDate is working with parameters: beginDate: "
 						+ startDate + " endDate: " + endDate);
 				if (endDate - startDate < 24 * 60 * 60 * 1000) {
 					return Response.ok(
@@ -131,7 +131,7 @@ public class MeasurementRS {
 				.findLastMeasurementIdByServer(/* serverId */);
 		if (lastId != null) {
 			Measurement m = measurementRepository.findOne(lastId);
-			LOG.info("last measurement: " + m);
+			LOG.debug("last measurement: " + m);
 			return Response.ok(m).build();
 		}
 		return Response.noContent().build();

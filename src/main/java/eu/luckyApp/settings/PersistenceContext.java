@@ -1,5 +1,7 @@
 package eu.luckyApp.settings;
 
+import java.util.Calendar;
+
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -12,10 +14,11 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 public class PersistenceContext {
 
-	@Bean(name = "dataSource", destroyMethod = "close")
+	@Bean(name = "modbusDataSource", destroyMethod = "close")
 	DataSource dataSource(Environment env) {
 
 		HikariConfig dataSoruceConfig = new HikariConfig();
+		dataSoruceConfig.setPoolName("AARSHikaripool-" + Calendar.getInstance().getTimeInMillis());
 		dataSoruceConfig.setDriverClassName(env
 				.getRequiredProperty("db.driver"));
 

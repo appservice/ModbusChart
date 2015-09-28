@@ -5,10 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>AngularChart</title>
-<link rel="stylesheet" type="text/css"
-	href="bootstrap-3.3.2-dist/css/bootstrap.min.css"></link>
-<link rel="stylesheet" type="text/css"
-	href="bootstrap-3.3.2-dist/css/bootstrap-theme.min.css"></link>
+<link rel="stylesheet" type="text/css" href="bootstrap-3.3.2-dist/css/bootstrap.min.css"></link>
+<link rel="stylesheet" type="text/css" href="bootstrap-3.3.2-dist/css/bootstrap-theme.min.css"></link>
 <link rel="stylesheet" type="text/css" media="all" href="css/main.css"></link>
 <link rel="icon" type="image/x-icon" href="images/favicon.ico"></link>
 </head>
@@ -22,26 +20,23 @@
 
 		<!--   <header class="navbar navbar-default "> -->
 		<div class="navbar navbar-inverse navbar-static-top">
-			<!--                         <div class = "container">
+			<!--           Przepływomierz              <div class = "container">
  -->
-			<span class="navbar-brand">Przepływomierz</span>
+			<span class="navbar-brand">Przepływomierz </span>
 
-			<button class="navbar-toggle" data-toggle="collapse"
-				data-target=".navHeaderCollapse">
-				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
-					class="icon-bar"></span>
+			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
 			</button>
 
 			<div class="collapse navbar-collapse navHeaderCollapse">
 
 				<ul class="nav navbar-nav navbar-right margin_right_10">
 
-					<li class="active"><a href="#/"><span
-							class="glyphicon glyphicon-home"></span> Strona domowa</a></li>
-					<li><a href="#/chart-online">Wykres online</a></li>
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
-						data-toggle="dropdown" role="button" aria-expanded="false">Wykresy
-							<b class="caret"></b>
+					<li class="active"><a href="#/"><span class="glyphicon glyphicon-home"></span> Strona domowa</a></li>
+					<li><a href="#/websocket">Wykres zużycia</a></li>
+					<li><a href="#/chart-online">Wykres chwilowy</a></li>
+					<!-- 				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+						aria-expanded="false">Wykresy <b class="caret"></b>
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#/2-hours-chart">Wykres ostatnie 2 godziny</a></li>
@@ -50,15 +45,15 @@
 							<li><a href="#/7-days-chart">Wykres ostatnie 7 dni</a></li>
 							<li><a href="#/31-days-chart">Wykres ostatnie 31 dni</a></li>
 							<li class="divider"></li>
-							<li><a href="#/custom-period-chart">Wykres z dowolnego
-									przedziału czasowego</a></li>
-						</ul></li>
-					<li><a href="#/download">Pobierz dane</a></li>
+							<li><a href="#/custom-period-chart">Wykres z dowolnego przedziału czasowego</a></li>
+						</ul></li> -->
+					<!-- 	<li><a href="#/download">Pobierz dane</a></li> -->
+					<li><a href="#/filepath">Dane archiwalne</a></li>
 
 					<li><a href="#/settings">Ustawienia</a></li>
-					<li><a href="#/websocket">websocket</a></li>
+					<!-- <li><a href="#/websocket">websocket</a></li> -->
 					<!--         <li><a href="#/help">Pomoc</a></li> -->
-					<li><a href="/ModbusChart/logout">Wyloguj</a></li>
+					<li><a href="/ModbusChart/logout">Wyloguj: <strong>{{currentUser.name}}</strong></a></li>
 
 				</ul>
 
@@ -80,9 +75,9 @@
 		<footer>
 			<!--   <div class="container "> -->
 			<p>
-				© Copyright by <b>CARTAMUNDI</b>. All rights reserved. Designed &
-				Developed by <b>ITEM Service </b> & <b>LuckyApp</b> <span
-					class="glyphicon glyphicon-envelope" style="margin-left: 20px;"></span>
+				© Copyright by <b><img alt="" src="images/logo_small.png"></b>. All rights reserved. <br /> <small>Designed
+					& Developed by <b><a href="http://www.itemservice.eu/">ITEM Service</a></b> & <b>LuckyApp</b>
+				</small> <span class="glyphicon glyphicon-envelope" style="margin-left: 20px;"></span>
 				<!-- <a class="btn btn-danger">Kliknij</a>  -->
 			</p>
 			<!--  </div> -->
@@ -99,35 +94,26 @@
 	<!-- load scripts -->
 	<script type="text/javascript" src="js/vendors/jquery-2.1.3.min.js"></script>
 
-	<script type="text/javascript"
-		src="bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
 
 
 	<script type="text/javascript" src="js/vendors/angular/angular.min.js"></script>
-	<script type="text/javascript"
-		src="js/vendors/angular-i18n/angular-locale_pl-pl.js"></script>
-	<script type="text/javascript"
-		src="js/vendors/angular-ui-router/angular-ui-router.min.js"></script>
+	<script type="text/javascript" src="js/vendors/angular-i18n/angular-locale_pl-pl.js"></script>
+	<script type="text/javascript" src="js/vendors/angular-ui-router/angular-ui-router.min.js"></script>
 
 	<!-- restangular -good rest contorller  -->
 	<script type="text/javascript" src="js/vendors/loadash/lodash.min.js"></script>
-	<script type="text/javascript"
-		src="js/vendors/restangular/restangular.min.js"></script>
+	<script type="text/javascript" src="js/vendors/restangular/restangular.min.js"></script>
 
-	<!-- poller -->
-	<script type="text/javascript"
-		src="js/vendors/angular-pooler/angular-poller.min.js"></script>
-	<!-- angular bootstrap  -->
-	<script type="text/javascript"
-		src="js/vendors/angular-strap/angular-strap.min.js"></script>
-	<script type="text/javascript"
-		src="js/vendors/angular-strap/angular-strap.tpl.min.js"></script>
+	<!-- poller 
+	<script type="text/javascript" src="js/vendors/angular-pooler/angular-poller.min.js"></script>-->
+	<!-- angular bootstrap  
+	<script type="text/javascript" src="js/vendors/angular-strap/angular-strap.min.js"></script>
+	<script type="text/javascript" src="js/vendors/angular-strap/angular-strap.tpl.min.js"></script>-->
 
 	<!-- chart engine -->
-	<script type="text/javascript"
-		src="js/vendors/dygraph/dygraph-combined.js"></script>
-	<script type="text/javascript"
-		src="js/vendors/dygraph/dygraph-extra.js"></script>
+	<script type="text/javascript" src="js/vendors/dygraph/dygraph-combined.js"></script>
+	<script type="text/javascript" src="js/vendors/dygraph/dygraph-extra.js"></script>
 	<script type="text/javascript" src="js/vendors/dygraph/download.js"></script>
 
 	<!--   <script type="text/javascript" src="js/vendors/gauge/gauge.js"></script> -->
@@ -136,8 +122,23 @@
 
 	<!-- my app files  -->
 	<script type="text/javascript" src="js/myApp.js"></script>
+
+	<!-- controllers -->
 	<script type="text/javascript" src="js/angular_app/controllers.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/homeController.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/settingsController.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/websocketController.js"></script>
+		<script type="text/javascript" src="js/angular_app/controllers/websocketController2.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/filePathController.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/helpController.js"></script>
+	
+
+
+
+	<!-- services  -->
 	<script type="text/javascript" src="js/angular_app/services.js"></script>
+
+	<!-- dyrectives  -->
 	<script type="text/javascript" src="js/angular_app/directives.js"></script>
 
 

@@ -15,38 +15,31 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.luckyApp.events.MeasureEvent;
 import eu.luckyApp.repository.ServerRepository;
 
-public class MeasurementHandler extends TextWebSocketHandler implements
-		ApplicationListener<MeasureEvent> {
+public class MeasurementHandler extends TextWebSocketHandler implements ApplicationListener<MeasureEvent> {
 
-	private static final Logger LOG = Logger
-			.getLogger(MeasurementHandler.class);
+	private static final Logger LOG = Logger.getLogger(MeasurementHandler.class);
 
 	private Set<WebSocketSession> mySessions = new HashSet<>();
-	
+
 	@Autowired
 	private ServerRepository serverRepository;
 
 	@Override
-	public void afterConnectionEstablished(WebSocketSession session)
-			throws Exception {
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		LOG.info("connection established with session id: " + session.getId());
 
-		// for(int i=0;i<100;i++){
-		// session.sendMessage(new
-		// TextMessage("tekst wysłany automatycznie "+i));
-		// }
-		// this.mySession = session;
 		this.mySessions.add(session);
-		String jsonServerObject=convertToJsonObject(serverRepository.findOne(1L));
+		String jsonServerObject = convertToJsonObject(serverRepository.findOne(1L));
+
 		session.sendMessage(new TextMessage(jsonServerObject));
-		
+
 	}
 
 	@Override
-	protected void handleTextMessage(WebSocketSession session,
-			TextMessage message) throws Exception {
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
 		// session.sendMessage(message);
 
@@ -55,28 +48,26 @@ public class MeasurementHandler extends TextWebSocketHandler implements
 	}
 
 	@Override
-	public void afterConnectionClosed(WebSocketSession session,
-			CloseStatus status) throws Exception {
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		LOG.info("connection  with session id: " + session.getId() + " closed");
 		mySessions.remove(session);
 
 	}
 
-/*	static final int i = 200;
-
-	@Scheduled(fixedDelay = i)
-	public void addMessege() throws IOException {
-		String returnedMessageString = convertToJsonObject(createSampleMeasurement());
-		TextMessage returnedMessage = new TextMessage(returnedMessageString);
-		for (WebSocketSession session : mySessions) {
-			if (session != null && session.isOpen()) {
-
-				// LOG.info(returnedMessage);
-				session.sendMessage(returnedMessage);
-
-			}
-		}
-	}*/
+	/*
+	 * static final int i = 200;
+	 * 
+	 * @Scheduled(fixedDelay = i) public void addMessege() throws IOException {
+	 * String returnedMessageString =
+	 * convertToJsonObject(createSampleMeasurement()); TextMessage
+	 * returnedMessage = new TextMessage(returnedMessageString); for
+	 * (WebSocketSession session : mySessions) { if (session != null &&
+	 * session.isOpen()) {
+	 * 
+	 * // LOG.info(returnedMessage); session.sendMessage(returnedMessage);
+	 * 
+	 * } } }
+	 */
 
 	/**
 	 * 
@@ -97,22 +88,6 @@ public class MeasurementHandler extends TextWebSocketHandler implements
 		return null;
 	}
 
-/*	@Bean
-	private Measurement createSampleMeasurement() {
-		Measurement m = new Measurement();
-		Random random = new Random();
-		m.setId(2L);
-		m.setDate(new Date());
-		m.getMeasuredValue().add(random.nextDouble() * 3 + 30);
-		m.getMeasuredValue().add(random.nextDouble() * 4 + 25);
-		m.getMeasuredValue().add(random.nextDouble() * 2 - 10);
-		m.getMeasuredValue().add(random.nextDouble() * 2 - 25);
-		m.getMeasuredValue().add(random.nextDouble() * 60 - 30);
-		m.getMeasuredValue().add(random.nextDouble() * 1);
-		m.getMeasuredValue().add(random.nextDouble() * 4);
-		return m;
-	}*/
-
 	@Override
 	public void onApplicationEvent(MeasureEvent event) {
 		String returnedMessageString = convertToJsonObject(event.getSource());
@@ -125,7 +100,7 @@ public class MeasurementHandler extends TextWebSocketHandler implements
 					session.sendMessage(returnedMessage);
 				} catch (IOException e) {
 					LOG.error(e);
-					//e.printStackTrace();
+					// e.printStackTrace();
 				}
 
 			}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="page-header">
+		<h3>Dane archiwalne</h3>
+	</div>
+	<div class="jumbotron">
+
+		<h3>
+			Pobierz dane w formie arkusza kalkualcyjengo excel.
+			<!-- <button class="btn btn-default" data-ng-click="downloadData()">Pobierz</button> -->
+
+		</h3>
+	</div>
+
+
+	<div class="jumbotron">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Lp</th>
+					<th>Data</th>
+					<th>Nazwa pliku</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="file in filepathes.content">
+					<td>{{$index+1}}</td>
+					<td>{{file.comment}}</td>
+					<td>{{file.fileName}}</td>
+					<td><a class="btn btn-primary" data-ng-href="rest/filepathes/{{file.id}}/file">Pobierz <i
+							class="glyphicon glyphicon-save-file"></i>
+					</a></td>
+					<td><a class="btn btn-primary" data-ng-click="deleteFilePath(file)">Usuń <i
+							class="glyphicon glyphicon-erase"></i></a></td>
+				</tr>
+
+			</tbody>
+		</table>
+		Strona: <span   data-ng-repeat="page in pageNumbers" ><button class="btn btn-default" data-ng-click="getPagedData(page,pageSize)"> {{page+1}}</button> </span>
+
+	</div>
+
+
+
+
+
+
+</body>
+</html>

@@ -5,18 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 
+import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
+import eu.luckyApp.model.ServerEntity;
 import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.ModbusException;
 import net.wimpi.modbus.procimg.Register;
 import net.wimpi.modbus.util.ModbusUtil;
-
-import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
-import eu.luckyApp.model.ServerEntity;
 
 @Component
 @Scope("prototype")
@@ -26,6 +24,8 @@ public class RegisterReader extends Observable implements Runnable {
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
 	private boolean  isConnected;
+	
+	
 	
 	private static final double WSPOLCZYNNIK=0.0027466659;
 
@@ -48,6 +48,7 @@ public class RegisterReader extends Observable implements Runnable {
 		} catch (Exception e) {
 
 			// send exception to observer
+		LOG.error(e.getStackTrace());
 			this.setChanged();
 			this.notifyObservers(e);
 		}
@@ -67,7 +68,7 @@ public class RegisterReader extends Observable implements Runnable {
 
 			// -----------read and save to DB float data--------------
 			// LOG.warn(serverEntity.getReadedDataType());
-			LOG.info("READED TYPE FROM MODBUS: " + new Date() + " "
+		LOG.debug("READED TYPE FROM MODBUS: " + new Date() + " "
 					+ serverEntity.getReadedDataType());
 
 try{
@@ -77,6 +78,7 @@ try{
 				readFloatData();
 				break;
 			case "INTEGER":
+				//LOG.warn("ser "+serverEntity.getSensorsName());
 				readIntegerData();
 				break;
 			default:
@@ -87,8 +89,11 @@ try{
 		} catch (Exception e) {
 
 			// send exception to observer
+			
 			this.setChanged();
 			this.notifyObservers(e);
+			e.printStackTrace();
+			LOG.error(e.getMessage()+" error in run function");
 			stopConnection();
 			
 		} finally {
@@ -98,12 +103,12 @@ try{
 
 	}
 
-	// -------------------------------------------------------------
+	// -----------------------------------------E--------------------
 	private void readFloatData() throws ModbusException {
 
 		Register[] registers = modbusMaster.readMultipleRegisters(
 				Modbus.DEFAULT_UNIT_ID, serverEntity.getFirstRegisterPos(),
-				serverEntity.getReadedDataCount() * 2);
+				serverEntity.getSensorsName().size() * 2);
 
 		List<Double> resultList = new ArrayList<>();
 
@@ -127,7 +132,7 @@ try{
 	private void readIntegerData() throws ModbusException {
 		Register[] registers = modbusMaster.readMultipleRegisters(
 				Modbus.DEFAULT_UNIT_ID, serverEntity.getFirstRegisterPos(),
-				serverEntity.getReadedDataCount());
+				serverEntity.getSensorsName().size());
 
 		List<Double> resultList = new ArrayList<>();
 

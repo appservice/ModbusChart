@@ -18,9 +18,8 @@
 
 
 
-		<chart-dygraph data-ng-if="is_loaded" data="myData"
-			chart-title="chartTitle" y-axis-title="Przepływ [m3]"
-			max-series-number="maxSeriesNumber"></chart-dygraph>
+<chart-dygraph data-ng-if="is_loaded" data="myData" chart-title="'Wykres wartości chwilowych'" y-axis-title="Przepływ [m3/h]"
+		max-series-number="maxSeriesNumber" series-name="seriesName"></chart-dygraph>
 		<br />
 	
 		
@@ -29,19 +28,45 @@
 		<table class="table table-striped table-bordered" >
 			<thead>
 
+
+<div class="my_table">
+		<table class="table table-striped table-bordered">
+			<thead>
+
 				<tr>
-				<th data-ng-repeat="value in dataToShow.values track by $index"><small>Czujnik {{$index+1}} </small></th>
+					<th data-ng-repeat="sensorName in seriesName track by $index" style="text-align: center;">{{sensorName}}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td data-ng-repeat="value in dataToShow.values track by $index">{{value|number:3}} [m<sup>3</sup>]
+					<td data-ng-repeat="value in dataToShow.values track by $index"
+						style="text-align: center"">
+						{{value|number:4}} [m<sup>3</sup>/h]
 					</td>
 				</tr>
+	<!-- 			<tr>
+
+					<td data-ng-repeat="squareColor in squaresTable  track by $index">
+						<div style="background-color: {{squareColor}}">
+							<br /> <br />
+						</div>
+							
+					</td>
+
+
+				</tr>
+			
+				<tr data-ng-if="currentUser.roles.indexOf('ROLE_ADMIN')>-1">
+
+					<td  data-ng-repeat="squareColor in squaresTable  track by $index" style="text-align: center;" >
+						<button class="btn btn-default" data-ng-click="onResetSensor($index)">Zeruj</button>
+					</td>
+
+
+				</tr> -->
 			</tbody>
 		</table>
-
-
+	</div>
 
 
 

@@ -7,8 +7,8 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
-public class MeasurementValue {
+//@Entity
+public class MeasurementValue implements Cloneable {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -32,6 +32,9 @@ public class MeasurementValue {
 	public void setValue(Double value) {
 		this.value = value;
 	}
+
+
+	
 	
 	
 

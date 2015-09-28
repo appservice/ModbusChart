@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.MeasurementRepository;
 
-@Component
-@Path("/")     //servers/{id}/measurements/download
+//@Component
+//@Path("/")     //servers/{id}/measurements/download
 public class ExcelRS {
 
 	public static final Logger LOG = Logger.getLogger(ExcelRS.class);
