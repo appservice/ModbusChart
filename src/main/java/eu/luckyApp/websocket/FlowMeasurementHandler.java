@@ -36,7 +36,7 @@ import eu.luckyApp.websocket.utils.Square;
 import eu.luckyApp.websocket.utils.SquareManager;
 
 //@Component
-public class FlowMeasurementHandler extends TextWebSocketHandler implements ApplicationListener<MeasureEvent<Measurement>> {
+public class FlowMeasurementHandler extends TextWebSocketHandler implements ApplicationListener<MeasureEvent> {
 
 	private static final Logger LOG = Logger.getLogger(FlowMeasurementHandler.class);
 
@@ -60,7 +60,9 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	private int numberOfValue;
 
 	@Override
-	public void onApplicationEvent(MeasureEvent<Measurement> evt) {
+	public void onApplicationEvent(MeasureEvent evt) {
+		
+		//System.out.println("do it");
 
 		ServerEntity server = serverRepository.findOne(1L);
 		if (server != null) {
@@ -74,13 +76,13 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 		if (this.tempMes == null) {
 
-			Measurement m =   evt.getSource();
+			Measurement m =   (Measurement)evt.getSource();
 			m.clearValuesList();
 			this.tempMes = calculatePerHour(m, dyvider);
 
 		} else {
 
-			tempMes.addAndCalculatePerHour(  evt.getSource(), dyvider);
+			tempMes.addAndCalculatePerHour( (Measurement) evt.getSource(), dyvider);
 		
 			if(makeReset){
 				tempMes.getMeasuredValue().set(numberOfValue, 0.0);
@@ -93,7 +95,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		sendSingleMessage(tempMes);
 		// sm.setSquareAmount(serverRepository.findOne(1l).getSensorsName().size());
 
-		List<Square> sl = sm.calculateSquare(evt.getSource());
+		List<Square> sl = sm.calculateSquare((Measurement)evt.getSource());
 		sendSingleMessage(sl);
 
 	}

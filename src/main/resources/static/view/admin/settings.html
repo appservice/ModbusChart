@@ -22,7 +22,7 @@
 						<th>IP</th>
 						<th>Port</th>
 						<th>Interwał</th>
-						<th>Co który pomiar zapisać</th>
+				<!-- 		<th>Co który pomiar zapisać</th> -->
 
 						<th>Typ danych</th>
 						<th>Współczynnik skali</th>
@@ -38,7 +38,7 @@
 						<td>{{server.ip}}</td>
 						<td>{{server.port}}</td>
 						<td>{{server.timeInterval}}</td>
-						<td>{{server.savedMeasurementNumber}}</td>
+			<!-- 			<td>{{server.savedMeasurementNumber}}</td> -->
 						<td>{{server.readedDataType}}</td>
 						<td>{{server.scaleFactor}}</td>
 						<!--    <td>{{server.readedDataCount}}</td>-->
@@ -223,7 +223,7 @@
 
 
 							<!-- sampler -->
-							<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
+					<!-- 		<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
 							<span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.min">Minimalna
 								wartość to 1!</span>
@@ -231,7 +231,7 @@
 								danych! Wymagana liczba!</span>
 							<input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number"
 								data-ng-model="newServer.savedMeasurementNumber" required min="1">
-
+ -->
 
 							<!-- readedDataTypes -->
 							<label for="input_type" class="control-label">Typ danych:</label>
@@ -321,7 +321,7 @@
 								data-ng-model="updatedServer.timeInterval" required min="20">
 
 							<!-- sampler -->
-							<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
+			<!-- 				<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.required">
 								Wymagany!</span>
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.min">Minimalna
@@ -329,7 +329,7 @@
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.number">Zły
 								format danych! Wymagana liczba!</span>
 							<input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number"
-								data-ng-model="updatedServer.savedMeasurementNumber" required min="1">
+								data-ng-model="updatedServer.savedMeasurementNumber" required min="1"> -->
 
 							<!-- readedDataTypes -->
 							<label for="input_type" class="control-label">Typ danych:</label>

@@ -52,12 +52,12 @@ angular.module('myApp.controllers').controller("WebsocketController", function($
 		
 
 			var returnedData = angular.fromJson(message.data);
-	
+	console.log(returnedData);
 
 			if (returnedData instanceof Array) {
-				if (returnedData[0].date != null) {
+				if (returnedData[0].date != null) {//returnedData.size>0&&
 					$scope.myData = returnedData;
-				;
+				
 
 					var emptyValues = [];
 					for (var emp_i = 0; emp_i < myServer.sensorsName.length; emp_i++) {

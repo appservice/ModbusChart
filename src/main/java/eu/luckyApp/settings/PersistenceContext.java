@@ -14,7 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 public class PersistenceContext {
 
-	@Bean(name = "modbusDataSource", destroyMethod = "close")
+	@Bean(name = "modbusDB", destroyMethod = "close")
 	DataSource dataSource(Environment env) {
 
 		HikariConfig dataSoruceConfig = new HikariConfig();

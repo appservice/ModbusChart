@@ -14,19 +14,32 @@ import eu.luckyApp.model.ServerEntity;
 import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.ModbusException;
 import net.wimpi.modbus.procimg.Register;
+import net.wimpi.modbus.procimg.SimpleRegister;
 import net.wimpi.modbus.util.ModbusUtil;
 
+/**
+ * @author LMochel
+ *
+ */
 @Component
-@Scope("prototype")
+//@Scope("prototype")
 public class RegisterReader extends Observable implements Runnable {
 
 	private MyModbusTCPMaster modbusMaster;
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
-	private boolean  isConnected;
+	private boolean  connected;
 	
 	
 	
+	/**
+	 * @return the connected
+	 */
+	public boolean isConnected() {
+		return connected;
+	}
+
+
 	private static final double WSPOLCZYNNIK=0.0027466659;
 
 	public ServerEntity getServerEntity() {
@@ -44,7 +57,7 @@ public class RegisterReader extends Observable implements Runnable {
 				serverEntity.getPort());
 		try {
 			modbusMaster.connect();
-			isConnected=true;
+			connected=true;
 		} catch (Exception e) {
 
 			// send exception to observer
@@ -56,9 +69,9 @@ public class RegisterReader extends Observable implements Runnable {
 	}
 	
 	public void stopConnection(){
-		if(isConnected)
+		if(connected)
 		modbusMaster.disconnect();
-		isConnected=false;
+		connected=false;
 	}
 	
 	@Override
@@ -150,5 +163,19 @@ try{
 		this.setChanged();
 		this.notifyObservers(resultList);
 
+	}
+	
+	
+	//asynchronic method
+	public void writeIntToRegister(int ref,int value) throws ModbusException{
+		//try {
+			Register r=new SimpleRegister();
+			r.setValue(value);
+		//	if(connected)
+			modbusMaster.writeSingleRegister(ref,r);
+
+		//} catch (ModbusException e) {
+		//	e.printStackTrace();
+	//	}
 	}
 }

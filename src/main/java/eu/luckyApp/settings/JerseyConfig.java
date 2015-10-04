@@ -7,6 +7,7 @@ import eu.luckyApp.rest.ExcelRS;
 import eu.luckyApp.rest.FilePathRS;
 import eu.luckyApp.rest.LoggedUserRS;
 import eu.luckyApp.rest.MeasurementRS;
+import eu.luckyApp.rest.RegisterRS;
 import eu.luckyApp.rest.ServersService;
 import eu.luckyApp.rest.UsersRS;
 
@@ -19,6 +20,7 @@ public class JerseyConfig extends ResourceConfig {
 	//	register(ExcelRS.class);
 		register(FilePathRS.class);
 		register(LoggedUserRS.class);
+		register(RegisterRS.class);
 		register(UsersRS.class);
 
 	

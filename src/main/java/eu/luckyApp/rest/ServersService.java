@@ -39,40 +39,38 @@ import eu.luckyApp.repository.ServerRepository;
 
 @Component
 @Path("/servers")
-//@PermitAll
-public class ServersService implements Observer,ApplicationEventPublisherAware{
+// @PermitAll
+public class ServersService implements Observer, ApplicationEventPublisherAware {
 
-	private static final Logger LOG = Logger.getLogger(ServersService.class
-			.getName());
-	
+	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
+
 	private ApplicationEventPublisher publisher;
 
 	@Autowired
 	private ServerRepository serverRepository;
 
-//	@Autowired
-//	MeasurementRepository mRepository;
+	// @Autowired
+	// MeasurementRepository mRepository;
 
 	@Autowired
 	private RegisterReader registerReader;
-	
-	//@Autowired
+
+	// @Autowired
 	private MeasurementRS measurementRS;
 
 	private String errorMessage;
 
 	private Measurement measurementOnline;
 
-	//private int mCounter;
-	
+	// private int mCounter;
+
 	@Autowired
 	private FlowMeasurementRS flowMeasurementRS;
 
-
-
 	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
 
-
+	@Autowired
+	private RegisterRS registerRs;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -81,13 +79,11 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 		return serverRepository.findAll();
 	}
 
-
-
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{serverId}")
-	//@RolesAllowed(value = { "ROLE_ADMIN" })
-	//@Secured("ROLE_ADMIN")
+	// @RolesAllowed(value = { "ROLE_ADMIN" })
+	// @Secured("ROLE_ADMIN")
 	public ServerEntity getServer(@PathParam("serverId") long id) {
 
 		ServerEntity server = serverRepository.findOne(id);
@@ -101,8 +97,7 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 
 		serverRepository.save(server);
 		Long serverId = server.getId();
-		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId)
-				.build();
+		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId).build();
 
 		return Response.created(createdUri).entity(server).build();
 	}
@@ -111,7 +106,7 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 	@Path("/{serverId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateServer(ServerEntity server) {
-		
+
 		serverRepository.save(server);
 		LOG.info("zmieniono server" + server);
 		return Response.noContent().build();
@@ -123,8 +118,8 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
 		// mesasurementRepo.findAll();
-	//	mRepository.deleteAllValues();
-	//	mRepository.deleteAllInBatch();
+		// mRepository.deleteAllValues();
+		// mRepository.deleteAllInBatch();
 		serverRepository.delete(server);
 		return Response.noContent().build();
 	}
@@ -133,8 +128,8 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 	@Path("/{serverId}")
 	public Response deleteServerById(@PathParam("serverId") long id) {
 		LOG.info(id);
-		//mRepository.deleteAllValues();
-	//	mRepository.deleteAllInBatch();
+		// mRepository.deleteAllValues();
+		// mRepository.deleteAllInBatch();
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}
@@ -145,34 +140,29 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 
 		ServerEntity server = serverRepository.findOne(id);
 		System.out.println(server.getSensorsName());
-	//	registerReader=new RegisterReader();
+		// registerReader=new RegisterReader();
 		registerReader.setServerEntity(server);
-		
+
 		if ((schedulersMap.get(id)) == null) {
 			registerReader.startConnection();
 			registerReader.addObserver(this);
-		
-			// save start measurement with null values
-		//	Measurement startMeasurement = new Measurement();
-			// startMeasurement.setServer(server);
-		//	startMeasurement.setDate(new Date());
-			//mRepository.save(startMeasurement);
 
-			ScheduledExecutorService scheduler = Executors
-					.newScheduledThreadPool(4);
-			
+			// save start measurement with null values
+			// Measurement startMeasurement = new Measurement();
+			// startMeasurement.setServer(server);
+			// startMeasurement.setDate(new Date());
+			// mRepository.save(startMeasurement);
+
+			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+
 			// TaskScheduler sched=new ThreadPoolTaskScheduler();
 			// sched.schedule(registerReader, new CronTrigger(""));
-			
-			
+
 			schedulersMap.put(id, scheduler);
-			
-			
-			scheduler.scheduleAtFixedRate(registerReader, 0,
-					server.getTimeInterval(), TimeUnit.MILLISECONDS);
+
+			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
 			LOG.info("schedulersMap after add:" + schedulersMap);
-			LOG.warn("Odczyt włączony. " + server.getIp() + ":"
-					+ server.getPort());
+			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
 			return Response.ok().build();
 		}
@@ -193,8 +183,7 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 			// registerReader.setConnected(false);
 			registerReader.deleteObserver(this);
 			registerReader.stopConnection();
-			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":"
-					+ server.getPort());
+			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
 			return Response.ok().build();
 		} else {
 
@@ -243,27 +232,24 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 
 			// measurement.getMeasuredValue().addAll(myData);
 			measurementOnline.getMeasuredValue().addAll(myData);
-			
-			
-			MeasureEvent<Measurement> measureEvent=new MeasureEvent<>(measurementOnline);
+
+			MeasureEvent<Measurement> measureEvent = new MeasureEvent<>(measurementOnline);
 			publisher.publishEvent(measureEvent);
-			
 
-	/*		if (mCounter % server.getSavedMeasurementNumber() == 0) {
-
-				Measurement m = mRepository.save(measurementOnline);
-				LOG.info("dodano: " + m);
-				mCounter=0;
-			}
-			mCounter++;*/
+			/*
+			 * if (mCounter % server.getSavedMeasurementNumber() == 0) {
+			 * 
+			 * Measurement m = mRepository.save(measurementOnline); LOG.info(
+			 * "dodano: " + m); mCounter=0; } mCounter++;
+			 */
 			this.errorMessage = "";
 
 		}
 
 		if (dataObject instanceof Exception) {
 			Exception ex = (Exception) dataObject;
-			LOG.error("Error Uwaga błąd połączenia/odczytu z: " + server.getIp()
-					+ ":" + server.getPort() + " |" + ex.getMessage());
+			LOG.error("Error Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |"
+					+ ex.getMessage());
 			this.errorMessage = ex.getMessage();
 			Long id = server.getId();
 
@@ -276,7 +262,7 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 
 	}
 
-@Path("/{serverId}/measurement-online")
+	@Path("/{serverId}/measurement-online")
 	@Produces(MediaType.APPLICATION_JSON)
 	@GET
 	public Measurement getMasurementsOline() {
@@ -284,24 +270,27 @@ public class ServersService implements Observer,ApplicationEventPublisherAware{
 		return measurementOnline;
 
 	}
-	
+
 	@Path("/{serverId}/measurements")
-	public MeasurementRS showMeasurementRs(){
+	public MeasurementRS showMeasurementRs() {
 		return measurementRS;
 	}
 
-	
-	//set publisher
+	// set publisher
 	@Override
 	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
-		this.publisher=publisher;
-		
-		
-		
+		this.publisher = publisher;
+
 	}
 
 	@Path("/{serverId}/flow")
-	public FlowMeasurementRS getFlowMeasurementRS(){
+	public FlowMeasurementRS getFlowMeasurementRS() {
 		return flowMeasurementRS;
 	}
+
+	@Path("/{serverId}/registers")
+	public RegisterRS showRegisterRs() {
+		return registerRs;
+	}
+
 }
