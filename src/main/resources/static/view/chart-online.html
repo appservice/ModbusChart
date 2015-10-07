@@ -2,8 +2,7 @@
 <html>
 <head>
 <title>Wykres</title>
-<meta name="description"
-	content="chart created using amCharts live editor" />
+
 <meta charset="UTF-8" />
 
 
@@ -11,40 +10,40 @@
 </head>
 <body>
 
-	<div>
-		<div class="page-header">
-			<h3>Wykres online</h3>
-		</div>
+	<div class="page-header">
+		<h3>Wykres online</h3>
+	</div>
 
 
 
-<chart-dygraph data-ng-if="is_loaded" data="myData" chart-title="'Wykres wartości chwilowych'" y-axis-title="Przepływ [m3/h]"
-		max-series-number="maxSeriesNumber" series-name="seriesName"></chart-dygraph>
-		<br />
-	
-		
-		
-	<div style="font-size: large;  ">{{dataToShow.date|date:'dd MMMM yyyy |   HH:mm:ss'}}</div>
-		<table class="table table-striped table-bordered" >
-			<thead>
+	<chart-dygraph data-ng-if="is_loaded" data="myData"
+		chart-title="'Wykres wartości chwilowych'"
+		y-axis-title="Przepływ [m3/h]" max-series-number="maxSeriesNumber"
+		series-name="seriesName"></chart-dygraph>
+	<br />
 
 
-<div class="my_table">
+
+	<div style="font-size: large;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}</div>
+
+
+
+	<div class="my_table">
 		<table class="table table-striped table-bordered">
 			<thead>
 
 				<tr>
-					<th data-ng-repeat="sensorName in seriesName track by $index" style="text-align: center;">{{sensorName}}</th>
+					<th data-ng-repeat="sensorName in seriesName track by $index"
+						style="text-align: center;">{{sensorName}}</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td data-ng-repeat="value in dataToShow.values track by $index"
-						style="text-align: center">
-						{{value|number:4}} [m<sup>3</sup>/h]
+						style="text-align: center">{{value|number:4}} [m<sup>3</sup>/h]
 					</td>
 				</tr>
-	<!-- 			<tr>
+				<!-- 			<tr>
 
 					<td data-ng-repeat="squareColor in squaresTable  track by $index">
 						<div style="background-color: {{squareColor}}">
@@ -70,7 +69,7 @@
 
 
 
-	</div>
+
 
 </body>
 </html>

@@ -40,6 +40,8 @@ public class ServerEntity {
 	
 	private int savedMeasurementNumber;
 	
+	public double scaleFactor;
+	
 	
 	@ElementCollection(fetch=FetchType.EAGER)	
 	@CollectionTable(name="SENSOR_NAME",joinColumns={@JoinColumn(name="ID",referencedColumnName="id")})
@@ -66,7 +68,7 @@ public class ServerEntity {
 		this.sensorsName = sensorsName;
 	}
 
-	public double scaleFactor;
+	
 	
 	public double getScaleFactor() {
 		return scaleFactor;

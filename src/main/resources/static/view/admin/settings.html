@@ -25,7 +25,7 @@
 				<!-- 		<th>Co który pomiar zapisać</th> -->
 
 						<th>Typ danych</th>
-						<th>Współczynnik skali</th>
+						<th>Współczynnik wyskalowania</th>
 						<!-- <th>Ilość czujników</th> -->
 						<th>Adres rejestru</th>
 
@@ -160,20 +160,6 @@
 	</div>
 
 
-	<!-- 	<div class="row">
-		<div class="col-lg-12">
-			<div class="jumbotron">
-				<span>
-					<button class="btn btn-danger " data-ng-click="switchOffServer();">Wyłącz program</button>
-					Po naciśnięciu tego przycisku cały program zostanie wyłączony. Aby włączyć ponownie należy uruchomić aplikację
-					bezpośrednio na serwerze sieciowym.
-				</span>
-			</div>
-
-		</div>
-
-
-	</div> -->
 	<!-- ==================modal dialog add new server =========================== -->
 	<!-- Modal -->
 	<form name="newServerForm" novalidate>
@@ -239,19 +225,14 @@
 							</select>
 
 							<!-- saleFactor -->
-							<label for="input_saved_scale_factor" class="control-label">Współczynnik skalowania:</label>
+							<label for="input_saved_scale_factor" class="control-label">Współczynnik wyskalowania:</label>
 							<span class="alert-danger" data-ng-show="newServerForm.savedScaleFactor.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="newServerForm.savedScaleFactor.$error.number">Zły format danych!
 								Wymagana liczba!</span>
-							<input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor"
-								data-ng-model="newServer.scaleFactor" required>
+							<input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor" data-ng-init="newServer.scaleFactor=0.0027466659"
+								data-ng-model="newServer.scaleFactor"  required>
 
-							<!-- readeDataCount -->
-							<!-- 		<label for="input_count" class="control-label">Ilość czujników:</label> <span class="alert-danger"
-								data-ng-show="newServerForm.readedDataCount.$error.required"> Wymagany!</span> <span class="alert-danger"
-								data-ng-show="newServerForm.readedDataCount.$error.number">Zły format danych! Wymagana liczba!</span> <input
-								name="readedDataCount" type="number" class="form-control" id="input_count"
-								data-ng-model="newServer.readedDataCount" required>  -->
+
 
 							<label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
 							<span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.required"> Wymagany!</span>

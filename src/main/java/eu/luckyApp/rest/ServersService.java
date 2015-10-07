@@ -1,9 +1,6 @@
 package eu.luckyApp.rest;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,9 +14,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.repository.ServerRepository;
 
