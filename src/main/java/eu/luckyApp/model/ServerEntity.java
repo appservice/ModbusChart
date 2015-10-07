@@ -1,22 +1,15 @@
 package eu.luckyApp.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.Max;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class ServerEntity {
@@ -40,8 +33,7 @@ public class ServerEntity {
 
 	private int firstRegisterPos;
 
-	// for example read 3 x float from following registers
-	private int readedDataCount;
+
 
 	// @Enumerated
 	private String readedDataType;
@@ -142,13 +134,7 @@ public class ServerEntity {
 		this.firstRegisterPos = firstRegisterPos;
 	}
 
-	public int getReadedDataCount() {
-		return readedDataCount;
-	}
 
-	public void setReadedDataCount(int readedDataCount) {
-		this.readedDataCount = readedDataCount;
-	}
 
 	public String getReadedDataType() {
 		return readedDataType;

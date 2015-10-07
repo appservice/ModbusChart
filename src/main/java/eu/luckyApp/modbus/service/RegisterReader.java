@@ -22,16 +22,14 @@ import net.wimpi.modbus.util.ModbusUtil;
  *
  */
 @Component
-//@Scope("prototype")
+// @Scope("prototype")
 public class RegisterReader extends Observable implements Runnable {
 
 	private MyModbusTCPMaster modbusMaster;
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
-	private boolean  connected;
-	
-	
-	
+	private boolean connected;
+
 	/**
 	 * @return the connected
 	 */
@@ -39,8 +37,7 @@ public class RegisterReader extends Observable implements Runnable {
 		return connected;
 	}
 
-
-	private static final double WSPOLCZYNNIK=0.0027466659;
+	private static final double WSPOLCZYNNIK = 0.0027466659;
 
 	public ServerEntity getServerEntity() {
 		return serverEntity;
@@ -50,68 +47,65 @@ public class RegisterReader extends Observable implements Runnable {
 		this.serverEntity = serverEntity;
 	}
 
-	
-	
-	public void startConnection(){
-		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(),
-				serverEntity.getPort());
+	public void startConnection() {
+		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
 		try {
 			modbusMaster.connect();
-			connected=true;
+			connected = true;
 		} catch (Exception e) {
 
 			// send exception to observer
-		LOG.error(e.getStackTrace());
+			LOG.error(e.getMessage());
 			this.setChanged();
 			this.notifyObservers(e);
 		}
 
 	}
-	
-	public void stopConnection(){
-		if(connected)
-		modbusMaster.disconnect();
-		connected=false;
+
+	public void stopConnection() {
+		if (connected)
+			modbusMaster.disconnect();
+		connected = false;
 	}
-	
+
 	@Override
 	public void run() {
 
-			
+		if (connected) {
 
 			// -----------read and save to DB float data--------------
 			// LOG.warn(serverEntity.getReadedDataType());
-		LOG.debug("READED TYPE FROM MODBUS: " + new Date() + " "
-					+ serverEntity.getReadedDataType());
+			LOG.debug("READED TYPE FROM MODBUS: " + new Date() + " " + serverEntity.getReadedDataType());
 
-try{
-			
-			switch (serverEntity.getReadedDataType().toUpperCase()) {
-			case "FLOAT":
-				readFloatData();
-				break;
-			case "INTEGER":
-				//LOG.warn("ser "+serverEntity.getSensorsName());
-				readIntegerData();
-				break;
-			default:
-				break;
+			try {
+
+				switch (serverEntity.getReadedDataType().toUpperCase()) {
+				case "FLOAT":
+					readFloatData();
+					break;
+				case "INTEGER":
+					readIntegerData();
+					break;
+				default:
+					break;
+
+				}
+
+			} catch (Exception e) {
+
+				// send exception to observer
+
+				e.printStackTrace();
+				LOG.error(e.getMessage() + " error in run function");
+				stopConnection();
+				this.setChanged();
+				this.notifyObservers(e);
 
 			}
 
-		} catch (Exception e) {
-
-			// send exception to observer
-			
+		}else{
 			this.setChanged();
-			this.notifyObservers(e);
-			e.printStackTrace();
-			LOG.error(e.getMessage()+" error in run function");
-			stopConnection();
-			
-		} finally {
-			//stopConnection();
-			
+			this.notifyObservers(new Exception("Błąd połączenia!"));
 		}
 
 	}
@@ -119,9 +113,8 @@ try{
 	// -----------------------------------------E--------------------
 	private void readFloatData() throws ModbusException {
 
-		Register[] registers = modbusMaster.readMultipleRegisters(
-				Modbus.DEFAULT_UNIT_ID, serverEntity.getFirstRegisterPos(),
-				serverEntity.getSensorsName().size() * 2);
+		Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,
+				serverEntity.getFirstRegisterPos(), serverEntity.getSensorsName().size() * 2);
 
 		List<Double> resultList = new ArrayList<>();
 
@@ -131,9 +124,8 @@ try{
 			System.arraycopy(registers[i + 1].toBytes(), 0, tmp, 0, 2);
 			System.arraycopy(registers[i].toBytes(), 0, tmp, 2, 2);
 			Float myFloatData = ModbusUtil.registersToFloat(tmp);
-			Double parsedToDobuleData = Double.parseDouble(myFloatData
-					.toString());
-			resultList.add(parsedToDobuleData*serverEntity.getScaleFactor());
+			Double parsedToDobuleData = Double.parseDouble(myFloatData.toString());
+			resultList.add(parsedToDobuleData * serverEntity.getScaleFactor());
 
 		}
 		// send data to observer
@@ -143,9 +135,8 @@ try{
 
 	// ----------------------------------------------------------------
 	private void readIntegerData() throws ModbusException {
-		Register[] registers = modbusMaster.readMultipleRegisters(
-				Modbus.DEFAULT_UNIT_ID, serverEntity.getFirstRegisterPos(),
-				serverEntity.getSensorsName().size());
+		Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,
+				serverEntity.getFirstRegisterPos(), serverEntity.getSensorsName().size());
 
 		List<Double> resultList = new ArrayList<>();
 
@@ -154,28 +145,22 @@ try{
 		for (int i = 0; i < len; i++) {
 
 			int value = registers[i].getValue();
-			
-			
-			
-			resultList.add(((double) value)*serverEntity.getScaleFactor());
+
+			resultList.add(((double) value) * serverEntity.getScaleFactor());
 		}
 		// send data to observer
 		this.setChanged();
 		this.notifyObservers(resultList);
 
 	}
-	
-	
-	//asynchronic method
-	public void writeIntToRegister(int ref,int value) throws ModbusException{
-		//try {
-			Register r=new SimpleRegister();
-			r.setValue(value);
-		//	if(connected)
-			modbusMaster.writeSingleRegister(ref,r);
 
-		//} catch (ModbusException e) {
-		//	e.printStackTrace();
-	//	}
+	public void writeIntToRegister(int ref, int value) throws ModbusException {
+	
+		Register r = new SimpleRegister();
+		r.setValue(value);
+		modbusMaster.writeSingleRegister(ref, r);
+
+	
 	}
+
 }

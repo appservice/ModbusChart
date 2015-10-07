@@ -21,59 +21,53 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
+import eu.luckyApp.events.MeasureEvent;
 import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.model.ServerRunningChecker;
-import eu.luckyApp.repository.MeasurementRepository;
 import eu.luckyApp.repository.ServerRepository;
 
-//@Component
-//@Path("/")
-public class ExecutorRS implements Observer {
-	
-	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
+@Component
+@Path("/")
+public class ServerExecutorRS implements Observer, ApplicationEventPublisherAware {
 
+	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
+	private ApplicationEventPublisher publisher;
+	
 	@Autowired
 	private ServerRepository serverRepository;
-	
+	 
 
-	@Autowired
-	MeasurementRepository mesasurementRepo;
-	
 	@Autowired
 	private RegisterReader registerReader;
 
 	private String errorMessage;
 
 	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
-	
-	
-	@POST	
-	public Response runServer(@PathParam("id") long id) {
-		LOG.info("test");
+
+	@POST
+	public Response runServer(@PathParam("serverId") long id) {
 
 		ServerEntity server = serverRepository.findOne(id);
+		System.out.println(server.getSensorsName());
+		// registerReader=new RegisterReader();
 		registerReader.setServerEntity(server);
-		LOG.info("schedulersMap:"+this.schedulersMap);
-		if ((this.schedulersMap.get(id)) == null) {
-			
-			//save start measurement  with null values
-			Measurement startMeasurement=new Measurement();
-			//startMeasurement.setServer(server);
-			startMeasurement.setDate(new Date());
-			mesasurementRepo.save(startMeasurement);
-			
-			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-			//TaskScheduler sched=new ThreadPoolTaskScheduler();
-			//sched.schedule(registerReader, new CronTrigger(""));
-			this.schedulersMap.put(id, scheduler);
+
+		if ((schedulersMap.get(id)) == null) {
+			registerReader.startConnection();
 			registerReader.addObserver(this);
 
+			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+
+			schedulersMap.put(id, scheduler);
+
 			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
-			LOG.info("schedulersMap:"+this.schedulersMap);
+			LOG.info("schedulersMap after add:" + schedulersMap);
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
 			return Response.ok().build();
@@ -83,16 +77,16 @@ public class ExecutorRS implements Observer {
 	}
 
 	@DELETE
-	public Response stopServer(@PathParam("id") Long id) {
+	public Response stopServer(@PathParam("serverId") Long id) {
 		ServerEntity server = serverRepository.findOne(id);
-		LOG.info(this.schedulersMap);
 		ScheduledExecutorService scheduler = schedulersMap.get(id);
-		LOG.info(this.schedulersMap.get(id));
+
 		if (scheduler != null) {
 			scheduler.shutdown();
-			this.schedulersMap.remove(id);
+			schedulersMap.remove(id);
 			// registerReader.setConnected(false);
 			registerReader.deleteObserver(this);
+			registerReader.stopConnection();
 			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
 			return Response.ok().build();
 		} else {
@@ -109,13 +103,12 @@ public class ExecutorRS implements Observer {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ServerRunningChecker isConntectedToServer(@PathParam("id") Long id) {
+	public ServerRunningChecker isConntectedToServer(@PathParam("serverId") Long id) {
 
 		ServerRunningChecker serverRunningChecker = new ServerRunningChecker();
 		serverRunningChecker.setServerId(id);
-		LOG.info("scheduler in get"+this.schedulersMap);
 
-		if ((this.schedulersMap.get(id)) != null) {
+		if ((schedulersMap.get(id)) != null) {
 			serverRunningChecker.setConnectedToServer(true);
 
 		} else {
@@ -124,41 +117,56 @@ public class ExecutorRS implements Observer {
 		}
 		return serverRunningChecker;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object dataObject) {
 		ServerEntity server = ((RegisterReader) o).getServerEntity();
 
 		if (dataObject instanceof List) {
+
+			@SuppressWarnings("unchecked")
 			List<Double> myData = (List<Double>) dataObject;
-			Measurement measurement = new Measurement();
-			measurement.setDate(new Date());
-			//measurement.setServer(server);
 			
-			measurement.getMeasuredValue().addAll(myData);
-			//server.getMeasurements().add(measurement);
-			// mesasurementRepo.
-			Measurement m = mesasurementRepo.save(measurement);
-			LOG.info("dodano: " + m);
-			LOG.info("sched:"+this.schedulersMap);
+			Measurement  measurementOnline = new Measurement();
+			measurementOnline.setDate(new Date());
+
+			measurementOnline.getMeasuredValue().addAll(myData);
+
+			MeasureEvent<Measurement> measureEvent = new MeasureEvent<>(measurementOnline);
+			publisher.publishEvent(measureEvent);
+
+			/*
+			 * if (mCounter % server.getSavedMeasurementNumber() == 0) {
+			 * 
+			 * Measurement m = mRepository.save(measurementOnline); LOG.info(
+			 * "dodano: " + m); mCounter=0; } mCounter++;
+			 */
 			this.errorMessage = "";
-			
 
 		}
 
 		if (dataObject instanceof Exception) {
 			Exception ex = (Exception) dataObject;
-			LOG.error("Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |" + ex.getMessage());
+			LOG.error("Error Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |"
+					+ ex.getMessage());
 			this.errorMessage = ex.getMessage();
 			Long id = server.getId();
 
 			ScheduledExecutorService scheduler = schedulersMap.get(id);
 
 			scheduler.shutdown();
-			this.schedulersMap.remove(id);
-			// registerReader.setConnected(false);
+			schedulersMap.remove(id);
 			registerReader.deleteObserver(this);
 		}
 
 	}
+
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+		this.publisher=publisher;
+		
+	}
+	
+
 }

@@ -1,28 +1,44 @@
+<!DOCTYPE html>
 <html>
-<head></head>
- 
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/x-icon"
+	href="images/favicon.ico"></link>
+<title>Przepływomierz</title>
+
+</head>
+
 <body>
-    <h1>Zaloguj</h1>
- 
-    <form name='f' action="j_spring_security_check" method='POST'>
-        <table>
-            <tr>
-                <td>Użytkownik:</td>
-                <td><input type='text' name='j_username' value=''></td>
-            </tr>
-            <tr>
-                <td>Hasło:</td>
-                <td><input type='password' name='j_password' /></td>
-            </tr>
-            <tr>
-                <td>Pamiętaj przez 7 dni:</td>
-                <td><input type="checkbox" name="remember-me" /></td>
-            </tr>
-            <tr>
-                <td><input name="submit" type="submit" value="Loguj" /></td>
-            </tr>
-        </table>
-    </form>
- 
+	<h1>Zaloguj</h1>
+
+	<form name='f' action="j_spring_security_check" method='POST'>
+		<table>
+			<tr>
+				<td>Użytkownik:</td>
+				<td><input type='text' name='j_username' value=''></td>
+			</tr>
+			<tr>
+				<td>Hasło:</td>
+				<td><input type='password' name='j_password' /></td>
+			</tr>
+			<tr>
+				<td>Pamiętaj przez 7 dni:</td>
+				<td><input type="checkbox" name="remember-me" /></td>
+			</tr>
+			<tr>
+				<td><input name="submit" type="submit" value="Loguj" /></td>
+			</tr>
+		</table>
+	</form>
+	<div id="error_data" style="color: red;"></div>
+	<script type="text/javascript">
+	"use strict"
+		var requestData = window.location.search;
+		if (requestData === "?login_error=true") {
+			document.getElementById("error_data").innerHTML = "Błędny login lub hasło!";
+		} else {
+			document.getElementById("error_data").innerHTML = "";
+		}
+	</script>
 </body>
 </html>

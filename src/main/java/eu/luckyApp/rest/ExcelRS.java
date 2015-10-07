@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.MeasurementRepository;

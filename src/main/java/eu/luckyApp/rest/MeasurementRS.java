@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.MeasurementRepository;
