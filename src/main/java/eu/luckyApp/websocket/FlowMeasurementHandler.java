@@ -79,6 +79,8 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		sm.setTimeInterval(server.getTimeInterval());
 	}
 
+	
+	
 	@Override
 	public void onApplicationEvent(ApplicationEvent evt) {
 
