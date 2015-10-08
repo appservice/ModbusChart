@@ -9,7 +9,7 @@ function FilePathController($scope, Restangular) {
 	$scope.filepathes = [];
 
 	$scope.pageNumbers = [];
-	$scope.pageSize = 31;
+	$scope.pageSize = 20;
 
 	var allData = Restangular.oneUrl('rest/filepathes').get({
 		page : '0',

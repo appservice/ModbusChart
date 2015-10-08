@@ -1,4 +1,4 @@
-package eu.luckyApp.settings;
+package eu.luckyApp.settings.security;
 
 import java.io.IOException;
 

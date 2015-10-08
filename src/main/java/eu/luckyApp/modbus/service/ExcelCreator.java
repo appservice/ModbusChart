@@ -161,6 +161,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		fpe.setAbsolutePath(f.getAbsolutePath());
 		fpe.setFileName(f.getName());
 		fpe.setComment(addTitleText());
+		fpe.setCreationDate(new Date());
 		return fpe;
 
 	}

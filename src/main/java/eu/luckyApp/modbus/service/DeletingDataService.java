@@ -11,7 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.luckyApp.model.FilePathEntity;
 import eu.luckyApp.model.Measurement;
+import eu.luckyApp.repository.FilePathRepository;
 import eu.luckyApp.repository.MeasurementRepository;
 
 
@@ -25,16 +27,22 @@ import eu.luckyApp.repository.MeasurementRepository;
 public class DeletingDataService {
 	private static final Logger LOG=Logger.getLogger(DeletingDataService.class);
 	
-	@Autowired
+	//@Autowired
 	MeasurementRepository mRepository;
+	
+	@Autowired
+	FilePathRepository fRepository;
 	
 	@Value(value="${deleteservice.daynumbers}")
 	int dayNumbers;
 	
+	@Value(value="${deleteservice.deletefiles}")
+	boolean dalateFiles;
+	
 	
 
 	@SuppressWarnings("rawtypes")
-	public void deleteOlderThan(Date date){		
+	public void deleteMeasurementsOlderThan(Date date){		
 	Iterable<Measurement> measurements=mRepository.findOlderThan(date);
 		//LOG.info();
 		int count=0;
@@ -51,16 +59,33 @@ public class DeletingDataService {
 	@Scheduled(cron="0 0 23 * * ?")
 	@Transactional
 	public void deleteOlderThanYear(){
+		Date nDaysAgoDate = calculateDateOlderThan(dayNumbers);
+		//deleteMeasurementsOlderThan(nDaysAgoDate);
+		if(dalateFiles){
+		deleteFilePathsOlderThan(nDaysAgoDate);
+		}
+		
+	}
+
+
+	private void deleteFilePathsOlderThan(Date nDaysAgoDate) {
+		Iterable<FilePathEntity> filePathes=fRepository.findOlderThan(nDaysAgoDate);
+		int count=0;
+		if(filePathes instanceof Collection){
+			count =((Collection)filePathes).size();
+		}
+		fRepository.delete(filePathes);
+		LOG.info("REMOVED FILE OLDER THAN "+nDaysAgoDate+" :"+count );
+		
+	}
+
+
+	private Date calculateDateOlderThan(int dayNumbers) {
 		Calendar today=Calendar.getInstance();
-
-
 		//one year later
-		today.add(Calendar.DAY_OF_YEAR, -dayNumbers);
-		
-		Date yearAgoDate=today.getTime();
-		deleteOlderThan(yearAgoDate);
-		
-		
+		today.add(Calendar.DAY_OF_YEAR, -dayNumbers);		
+		Date calculatedDate=today.getTime();
+		return calculatedDate;
 	}
 	
 }

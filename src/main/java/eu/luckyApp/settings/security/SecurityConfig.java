@@ -1,4 +1,4 @@
-package eu.luckyApp.settings;
+package eu.luckyApp.settings.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +9,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
-import eu.luckyApp.settings.security.CustomUserDetailsService;
-import eu.luckyApp.settings.security.Role;
-import eu.luckyApp.settings.security.UserRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -30,6 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Value(value = "${admin.password}")
 	public String adminPassword;
+	
+	@Value("${security.require-ssl}")
+	boolean requireSSL;
 	
 	//@Value("#{Integer.parseInt(${remember_token_valid_time});}")
 	public Integer rememberTokenValidTime=604800;
@@ -57,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable()// .sessionManagement().disable()
+		http.csrf().disable()
 
 				.authorizeRequests().antMatchers("/js/**", "**/favicon.ico", "/css/**", "/images/**", "/errors/**")
 				.permitAll().antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN").antMatchers(HttpMethod.POST, "/**")
@@ -69,12 +68,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.failureUrl("/login.html?login_error=true").passwordParameter("j_password")
 				.usernameParameter("j_username")
 				.and().rememberMe().tokenValiditySeconds(rememberTokenValidTime).key("uniqueAndSecret")
-				// .and().httpBasic()
 				.and().logout().permitAll().logoutUrl("/logout")
 				.and().exceptionHandling().authenticationEntryPoint(new AlwaysSendUnauthorized401AuthenticationEntryPoint())
-			//	.and().requiresChannel().anyRequest().requiresSecure()
-			//	.and().headers().httpStrictTransportSecurity()
+
+
 			;
+		
+		if(requireSSL){
+			http.requiresChannel().anyRequest().requiresSecure();
+			//	.and().headers().httpStrictTransportSecurity()
+		}
 
 	}
 

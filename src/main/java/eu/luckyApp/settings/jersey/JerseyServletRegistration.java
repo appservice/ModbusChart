@@ -1,12 +1,10 @@
-package eu.luckyApp.settings;
+package eu.luckyApp.settings.jersey;
 
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import eu.luckyApp.settings.jersey.JerseyConfig;
 
 
 @Configuration

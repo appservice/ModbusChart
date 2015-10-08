@@ -1,9 +1,13 @@
 package eu.luckyApp.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Proxy;
@@ -21,6 +25,9 @@ public class FilePathEntity {
  private String fileName;
  
  private String comment;
+ 
+ @Temporal(TemporalType.TIMESTAMP)
+ private Date creationDate;
 /**
  * @return the comment
  */
@@ -75,6 +82,14 @@ public void setAbsolutePath(String absolutePath) {
  */
 public void setFileName(String fileName) {
 	this.fileName = fileName;
+}
+
+public Date getCreationDate() {
+	return creationDate;
+}
+
+public void setCreationDate(Date creationDate) {
+	this.creationDate = creationDate;
 }
  
  
