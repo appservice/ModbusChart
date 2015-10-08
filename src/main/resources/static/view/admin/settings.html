@@ -21,8 +21,8 @@
 						<th>Nazwa</th>
 						<th>IP</th>
 						<th>Port</th>
-						<th>Interwał</th>
-				<!-- 		<th>Co który pomiar zapisać</th> -->
+						<th>Interwał [ms]</th>
+						<th>Co który pomiar pokazać</th> 
 
 						<th>Typ danych</th>
 						<th>Współczynnik wyskalowania</th>
@@ -38,7 +38,7 @@
 						<td>{{server.ip}}</td>
 						<td>{{server.port}}</td>
 						<td>{{server.timeInterval}}</td>
-			<!-- 			<td>{{server.savedMeasurementNumber}}</td> -->
+						<td>{{server.savedMeasurementNumber}}</td> 
 						<td>{{server.readedDataType}}</td>
 						<td>{{server.scaleFactor}}</td>
 						<!--    <td>{{server.readedDataCount}}</td>-->
@@ -52,21 +52,21 @@
 
 
 				</table>
-				<button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog" data-ng-show="!isButtonDisabled">
+				<button class="btn btn-primary" data-toggle="modal" data-target="#newServerDialog" data-ng-show="!isButtonShowed">
 					Dodaj nowy <i class="glyphicon glyphicon-plus"></i>
 				</button>
-				<button class="btn btn-primary" data-toggle="modal" data-target="#editServerDialog" data-ng-show="isButtonDisabled"
-					data-ng-click="preEditServer(serversList[0])">
+				<button class="btn btn-primary" data-toggle="modal" data-target="#editServerDialog" data-ng-show="isButtonShowed"
+					data-ng-click="preEditServer(serversList[0])"><!-- data-ng-disabled="false" -->
 					Edytuj <i class="glyphicon glyphicon-edit"></i>
 				</button>
-				<!--     <button class="btn btn-primary" data-ng-show="isButtonDisabled" data-ng-click="removeServer(serversList[0])">
+				<!--     <button class="btn btn-primary" data-ng-show="isButtonShowed" data-ng-click="removeServer(serversList[0])">
           Usuń <i class="glyphicon glyphicon-remove"></i>
         </button>-->
 				<span>
-					<button class="btn btn-danger " data-ng-show="isButtonDisabled" data-ng-click="runServer(serversList[0])">
-						Włącz <i class="glyphicon glyphicon-play"></i>
+					<button class="btn btn-danger " data-ng-show="isButtonShowed" data-ng-click="runServer(serversList[0])">
+						Włącz <i class="glyphicon glyphicon-play" ></i>
 					</button>
-					<button class="btn btn-danger " data-ng-show="isButtonDisabled" data-ng-click="stopServer(serversList[0])">
+					<button class="btn btn-danger " data-ng-show="isButtonShowed" data-ng-click="stopServer(serversList[0])">
 						Wyłącz <i class="glyphicon glyphicon-stop"></i>
 					</button>
 				</span>
@@ -81,7 +81,7 @@
 
 	<!--  ---------------------lista    sensorów ------------------------------------ -->
 	<div class="row">
-		<div class="col-lg-6" data-ng-show="isButtonDisabled">
+		<div class="col-lg-6" data-ng-show="isButtonShowed">
 			<div class="jumbotron  my_table">
 				<h2>Lista czujników</h2>
 				<ul data-ng-repeat="server in serversList" class="list-inline">
@@ -207,7 +207,7 @@
 
 
 							<!-- sampler -->
-					<!-- 		<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
+					 		<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
 							<span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.min">Minimalna
 								wartość to 1!</span>
@@ -215,7 +215,7 @@
 								danych! Wymagana liczba!</span>
 							<input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number"
 								data-ng-model="newServer.savedMeasurementNumber" required min="1">
- -->
+
 
 							<!-- readedDataTypes -->
 							<label for="input_type" class="control-label">Typ danych:</label>
@@ -300,7 +300,7 @@
 								data-ng-model="updatedServer.timeInterval" required min="20">
 
 							<!-- sampler -->
-			<!-- 				<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
+							<label for="input_saved_measurement_number" class="control-label">Co którą próbkę zapisać:</label>
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.required">
 								Wymagany!</span>
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.min">Minimalna
@@ -308,7 +308,7 @@
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.number">Zły
 								format danych! Wymagana liczba!</span>
 							<input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number"
-								data-ng-model="updatedServer.savedMeasurementNumber" required min="1"> -->
+								data-ng-model="updatedServer.savedMeasurementNumber" required min="1"> 
 
 							<!-- readedDataTypes -->
 							<label for="input_type" class="control-label">Typ danych:</label>

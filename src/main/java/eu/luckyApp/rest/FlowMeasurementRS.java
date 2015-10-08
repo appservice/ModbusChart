@@ -51,7 +51,7 @@ public class FlowMeasurementRS implements ApplicationListener<MeasureEvent> {
 	}
 	
 	
-	@Scheduled(cron="0 0/30 9/8 * * ?")
+//	@Scheduled(cron="0 0/30 9/8 * * ?")
 	public void clearMeasurementList(){
 		
 		LOG.info("*/20 * * * * ? + "+new Date());

@@ -11,10 +11,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.socket.CloseStatus;
@@ -26,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.luckyApp.events.MeasureEvent;
+import eu.luckyApp.events.ServerUpdatedEvent;
 import eu.luckyApp.modbus.service.ExcelCreator;
 import eu.luckyApp.model.FilePathEntity;
 import eu.luckyApp.model.Measurement;
@@ -36,7 +39,7 @@ import eu.luckyApp.websocket.utils.Square;
 import eu.luckyApp.websocket.utils.SquareManager;
 
 //@Component
-public class FlowMeasurementHandler extends TextWebSocketHandler implements ApplicationListener<MeasureEvent> {
+public class FlowMeasurementHandler extends TextWebSocketHandler implements ApplicationListener {
 
 	private static final Logger LOG = Logger.getLogger(FlowMeasurementHandler.class);
 
@@ -54,50 +57,77 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	private FilePathRepository filePathRepository;
 
 	private Double dyvider;
-	
+
 	private boolean makeReset;
-	
+
 	private int numberOfValue;
 
+	private int mCounter=0;
+
+	private ServerEntity server;
+
+	@PostConstruct
+	public void initialize() {
+		server = serverRepository.findOne(1L);
+		if (server == null) {
+			server=new ServerEntity();
+			server.setSavedMeasurementNumber(1);
+			server.setTimeInterval(2000);  //default 2 s
+			
+		}						
+		dyvider = 3600000 / (double) (server.getTimeInterval());
+		sm.setTimeInterval(server.getTimeInterval());
+	}
+
 	@Override
-	public void onApplicationEvent(MeasureEvent evt) {
-		
-		//System.out.println("do it");
+	public void onApplicationEvent(ApplicationEvent evt) {
 
-		ServerEntity server = serverRepository.findOne(1L);
-		if (server != null) {
-			dyvider = 3600000 / (double) (server.getTimeInterval());
+		// -------------MEASUREMENT EVENT-----------------------
+		if (evt instanceof MeasureEvent) {
 
-			sm.setTimeInterval(server.getTimeInterval());
-		} else {
-			dyvider = 3600000 / (double) (2000); //
-			sm.setTimeInterval(2000); // default 2 s
+			Measurement m = (Measurement) evt.getSource();
+			prepareTemporaryMeasurement(m);
+
+			if (mCounter % server.getSavedMeasurementNumber() == 0) {
+				mesList.add(tempMes.deepClone());
+				sendSingleMessage(tempMes);
+				List<Square> sl = sm.calculateSquare(m);
+				sendSingleMessage(sl);
+				mCounter = 0;
+			}
+			mCounter++;
+			// sm.setSquareAmount(serverRepository.findOne(1l).getSensorsName().size());
+
+
 		}
 
-		if (this.tempMes == null) {
+		// -------------SERVER UPDATE EVENT-----------------------
+		if (evt instanceof ServerUpdatedEvent) {
+			
+			ServerEntity s = (ServerEntity) evt.getSource();
+			this.server=s;
+			dyvider = 3600000 / (double) (s.getTimeInterval());
+			sm.setTimeInterval(s.getTimeInterval());
+			LOG.info("server updated: " + s);
+		}
 
-			Measurement m =   (Measurement)evt.getSource();
+	}
+
+	private void prepareTemporaryMeasurement(Measurement m) {
+		if (this.tempMes == null) {
 			m.clearValuesList();
 			this.tempMes = calculatePerHour(m, dyvider);
 
 		} else {
 
-			tempMes.addAndCalculatePerHour( (Measurement) evt.getSource(), dyvider);
-		
-			if(makeReset){
+			tempMes.addAndCalculatePerHour(m, dyvider);
+
+			if (makeReset) {
 				tempMes.getMeasuredValue().set(numberOfValue, 0.0);
-				makeReset=false;
+				makeReset = false;
 			}
 
 		}
-
-		mesList.add(tempMes.deepClone());
-		sendSingleMessage(tempMes);
-		// sm.setSquareAmount(serverRepository.findOne(1l).getSensorsName().size());
-
-		List<Square> sl = sm.calculateSquare((Measurement)evt.getSource());
-		sendSingleMessage(sl);
-
 	}
 
 	@Override
@@ -118,7 +148,6 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		synchronized (session) {
 			super.handleTextMessage(session, message);
 			resetSensor(message);
-			// LOG.info(message.getPayload());
 		}
 	}
 
@@ -129,16 +158,13 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 		String[] messageReceived = message.getPayload().split(":");
 
-		
-		
 		if (messageReceived[0].equals("reset")) {
-			numberOfValue=Integer.parseInt(messageReceived[1]);
-			makeReset=true;
-		//	sendSingleMessage(tempMes);
+			numberOfValue = Integer.parseInt(messageReceived[1]);
+			makeReset = true;
+			// sendSingleMessage(tempMes);
 		}
 	}
 
-	
 	/**
 	 * Function is done after connection of websocket is closed.
 	 */
@@ -152,13 +178,10 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		}
 	}
 
-	
-	
-	
 	/**
 	 * 
 	 */
-	@Scheduled(cron = "${flowmeasurementhandler.cronstetment}") 															// // ?"
+	@Scheduled(cron = "${flowmeasurementhandler.cronstetment}") // // ?"
 	@Async
 	public void clearMeasurementList() {
 		LOG.info("Created file xls " + new Date());
@@ -168,27 +191,22 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 			List<String> seriesNames = serverRepository.findOne(1L).getSensorsName();
 			Future<FilePathEntity> fpe = es.submit(new ExcelCreator(mesList, seriesNames));
-			
-			mesList=new ArrayList<>();
+
+			mesList = new ArrayList<>();
 			sm.clear();
 			this.tempMes = null;
 			sendSingleMessage(new DateObject(new Date()));
-			
+
 			try {
 
-				filePathRepository.saveAndFlush(fpe.get());	
-				
-				LOG.info("file created: "+fpe.get().getAbsolutePath());
+				filePathRepository.saveAndFlush(fpe.get());
+
+				LOG.info("file created: " + fpe.get().getAbsolutePath());
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
 			es.shutdown();
 		}
-		
-	
-	
-
-		
 
 	}
 
@@ -211,11 +229,9 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		return null;
 	}
 
-	
-	
-	
 	/**
 	 * Function is sending object by single text message to websocket clients
+	 * 
 	 * @param message
 	 */
 	@Async
@@ -239,11 +255,9 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		}
 	}
 
-	
-	
-	
 	/**
 	 * Function calculate ...
+	 * 
 	 * @param measurement
 	 * @param divisor
 	 * @return devided measurement
@@ -273,14 +287,4 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 	}
 
-	/*private Measurement createZeroMeasurement() {
-
-		Measurement zeroMeausrement = new Measurement();
-		zeroMeausrement.setDate(new Date());
-		for (int i = 0; i < serverRepository.findOne(1L).getSensorsName().size(); i++) {
-			zeroMeausrement.getMeasuredValue().add(0.0);
-		}
-
-		return zeroMeausrement;
-	}*/
 }

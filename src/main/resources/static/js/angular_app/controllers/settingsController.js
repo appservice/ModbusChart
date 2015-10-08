@@ -11,7 +11,10 @@ angular
 						'Restangular',
 						'$timeout',
 						function($rootScope,$scope, Restangular, $timeout) {
-							$scope.isButtonDisabled = false;
+							$scope.isButtonShowed = false;
+							$scope.isButtonDisabled=false;
+							
+							
 							$scope.serversList = [];
 							$scope.readedDataTypes = [ {
 								"type" : "FLOAT",
@@ -43,7 +46,7 @@ angular
 							baseServers.getList().then(function(servers) {
 								$scope.serversList = servers;
 								if ($scope.serversList.length > 0) {
-									$scope.isButtonDisabled = true;
+									$scope.isButtonShowed = true;
 								}
 
 							},$rootScope.errorView);
@@ -64,7 +67,7 @@ angular
 										var index = $scope.serversList.indexOf(server);
 										if (index > -1)
 											$scope.serversList.splice(index, 1);
-										$scope.isButtonDisabled = false;
+										$scope.isButtonShowed = false;
 									}, errorResponseFunctoin);
 								}
 							}
@@ -76,7 +79,7 @@ angular
 								baseServers.post(newServer).then(
 										function(response) {
 											$scope.serversList.push(response);
-											$scope.isButtonDisabled = true;
+											$scope.isButtonShowed = true;
 											console.log("added id:" + response.id + "+ name: " + response.name + " ip: " + response.ip + " port: "
 													+ response.port + " timeInterval: " + response.timeInterval);
 
@@ -90,9 +93,7 @@ angular
 							}
 
 							$scope.updateServer = function(server) {
-								// var editedServer=Restangular.copy(server);
 
-								// $scope.updateServer=server;
 								server.put();
 
 							}
@@ -116,17 +117,15 @@ angular
 
 							// ---------run server (run excecutor)----
 							$scope.runServer = function(server) {
+								
+								
 								var id = server.id;
 								server.post('executor').then(
 										function() {
 											console.log("started");
+											$scope.isButtonDisabled=true;
 
-											// -----------checking if the server
-											// is
-											// running or occurred error
-
-											//	
-
+											// -----------checking if the server is running or occurred error
 											var executeGet = function() {
 
 												baseServers.customGET(id + "/executor").then(
@@ -137,8 +136,10 @@ angular
 
 															} else {
 																// console.log(response);
+																$scope.isButtonDisabled=false;
 																alert("Wystąpił błąd podczas połączenia z serwerem: " + server.name + "\n"
 																		+ response.errorMessage + "!");
+																
 
 															}
 

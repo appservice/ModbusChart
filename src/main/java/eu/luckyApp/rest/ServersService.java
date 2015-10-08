@@ -17,8 +17,10 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import eu.luckyApp.events.ServerUpdatedEvent;
 import eu.luckyApp.model.ServerEntity;
 import eu.luckyApp.repository.ServerRepository;
 
@@ -26,6 +28,9 @@ import eu.luckyApp.repository.ServerRepository;
 @Path("/servers")
 // @PermitAll
 public class ServersService {
+	
+	@Autowired
+	ApplicationEventPublisher publisher;
 
 	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
 
@@ -64,10 +69,11 @@ public class ServersService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addServer(ServerEntity server, @Context UriInfo uriInfo) {
 
-		serverRepository.save(server);
-		Long serverId = server.getId();
+		ServerEntity s=serverRepository.save(server);
+		Long serverId = s.getId();
 		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId).build();
-
+		publisher.publishEvent(new ServerUpdatedEvent<ServerEntity>(s));
+		
 		return Response.created(createdUri).entity(server).build();
 	}
 
@@ -76,8 +82,10 @@ public class ServersService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateServer(ServerEntity server) {
 
-		serverRepository.save(server);
+		ServerEntity s=serverRepository.save(server);
 		LOG.info("zmieniono server" + server);
+		publisher.publishEvent(new ServerUpdatedEvent<ServerEntity>(s));
+
 		return Response.noContent().build();
 
 	}

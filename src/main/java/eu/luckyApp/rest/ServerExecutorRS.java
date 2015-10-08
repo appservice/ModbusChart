@@ -67,7 +67,8 @@ public class ServerExecutorRS implements Observer, ApplicationEventPublisherAwar
 			schedulersMap.put(id, scheduler);
 
 			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
-			LOG.info("schedulersMap after add:" + schedulersMap);
+
+			//LOG.info("schedulersMap after add:" + schedulersMap);
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
 
 			return Response.ok().build();
