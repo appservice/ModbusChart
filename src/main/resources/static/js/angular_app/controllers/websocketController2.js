@@ -17,7 +17,12 @@ angular.module('myApp.controllers').controller("WebsocketController2", function(
 	var server = null;
 	var dataTableSize = 60;
 ;//myServer.sensorsName;
-
+var wsUrl;
+if (window.location.protocol == 'http:') {
+    wsUrl = 'ws://' + currentLocation.host + '/ModbusChart/measurementHandler';
+} else {
+    wsUrl = 'wss://' + currentLocation.host + '/ModbusChart/measurementHandler';
+}
 	// $scope.onStartWebsocket=function(){
 	
 	Restangular.one('rest/servers', 1).get().then(function(myServer) {
@@ -31,7 +36,7 @@ angular.module('myApp.controllers').controller("WebsocketController2", function(
 	// }
 
 	function testWebsocket() {
-		websocket = new WebSocket("ws://" + currentLocation.host + "/ModbusChart/measurementHandler");
+		websocket = new WebSocket(wsUrl);
 
 		websocket.onopen = function(evt) {
 			onOpen(evt)

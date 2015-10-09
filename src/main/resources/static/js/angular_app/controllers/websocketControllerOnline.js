@@ -11,6 +11,13 @@
 	$scope.squaresTable = [];
 	var websocket = null;
 	var isFirstMessage = true;
+	
+	var wsUrl;
+	if (window.location.protocol == 'http:') {
+	    wsUrl = 'ws://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
+	} else {
+	    wsUrl = 'wss://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
+	}
 
 	Restangular.one('rest/servers', 1).get().then(function(myServer) {
 
@@ -29,7 +36,7 @@
 		// }
 
 		function testWebsocket() {
-			websocket = new WebSocket("ws://" + currentLocation.host + "/ModbusChart/flowMeasurementHandler");
+			websocket = new WebSocket(wsUrl);
 
 			websocket.onopen = function(evt) {
 				onOpen(evt)
