@@ -1,9 +1,11 @@
 package eu.luckyApp.websocket;
 
 import java.io.IOException;
+import java.nio.DoubleBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -16,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.luckyApp.events.MeasureEvent;
+import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.ServerRepository;
 
 public class MeasurementHandler extends TextWebSocketHandler implements ApplicationListener<MeasureEvent> {
@@ -23,6 +26,9 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 	private static final Logger LOG = Logger.getLogger(MeasurementHandler.class);
 
 	private Set<WebSocketSession> mySessions = new HashSet<>();
+	// public static final int QUEUE_SIZE=60;
+	
+	//CircularFifoQueue<Measurement> queue=new CircularFifoQueue<>(QUEUE_SIZE);
 
 	@Autowired
 	private ServerRepository serverRepository;
@@ -32,10 +38,12 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 		LOG.info("connection established with session id: " + session.getId());
 
 		this.mySessions.add(session);
+
 		String jsonServerObject = convertToJsonObject(serverRepository.findOne(1L));
-
-		session.sendMessage(new TextMessage(jsonServerObject));
-
+		synchronized (session) {
+			session.sendMessage(new TextMessage(jsonServerObject));
+			//session.sendMessage(new TextMessage(convertToJsonObject(queue)));
+		}
 	}
 
 	@Override
@@ -43,8 +51,10 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 
 		// session.sendMessage(message);
 
-		if (message.getPayload().equalsIgnoreCase("start"))
-			session.sendMessage(new TextMessage("to jest test"));
+		if (message.getPayload().equalsIgnoreCase("start")) {
+
+		}
+		// session.sendMessage(new TextMessage("to jest test"));
 	}
 
 	@Override
@@ -54,20 +64,7 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 
 	}
 
-	/*
-	 * static final int i = 200;
-	 * 
-	 * @Scheduled(fixedDelay = i) public void addMessege() throws IOException {
-	 * String returnedMessageString =
-	 * convertToJsonObject(createSampleMeasurement()); TextMessage
-	 * returnedMessage = new TextMessage(returnedMessageString); for
-	 * (WebSocketSession session : mySessions) { if (session != null &&
-	 * session.isOpen()) {
-	 * 
-	 * // LOG.info(returnedMessage); session.sendMessage(returnedMessage);
-	 * 
-	 * } } }
-	 */
+	
 
 	/**
 	 * 
@@ -90,17 +87,27 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 
 	@Override
 	public void onApplicationEvent(MeasureEvent event) {
-		String returnedMessageString = convertToJsonObject(event.getSource());
-		TextMessage returnedMessage = new TextMessage(returnedMessageString);
+		Measurement m=(Measurement) event.getSource();
+		// queue.add(m);		
+		sendSingleMessage(m);
+	}
+	
+	
+	
+	private void sendSingleMessage(Object message) {
+
+		TextMessage returnedMessage = new TextMessage(convertToJsonObject(message));
 		for (WebSocketSession session : mySessions) {
 			if (session != null && session.isOpen()) {
+				synchronized (session) {
 
-				// LOG.info(returnedMessage);
-				try {
-					session.sendMessage(returnedMessage);
-				} catch (IOException e) {
-					LOG.error(e);
-					// e.printStackTrace();
+					try {
+
+						session.sendMessage(returnedMessage);
+
+					} catch (IOException e) {
+						LOG.error(e);
+					}
 				}
 
 			}

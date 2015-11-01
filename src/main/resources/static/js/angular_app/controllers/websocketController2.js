@@ -1,144 +1,169 @@
 /**
  * 
- *//**
+ */
+/**
  * =============websocket controller======================
  */
 
-angular.module('myApp.controllers').controller("WebsocketController2", function($scope,Restangular) {
+angular
+		.module('myApp.controllers')
+		.controller(
+				"WebsocketController2",
+				function($scope, Restangular) {
 
-	var currentLocation = window.location;
-	console.log(currentLocation);
-	$scope.myData = [];
-	$scope.dataToShow = null;
-	$scope.closeButtonText = "Stop";
-	var websocket = null;
-	$scope.squaresTable = [];
-	var isFirstMessage = true;
-	var server = null;
-	var dataTableSize = 60;
-;//myServer.sensorsName;
-var wsUrl;
-if (window.location.protocol == 'http:') {
-    wsUrl = 'ws://' + currentLocation.host + '/ModbusChart/measurementHandler';
-} else {
-    wsUrl = 'wss://' + currentLocation.host + '/ModbusChart/measurementHandler';
-}
-	// $scope.onStartWebsocket=function(){
-	
-	Restangular.one('rest/servers', 1).get().then(function(myServer) {
-		$scope.is_loaded = true;
-		$scope.seriesName =myServer.sensorsName;
-		
-		
-	console.log("start is starting!");
-	testWebsocket();
+					var currentLocation = window.location;
+					console.log(currentLocation);
+					$scope.myData = [];
+					$scope.dataToShow = null;
+					$scope.closeButtonText = "Stop";
+					var websocket = null;
+					$scope.squaresTable = [];
+					var isFirstMessage = true;
+					var server = null;
+					var dataTableSize = 60;
+					;// myServer.sensorsName;
+					var wsUrl;
+					if (window.location.protocol == 'http:') {
+						wsUrl = 'ws://' + currentLocation.host
+								+ '/ModbusChart/measurementHandler';
+					} else {
+						wsUrl = 'wss://' + currentLocation.host
+								+ '/ModbusChart/measurementHandler';
+					}
+					// $scope.onStartWebsocket=function(){
 
-	// }
+					Restangular
+							.one('rest/servers', 1)
+							.get()
+							.then(
+									function(myServer) {
+										$scope.is_loaded = true;
+										$scope.seriesName = myServer.sensorsName;
 
-	function testWebsocket() {
-		websocket = new WebSocket(wsUrl);
+										console.log("start is starting!");
+										testWebsocket();
 
-		websocket.onopen = function(evt) {
-			onOpen(evt)
-		};
-		websocket.onmessage = function(message) {
-			onMessage(message)
-		};
-		websocket.onclose = function(evt) {
-			onClose(evt)
-		};
+										// }
 
-		// websocket.onmessage = function(evt) { onMessage(evt) };
-		// websocket.onerror = function(evt) { onError(evt) };
-	}
-	function onOpen(evt) {
-		console.log("on open is on");
-		console.log(evt);
-		// websocket.send("start");
-		// for(var i=0;i<100;i++){
-		// websocket.send("kojene messege "+i);
-		// }
+										function testWebsocket() {
+											websocket = new WebSocket(wsUrl);
 
-	}
-	function onMessage(message) {
-		// console.log("object :"+message.data);
-		// var obj=JSON.parse(message.data);
-		// if(isFirstMessage){
+											websocket.onopen = function(evt) {
+												onOpen(evt)
+											};
+											websocket.onmessage = function(
+													message) {
+												onMessage(message)
+											};
+											websocket.onclose = function(evt) {
+												onClose(evt)
+											};
 
-		var returnedData = JSON.parse(message.data);
-		if (returnedData.ip != null) {
-			server = returnedData;
-			console.log(server);
+											// websocket.onmessage =
+											// function(evt) { onMessage(evt) };
+											// websocket.onerror = function(evt)
+											// { onError(evt) };
+										}
+										function onOpen(evt) {
+											console.log("on open is on");
+											console.log(evt);
 
-			// 
-		} else {
-			var obj = angular.fromJson(message.data);
-			// console.log(obj);
+										}
+										function onMessage(message) {
+											var returnedData = JSON
+													.parse(message.data);
 
-			if (isFirstMessage) {
-				var emptyValues = [];
-				for (var emp_i = 0; emp_i < server.sensorsName.length; emp_i++) {
-					emptyValues[emp_i] = null;
-				}
-				// console.log(obj.date - (dataTableSize
-				// )*server.timeInterval);
-				for (var j = 0; j < dataTableSize; j++) {
-					$scope.myData.push({
-						"date" : obj.date - (dataTableSize - j) * server.timeInterval,
-						"values" : emptyValues
-					});
+											if (!(returnedData instanceof Array)) {
+												if (returnedData.ip != null) {
+													server = returnedData;
 
-				}
+												} else {
+													// var obj = returnedData;
+													// console.log(obj);
 
-				isFirstMessage = false;
-			}
-			// }else{
+													if (isFirstMessage) {
+														var emptyValues = [];
+														for (var emp_i = 0; emp_i < server.sensorsName.length; emp_i++) {
+															emptyValues[emp_i] = null;
+														}
+														// console.log(obj.date
+														// - (dataTableSize
+														// )*server.timeInterval);
+														for (var j = 0; j < dataTableSize; j++) {
+															$scope.myData
+																	.push({
+																		"date" : returnedData.date
+																				- (dataTableSize - j)
+																				* server.timeInterval,
+																		"values" : emptyValues
+																	});
 
-			// console.log(new Date(obj.date));
-			// console.log(obj);
+														}
 
-			if ($scope.myData.length > dataTableSize) {
-				$scope.myData.shift();
-			}
+														isFirstMessage = false;
+													}
+													// }else{
 
-			$scope.dataToShow = obj;
-			$scope.myData.push(obj);
-			// console.log($scope.myData);
-			$scope.$apply('myData');
-		}
-	}
-	// console.log(message);
-	// websocket.close();
-	// }
+													// console.log(new
+													// Date(obj.date));
+													// console.log(obj);
 
-	function onClose(evt) {
-		console.log("Websocket Closed");
+													if ($scope.myData.length > dataTableSize) {
+														$scope.myData.shift();
+													}
 
-		// websocket=null;
-	}
+													$scope.dataToShow = returnedData;
+													$scope.myData
+															.push(returnedData);
+													// console.log(returnedData);
+													$scope.$apply('myData');
+												}
+											}else
+												{
+												console.log(returnedData);
+												}
+										}
+										// console.log(message);
+										// websocket.close();
+										// }
 
-	// -----------switch off when destroy controller-----------
-	$scope.$on("$destroy", function(event) {
-		console.log("destroyed");
-		if (websocket.readyState == websocket.OPEN) {
-			websocket.close();
-			$scope.closeButtonText = "Start";
-		}
-	})
-	// -------toggle button on/off-------------------
-	$scope.onStartWebsocket = function() {
-		if (websocket.readyState != websocket.CLOSED) {
+										function onClose(evt) {
+											console.log("Websocket Closed");
 
-			websocket.close();
-			$scope.closeButtonText = "Start";
-			// console.log("closed websocket session");
-			//
-		} else {
-			$scope.myData = [];
-			isFirstMessage = true;
-			testWebsocket();
-			$scope.closeButtonText = "Stop"
+											// websocket=null;
+										}
 
-		}
-	}});
-});
+										// -----------switch off when destroy
+										// controller-----------
+										$scope
+												.$on(
+														"$destroy",
+														function(event) {
+															console
+																	.log("destroyed");
+															if (websocket.readyState == websocket.OPEN) {
+																websocket
+																		.close();
+																$scope.closeButtonText = "Start";
+															}
+														})
+										// -------toggle button
+										// on/off-------------------
+										$scope.onStartWebsocket = function() {
+											if (websocket.readyState != websocket.CLOSED) {
+
+												websocket.close();
+												$scope.closeButtonText = "Start";
+												// console.log("closed websocket
+												// session");
+												//
+											} else {
+												$scope.myData = [];
+												isFirstMessage = true;
+												testWebsocket();
+												$scope.closeButtonText = "Stop"
+
+											}
+										}
+									});
+				});

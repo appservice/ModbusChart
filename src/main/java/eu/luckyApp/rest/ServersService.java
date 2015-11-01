@@ -40,8 +40,8 @@ public class ServersService {
 	@Autowired
 	ServerExecutorRS serverExecutorRs;
 
-	@Autowired
-	private FlowMeasurementRS flowMeasurementRS;
+//	@Autowired
+//	private FlowMeasurementRS flowMeasurementRS;
 
 	@Autowired
 	private RegisterWriterRS registerRs;
@@ -117,10 +117,10 @@ public class ServersService {
 		return serverExecutorRs;
 	}
 
-	@Path("/{serverId}/flow")
+/*	@Path("/{serverId}/flow")
 	public FlowMeasurementRS getFlowMeasurementRS() {
 		return flowMeasurementRS;
-	}
+	}*/
 
 	@Path("/{serverId}/registers")
 	public RegisterWriterRS showRegisterRs() {

@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 import eu.luckyApp.events.MeasureEvent;
 import eu.luckyApp.model.Measurement;
 
-@Component
-@Path("/")
+//@Component
+//@Path("/")
 public class FlowMeasurementRS implements ApplicationListener<MeasureEvent> {
 
 	Logger LOG = Logger.getLogger(FlowMeasurementRS.class);

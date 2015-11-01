@@ -76,7 +76,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 			
 		}						
 		dyvider = 3600000 / (double) (server.getTimeInterval());
-		sm.setTimeInterval(server.getTimeInterval());
+		sm.setTimeInterval(server.getTimeInterval()*server.getSavedMeasurementNumber());
 	}
 
 	
@@ -109,7 +109,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 			ServerEntity s = (ServerEntity) evt.getSource();
 			this.server=s;
 			dyvider = 3600000 / (double) (s.getTimeInterval());
-			sm.setTimeInterval(s.getTimeInterval());
+			sm.setTimeInterval(s.getTimeInterval()*s.getSavedMeasurementNumber());
 			LOG.info("server updated: " + s);
 		}
 
@@ -185,7 +185,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	 */
 	@Scheduled(cron = "${flowmeasurementhandler.cronstetment}") // // ?"
 	@Async
-	public void clearMeasurementList() {
+	public void saveDataAndClearList() {
 		LOG.info("Created file xls " + new Date());
 
 		if (serverRepository.findOne(1L) != null) {

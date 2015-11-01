@@ -11,9 +11,11 @@
 <body>
 
 	<div class="page-header">
-		<h3>Wykres online</h3>
+		<h3>Wykres chwilowy</h3>
 	</div>
-
+	<div>
+		<button class="btn btn-info" data-ng-click="onStartWebsocket();">{{closeButtonText}}</button>
+	</div>
 
 
 	<chart-dygraph data-ng-if="is_loaded" data="myData"
