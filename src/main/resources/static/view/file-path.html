@@ -25,6 +25,7 @@
 					<th>Lp</th>
 					<th>Data</th>
 					<th>Nazwa pliku</th>
+					<th>Cena 1m<sup>3</sup> powietrza </th>
 					<th></th>
 					<th></th>
 				</tr>
@@ -34,6 +35,7 @@
 					<td>{{$index+1+filepathes.size*filepathes.number}}</td>
 					<td>{{file.comment}}</td>
 					<td>{{file.fileName}}</td>
+					<td>{{file.priceOf1m3Air|number:4}} PLN</td>
 					<td><a class="btn btn-primary" data-ng-href="rest/filepathes/{{file.id}}/file">Pobierz <i
 							class="glyphicon glyphicon-save-file"></i>
 					</a></td>

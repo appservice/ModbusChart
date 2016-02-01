@@ -43,7 +43,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 	private static final Logger LOG = Logger.getLogger(FlowMeasurementHandler.class);
 
-	private Map<String, WebSocketSession> mySessions = new ConcurrentHashMap<>();
+	private final Map<String, WebSocketSession> mySessions = new ConcurrentHashMap<>();
 
 	private List<Measurement> mesList = new ArrayList<>();
 
@@ -88,11 +88,14 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		if (evt instanceof MeasureEvent) {
 
 			Measurement m = (Measurement) evt.getSource();
+			//LOG.warn(m);
 			prepareTemporaryMeasurement(m);
 
 			if (mCounter % server.getSavedMeasurementNumber() == 0) {
 				mesList.add(tempMes.deepClone());
 				sendSingleMessage(tempMes);
+			//	LOG.warn(tempMes);
+				
 				List<Square> sl = sm.calculateSquare(m);
 				sendSingleMessage(sl);
 				mCounter = 0;
@@ -118,6 +121,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	private void prepareTemporaryMeasurement(Measurement m) {
 		if (this.tempMes == null) {
 			m.clearValuesList();
+			m.setEnergyConsumption(0.0);
 			this.tempMes = calculatePerHour(m, dyvider);
 
 		} else {
@@ -176,7 +180,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		synchronized (session) {
 
 			mySessions.remove(session);
-			LOG.warn("session is closed");
+			LOG.info("session is closed");
 		}
 	}
 
@@ -267,6 +271,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	private Measurement calculatePerHour(Measurement measurement, Double divisor) {
 		Measurement returnedMeasurement = new Measurement();
 		returnedMeasurement.setDate(measurement.getDate());
+		returnedMeasurement.setEnergyConsumption(measurement.getEnergyConsumption());
 
 		for (Double value : measurement.getMeasuredValue()) {
 			returnedMeasurement.getMeasuredValue().add(value / divisor);

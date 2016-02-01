@@ -214,12 +214,13 @@ Dygraph.Export.drawPlot = function (canvas, dygraph, options) {
         Dygraph.Export.putLabel(ctx, labelsPlugin.title_div_, options, 
             options.titleFont, options.titleFontColor);
 
-        Dygraph.Export.putLabel(ctx, labelsPlugin.xlabel_div_, options, 
+      Dygraph.Export.putLabel(ctx, labelsPlugin.xlabel_div_, options, 
             options.axisLabelFont, options.axisLabelFontColor);
 
         Dygraph.Export.putVerticalLabelY1(ctx, labelsPlugin.ylabel_div_, options, 
             options.axisLabelFont, options.axisLabelFontColor, "center");
 
+        console.log(labelsPlugin);
         Dygraph.Export.putVerticalLabelY2(ctx, labelsPlugin.y2label_div_, options, 
             options.axisLabelFont, options.axisLabelFontColor, "center");
     }
@@ -282,7 +283,7 @@ Dygraph.Export.putVerticalLabelY1 = function (ctx, divLabel, options, font, colo
     var top = parseInt(divLabel.style.top, 10);
     var left = parseInt(divLabel.style.left, 10) + parseInt(divLabel.style.width, 10) / 2;
     var text = divLabel.innerText || divLabel.textContent;
-
+console.log("left:"+ left);
   
     // FIXME: The value of the 'left' property is frequently 0, used the option.
     if (!left)
@@ -290,7 +291,8 @@ Dygraph.Export.putVerticalLabelY1 = function (ctx, divLabel, options, font, colo
 
     if (textAlign == "center") {
         var textDim = ctx.measureText(text);
-        top = Math.ceil((ctx.canvas.height - textDim.width) / 2 + textDim.width);
+      //  top = Math.ceil((ctx.canvas.height - textDim.width) / 2 + textDim.width);
+        top = Math.ceil(ctx.canvas.height / 2);
     }
    // alert("div: "+divLabel.style.width+"ctx "+ctx.canvas.width);
     ctx.save();
@@ -308,16 +310,20 @@ Dygraph.Export.putVerticalLabelY1 = function (ctx, divLabel, options, font, colo
 /**
  * Draws a label Y2 rotated 90 degrees clockwise.
  */
-Dygraph.Export.putVerticalLabelY2 = function (ctx, divLabel, options, font, color, textAlign) {
+Dygraph.Export.putVerticalLabelY2 = function (ctx, divLabel, options, font, color, textAlign,dygraph) {
     "use strict";
     if (!divLabel) {
         return;
     }
         
+    console.log(divLabel);
     var top = parseInt(divLabel.style.top, 10);
-    var right = parseInt(divLabel.style.right, 10) + parseInt(divLabel.style.width, 10) * 2;
+    
+  //  var right = parseInt(divLabel.style.right, 10) + parseInt(divLabel.style.width, 10) * 2;
+    var right =10;// parseInt(divLabel.style.left, 10)-300;// + parseInt(divLabel.style.width, 10) * 2;
     var text = divLabel.innerText || divLabel.textContent;
 
+    console.log(right);
     if (textAlign == "center") {
         top = Math.ceil(ctx.canvas.height / 2);
     }
@@ -331,6 +337,8 @@ Dygraph.Export.putVerticalLabelY2 = function (ctx, divLabel, options, font, colo
     ctx.fillStyle = color;
     ctx.font = font;
     ctx.textAlign = textAlign;
+    
+    //console.log(right - ctx.canvas.width);
     ctx.fillText(text, top, right - ctx.canvas.width);
     
     ctx.restore();

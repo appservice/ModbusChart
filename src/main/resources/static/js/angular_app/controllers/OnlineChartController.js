@@ -1,168 +1,169 @@
 /**
  * 
- */angular.module('myApp.controllers').controller("WebsocketControllerOnline", function($scope, Restangular) {
+ */
+/**
+ * =============websocket controller======================
+ */
 
-	var currentLocation = window.location;
-	console.log(currentLocation);
-	$scope.myData = [];
-	$scope.dataToShow = null;
-	$scope.closeButtonText = "Stop";
-	$scope.is_loaded = false;
-	$scope.squaresTable = [];
-	var websocket = null;
-	var isFirstMessage = true;
-	
-	var wsUrl;
-	if (window.location.protocol == 'http:') {
-	    wsUrl = 'ws://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
-	} else {
-	    wsUrl = 'wss://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
-	}
+angular
+		.module('myApp.controllers')
+		.controller(
+				"OnlineChartController",
+				function($scope, Restangular) {
 
-	Restangular.one('rest/servers', 1).get().then(function(myServer) {
-
-		// $scope.server = myServer;
-
-		// console.log(myServer);
-		$scope.seriesName = myServer.sensorsName;
-		$scope.is_loaded = true;
-		// var dataTableSize = 60 * 8 * 60;
-
-		// $scope.onStartWebsocket=function(){
-
-		console.log("start is starting!");
-		testWebsocket();
-
-		// }
-
-		function testWebsocket() {
-			websocket = new WebSocket(wsUrl);
-
-			websocket.onopen = function(evt) {
-				onOpen(evt)
-			};
-			websocket.onmessage = function(message) {
-				onMessage(message)
-			};
-			websocket.onclose = function(evt) {
-				onClose(evt)
-				
-			};
-
-		}
-		function onOpen(evt) {
-			console.log("on open is on");
-
-		}
-		function onMessage(message) {
-		
-
-			var returnedData = angular.fromJson(message.data);
-	
-
-			if (returnedData instanceof Array) {
-				if (returnedData[0].date != null) {
-					$scope.myData = returnedData;
-				;
-
-					var emptyValues = [];
-					for (var emp_i = 0; emp_i < myServer.sensorsName.length; emp_i++) {
-						emptyValues[emp_i] = null;
+					var currentLocation = window.location;
+					console.log(currentLocation);
+					$scope.myData = [];
+					$scope.dataToShow = null;
+					$scope.closeButtonText = "Stop";
+					var websocket = null;
+					$scope.squaresTable = [];
+					var isFirstMessage = true;
+					var server = null;
+					var dataTableSize = 60;
+					;// myServer.sensorsName;
+					var wsUrl;
+					if (window.location.protocol == 'http:') {
+						wsUrl = 'ws://' + currentLocation.host
+								+ '/ModbusChart/measurementHandler';
+					} else {
+						wsUrl = 'wss://' + currentLocation.host
+								+ '/ModbusChart/measurementHandler';
 					}
+					// $scope.onStartWebsocket=function(){
 
-					$scope.myData.push({
-						"date" : returnedData[0].date + 28800000,
-						"values" : emptyValues
-					});
+					Restangular
+							.one('rest/servers', 1)
+							.get()
+							.then(
+									function(myServer) {
+										$scope.is_loaded = true;
+										$scope.seriesName = myServer.sensorsName;
 
-					// console.log(returnedData);
-					$scope.$apply('myData');
+										console.log("start is starting!");
+										testWebsocket();
 
-				} else {
+										// }
 
-					$scope.squaresTable = returnedData;
-					$scope.$apply('squaresTable');
+										function testWebsocket() {
+											websocket = new WebSocket(wsUrl);
 
-				}
-			} else if (returnedData.resetDate != null) {
+											websocket.onopen = function(evt) {
+												onOpen(evt)
+											};
+											websocket.onmessage = function(
+													message) {
+												onMessage(message)
+											};
+											websocket.onclose = function(evt) {
+												onClose(evt)
+											};
 
-				console.log(returnedData.resetDate);
-				console.log("clear");
-				$scope.myData = [];
-				// $scope.$apply('myData');
-				var emptyValues = [];
-				for (var emp_i = 0; emp_i < myServer.sensorsName.length; emp_i++) {
-					emptyValues[emp_i] = null;
-				}
+											// websocket.onmessage =
+											// function(evt) { onMessage(evt) };
+											// websocket.onerror = function(evt)
+											// { onError(evt) };
+										}
+										function onOpen(evt) {
+											console.log("on open is on");
+											console.log(evt);
 
-				$scope.myData.push({
-					"date" : returnedData.resetDate + 28800000,
-					"values" : emptyValues
+										}
+										function onMessage(message) {
+											var returnedData = JSON
+													.parse(message.data);
+
+											if (!(returnedData instanceof Array)) {
+												if (returnedData.ip != null) {
+													server = returnedData;
+
+												} else {
+													// var obj = returnedData;
+													// console.log(obj);
+
+													if (isFirstMessage) {
+														var emptyValues = [];
+														for (var emp_i = 0; emp_i < server.sensorsName.length; emp_i++) {
+															emptyValues[emp_i] = null;
+														}
+														// console.log(obj.date
+														// - (dataTableSize
+														// )*server.timeInterval);
+														for (var j = 0; j < dataTableSize; j++) {
+															$scope.myData
+																	.push({
+																		"date" : returnedData.date
+																				- (dataTableSize - j)
+																				* server.timeInterval,
+																		"values" : emptyValues
+																	});
+
+														}
+
+														isFirstMessage = false;
+													}
+													// }else{
+
+													// console.log(new
+													// Date(obj.date));
+													// console.log(obj);
+
+													if ($scope.myData.length > dataTableSize) {
+														$scope.myData.shift();
+													}
+
+													$scope.dataToShow = returnedData;
+													$scope.myData
+															.push(returnedData);
+													// console.log(returnedData);
+													$scope.$apply('myData');
+												}
+											}else
+												{
+												console.log(returnedData);
+												}
+										}
+										// console.log(message);
+										// websocket.close();
+										// }
+
+										function onClose(evt) {
+											console.log("Websocket Closed");
+
+											// websocket=null;
+										}
+
+										// -----------switch off when destroy
+										// controller-----------
+										$scope
+												.$on(
+														"$destroy",
+														function(event) {
+															console
+																	.log("destroyed");
+															if (websocket.readyState == websocket.OPEN) {
+																websocket
+																		.close();
+																$scope.closeButtonText = "Start";
+															}
+														})
+										// -------toggle button
+										// on/off-------------------
+										$scope.onStartWebsocket = function() {
+											if (websocket.readyState != websocket.CLOSED) {
+
+												websocket.close();
+												$scope.closeButtonText = "Start";
+												// console.log("closed websocket
+												// session");
+												//
+											} else {
+												$scope.myData = [];
+												isFirstMessage = true;
+												testWebsocket();
+												$scope.closeButtonText = "Stop"
+
+											}
+										}
+									});
 				});
-			} else if (returnedData.date != null)
-
-			{
-	
-				var obj = returnedData;
-
-				$scope.dataToShow = obj;
-				$scope.myData.splice($scope.myData.length - 1, 0, obj);
-
-				$scope.$apply('myData');
-			}
-			// }
-		}
-
-		function onClose(evt) {
-			console.log("Websocket Closed");
-			$scope.closeButtonText = "Start";
-			$scope.$apply('closeButtonText');
-
-			// websocket=null;
-		}
-
-		// -----------switch off when destroy controller-----------
-		$scope.$on("$destroy", function(event) {
-			console.log("destroyed");
-			if (websocket.readyState == websocket.OPEN) {
-				websocket.close();
-				$scope.closeButtonText = "Start";
-			}
-		})
-		// -------toggle button on/off-------------------
-		$scope.onStartWebsocket = function() {
-			if (websocket.readyState != websocket.CLOSED) {
-
-				websocket.close();
-				$scope.closeButtonText = "Start"; //
-			} else {
-
-				isFirstMessage = true;
-				testWebsocket();
-				$scope.closeButtonText = "Stop"
-			}
-			//	 
-		}
-		
-		//------ reset sensor --------------
-		$scope.onResetSensor=function(sensorNumber){
-			var doRest=confirm("Czy wyzerować dane sensora?")
-			if(doRest){
-			if(websocket.readyState==websocket.OPEN){
-				websocket.send("reset:"+sensorNumber);
-				console.log('reset sensror'+sensorNumber);
-			}}
-		}
-		
-	//$scope.isAdminRole=function(){
-			//console.log($rootScope.currentUser.roles.indexOf('ROLE_ADMIN')>-1);
-		//if($rootScope.currentUser.roles.indexOf({autority:"ROLE_ADMIN"})>-1)
-		//return true
-	//	else{
-		//	return false;
-		//console.log("test");
-		//}
-
-	//}
-	});
-});

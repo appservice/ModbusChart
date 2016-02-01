@@ -1,12 +1,9 @@
-/**
- * 'emguo.poller',
- * 'mgcrea.ngStrap' ,
- */
 
-var myApp = angular.module('myApp', [ 'ui.router', 'restangular',
+"use strict";
+var app = angular.module('myApp', [ 'ui.router', 'restangular',
 		 'myApp.directives', 'myApp.controllers',
 		'myApp.services','ngLocale']);//'ui.bootstrap'
-myApp.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider, $urlRouterProvider) {
 	
 	$urlRouterProvider.otherwise('/');
    // $locationProvider.html5Mode(true);
@@ -14,39 +11,7 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		url : '/',
 		templateUrl : "view/home.html",
 		controller:'HomeController'// /ModbusChart
-	})/*.state('chart', {
-		url : '/2-hours-chart',
-		templateUrl : 'view/day-chart.html',
-		controller : 'TwoHoursChartController'})
-	.state('8-hours-chart', {
-		url : '/8-hours-chart',
-		templateUrl : 'view/day-chart.html',
-		controller : 'EightHoursChartController'})
-
-	.state('1-day-chart', {
-		url : '/1-day-chart',
-		templateUrl : 'view/day-chart.html',
-		controller : 'DayChartController'
-
-	}).state('7-days-chart', {
-		url : '/7-days-chart',
-		templateUrl : 'view/day-chart.html',
-		controller : 'SevenDaysChartController'
-
-	}).state('31-days-chart', {
-		url : '/31-days-chart',
-		templateUrl : 'view/day-chart.html',
-		controller : 'ThirtyOneDaysChartController'
-
-	}).state('download',{
-		url:'/download',
-		templateUrl:'view/download.html',
-		controller:'DownloadController'
-	}).state('customPeriodChart',{
-		url:'/custom-period-chart',
-		templateUrl:'view/custom-period-chart.html',
-		controller:'CustomPeriodChartController'
-	})*/.state('settings', {
+	}).state('settings', {
 		url : '/settings',
 		templateUrl : 'view/admin/settings.html',
 		controller : 'SettingsController'
@@ -56,20 +21,20 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		templateUrl : 'view/help.html',
 		controller:'HelpController'
 
-	}).state('chartOnline', {
-		url : '/chart-online',
-		templateUrl : 'view/chart-online.html',
-		controller : 'WebsocketController2',//'ChartOnlineController'
+	}).state('onlineChart', {
+		url : '/online-chart',
+		templateUrl : 'view/online-chart.html',
+		controller : 'OnlineChartController',//'ChartOnlineController'
 
 	}).state('403', {
 		url : '/403',
 		templateUrl : 'view/403.html'
 		//controller : ''
 
-	}).state('websocket',{
-		url:'/websocket',
-		templateUrl:'view/websocket.html',
-		controller:'WebsocketController'
+	}).state('air-consumption-chart',{
+		url:'/air-consumption-chart',
+		templateUrl:'view/air-consumption-chart.html',
+		controller:'AirConsumptionController'
 	}).state('filepath',{
 		url:'/filepath',
 		templateUrl:'view/file-path.html',
@@ -79,31 +44,23 @@ myApp.config(function($stateProvider, $urlRouterProvider) {
 		templateUrl : 'login.html'
 		//controller : ''
 
+	})
+	.state('calculatedChart', {
+		url : '/calculated-chart',
+		templateUrl : 'view/calculated-chart.html',
+		controller : 'CalcuatedChartController',
+
 	});
 	
 });
-myApp.config([ 'RestangularProvider', function(RestangularProvider) {
+app.config([ 'RestangularProvider', function(RestangularProvider) {
 	RestangularProvider.setBaseUrl('/ModbusChart');
 	 // RestangularProvider.setRequestSuffix('.json');
 
 
 } ]);
 
-/*
- * // ----stop poller when change site myApp.config(function(pollerConfig) {
- * pollerConfig.stopOnStateChange(true); // If you use $stateProvider from //
- * ui-router. });
- */
-/*
-myApp.config(function(pollerConfig) {
-	pollerConfig.stopOnStateChange = true; // If you use $stateProvider from
-	// ui-router.
-	// pollerConfig.stopOnRouteChange = true; // If you use $routeProvider from
-	// ngRoute.
-	pollerConfig.resetOnStateChange = true;
-});
-*/
-myApp.run(function($rootScope,$state,Restangular,$window) {
+app.run(function($rootScope,$state,Restangular,$window) {
 	$rootScope.$on('$stateChangeError',
 		    function(event, toState, toParams, fromState, fromParams, error){
 //		  
@@ -142,9 +99,7 @@ myApp.run(function($rootScope,$state,Restangular,$window) {
 	}
 	
 	
-/*	Restangular.one('rest/servers', 1).get().then(function(myServer) {
-		// console.log(myServer);
-		$rootScope.mainServer = myServer;});*/
+
 
 	Restangular.one('rest/loggedUser', 1).get().then(function(currentUser) {
 	
@@ -152,11 +107,14 @@ myApp.run(function($rootScope,$state,Restangular,$window) {
 	console.log($rootScope.currentUser);
 	
 
-		
 	
-		
-
 	
+	});
+	
+	//$rootScope.preferences.currentPrice=0;
+	Restangular.one('rest/preferences').get().then(function(data){
+		$rootScope.preferences=data.plain();
+		
 	});
 	
 	

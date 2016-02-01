@@ -13,7 +13,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="jumbotron " style="min-width: 45em;">
-				<h2>Serwer</h2>
+				<h2>PLC</h2>
 
 				<table class="table table-striped table-bordered" style="min-width: 250pt;">
 					<tr>
@@ -22,12 +22,13 @@
 						<th>IP</th>
 						<th>Port</th>
 						<th>Interwał [ms]</th>
-						<th>Co który pomiar pokazać</th> 
+						<th>Co który pomiar pokazać</th>
 
 						<th>Typ danych</th>
-						<th>Współczynnik wyskalowania</th>
+						<th style="width: 100px" title="Współczynnik do wyskalowania czujników przepływu powietrza">Współczynnik_1 </th>
+						<th style="width: 100px" title="Współczynnik do wyskalowania licznika poboru energii elektrycznej">Współczynnik_2 </th>
 						<!-- <th>Ilość czujników</th> -->
-						<th>Adres rejestru</th>
+						<th title="Początkowy adres odczytywanych rejestrów">Adres rejestru</th>
 
 
 					</tr>
@@ -38,9 +39,11 @@
 						<td>{{server.ip}}</td>
 						<td>{{server.port}}</td>
 						<td>{{server.timeInterval}}</td>
-						<td>{{server.savedMeasurementNumber}}</td> 
+						<td>{{server.savedMeasurementNumber}}</td>
 						<td>{{server.readedDataType}}</td>
+						
 						<td>{{server.scaleFactor}}</td>
+						<td>{{server.scaleFactorForElectricEnergy}}</td>
 						<!--    <td>{{server.readedDataCount}}</td>-->
 						<td>{{server.firstRegisterPos}}</td>
 						<!-- <td><a href="#" data-toggle="modal" data-target="#editServerDialog" data-ng-click="preEditServer(server)">Edytuj</a></td> -->
@@ -56,7 +59,8 @@
 					Dodaj nowy <i class="glyphicon glyphicon-plus"></i>
 				</button>
 				<button class="btn btn-primary" data-toggle="modal" data-target="#editServerDialog" data-ng-show="isButtonShowed"
-					data-ng-click="preEditServer(serversList[0])"><!-- data-ng-disabled="false" -->
+					data-ng-click="preEditServer(serversList[0])">
+					<!-- data-ng-disabled="false" -->
 					Edytuj <i class="glyphicon glyphicon-edit"></i>
 				</button>
 				<!--     <button class="btn btn-primary" data-ng-show="isButtonShowed" data-ng-click="removeServer(serversList[0])">
@@ -64,7 +68,7 @@
         </button>-->
 				<span>
 					<button class="btn btn-danger " data-ng-show="isButtonShowed" data-ng-click="runServer(serversList[0])">
-						Włącz <i class="glyphicon glyphicon-play" ></i>
+						Włącz <i class="glyphicon glyphicon-play"></i>
 					</button>
 					<button class="btn btn-danger " data-ng-show="isButtonShowed" data-ng-click="stopServer(serversList[0])">
 						Wyłącz <i class="glyphicon glyphicon-stop"></i>
@@ -83,7 +87,7 @@
 	<div class="row">
 		<div class="col-lg-6" data-ng-show="isButtonShowed">
 			<div class="jumbotron  my_table">
-				<h2>Lista czujników</h2>
+				<h2>Lista czujników przepływu</h2>
 				<ul data-ng-repeat="server in serversList" class="list-inline">
 					<li>
 
@@ -113,6 +117,17 @@
 			</div>
 		</div>
 
+		<!--  --------------------- wartoc ceny energii  ------------------------------------ -->
+
+		<div class="col-lg-6">
+			<div class="jumbotron">
+				<h2>Koszt 1 kWh</h2>
+				 {{preferences.currentPrice|currency}}
+				 	<button class="btn btn-primary" data-toggle="modal" data-target="#updatePriceModal"
+								data-ng-click="preEditUser(user)">
+								Edytuj <i class="glyphicon glyphicon-edit"></i></button>
+			</div>
+		</div>
 
 		<!--  ---------------------lista    użytkowników ------------------------------------ -->
 
@@ -136,7 +151,9 @@
 						<td>{{user.userName}}</td>
 						<td data-ng-show="user.roles.indexOf('ROLE_ADMIN')>-1">Administrator</td>
 						<td data-ng-show="user.roles.indexOf('ROLE_ADMIN')<0">Użytkownik</td>
-						<td><input type="checkbox" data-ng-checked="user.enabled" disabled="disabled"/></td>
+						<td>
+							<input type="checkbox" data-ng-checked="user.enabled" disabled="disabled" />
+						</td>
 						<td>
 							<button class="btn btn-primary" data-toggle="modal" data-target="#updateUserDialog"
 								data-ng-click="preEditUser(user)">
@@ -207,7 +224,7 @@
 
 
 							<!-- sampler -->
-					 		<label for="input_saved_measurement_number" class="control-label">Co który pomiar pokazać:</label>
+							<label for="input_saved_measurement_number" class="control-label">Co który pomiar pokazać:</label>
 							<span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="newServerForm.savedMeasurementNumber.$error.min">Minimalna
 								wartość to 1!</span>
@@ -229,12 +246,20 @@
 							<span class="alert-danger" data-ng-show="newServerForm.savedScaleFactor.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="newServerForm.savedScaleFactor.$error.number">Zły format danych!
 								Wymagana liczba!</span>
-							<input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor" data-ng-init="newServer.scaleFactor=0.0027466659"
-								data-ng-model="newServer.scaleFactor"  required>
-
-
-
-							<label for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
+							<input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor"
+								data-ng-init="newServer.scaleFactor=0.0027466659" data-ng-model="newServer.scaleFactor" required> 
+								
+								
+							<!-- saleFactorEmergy -->
+							<label for="input_saved_scale_factor_energy" class="control-label">Współczynnik wyskalowania:</label>
+							<span class="alert-danger" data-ng-show="newServerForm.savedScaleFactorEnergy.$error.required"> Wymagany!</span>
+							<span class="alert-danger" data-ng-show="newServerForm.savedScaleFactorEnergy.$error.number">Zły format danych!
+								Wymagana liczba!</span>
+							<input name="savedScaleFactorEnergy" type="number" class="form-control" id="input_saved_scale_factor_energy"
+								data-ng-init="newServer.scaleFactorForElectricEnergy=1" data-ng-model="newServer.scaleFactorForElectricEnergy" required> 
+								
+								<label
+								for="input_pos" class="control-label">Adres pierwszego rejestru:</label>
 							<span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="newServerForm.firstRegisterPos.$error.number">Zły format danych!
 								Wymagana liczba!</span>
@@ -308,7 +333,7 @@
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedMeasurementNumber.$error.number">Zły
 								format danych! Wymagana liczba!</span>
 							<input name="savedMeasurementNumber" type="number" class="form-control" id="input_saved_measurement_number"
-								data-ng-model="updatedServer.savedMeasurementNumber" required min="1"> 
+								data-ng-model="updatedServer.savedMeasurementNumber" required min="1">
 
 							<!-- readedDataTypes -->
 							<label for="input_type" class="control-label">Typ danych:</label>
@@ -318,13 +343,21 @@
 							</select>
 
 							<!-- saleFactor -->
-							<label for="input_saved_scale_factor" class="control-label">Współczynnik skalowania:</label>
+							<label for="input_saved_scale_factor" class="control-label">Współczynnik skalowania licznika energii el.</label>
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedScaleFactor.$error.required"> Wymagany!</span>
 							<span class="alert-danger" data-ng-show="updatedServerForm.savedScaleFactor.$error.number">Zły format
 								danych! Wymagana liczba!</span>
 							<input name="savedScaleFactor" type="number" class="form-control" id="input_saved_scale_factor"
 								data-ng-model="updatedServer.scaleFactor" required>
 
+
+		<!-- saleFactorEnergy -->
+							<label for="input_saved_scale_factor_energy" class="control-label">Współczynnik skalowania czujników przepływu</label>
+							<span class="alert-danger" data-ng-show="updatedServerForm.savedScaleFactorEnergy.$error.required"> Wymagany!</span>
+							<span class="alert-danger" data-ng-show="updatedServerForm.savedScaleFactorEnergy.$error.number">Zły format
+								danych! Wymagana liczba!</span>
+							<input name="savedScaleFactorEnergy" type="number" class="form-control" id="input_saved_scale_factor_energy"
+								data-ng-model="updatedServer.scaleFactorForElectricEnergy" required>
 
 							<!-- readeDataCount -->
 							<!--	<label for="input_count" class="control-label">Ilość czujników:</label> <span class="alert-danger"
@@ -420,8 +453,8 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="input_enabled" >Czy aktywny: <input name="input_enabled" type="checkbox"
-								 id="input_enabled" data-ng-model="newdUser.enabled" required>
+							<label for="input_enabled">Czy aktywny: <input name="input_enabled" type="checkbox" id="input_enabled"
+								data-ng-model="newdUser.enabled" required>
 							</label>
 						</div>
 					</div>
@@ -458,7 +491,9 @@
 							<input name="name" type="text" class="form-control" id="input_name" data-ng-model="updatedUser.userName" required>
 						</div>
 						<div class="form-group">
-							<label for="input_password" class="control-label">Hasło:<small style="font-family:cursive;font-stretch: condensed;"> (w przypadku pozostawienia pustego pola hasło pozostanie niezmienione)</small></label>
+							<label for="input_password" class="control-label">Hasło:<small
+								style="font-family: cursive; font-stretch: condensed;"> (w przypadku pozostawienia pustego pola hasło
+									pozostanie niezmienione)</small></label>
 							<span class="alert-danger" data-ng-show="addUserForm.password.$error.required"> Wymagana!</span>
 							<input name="password" type="password" class="form-control" id="input_password"
 								data-ng-model="updatedUser.userPassword" required>
@@ -471,8 +506,8 @@
 						</select>
 
 						<div class="form-group">
-							<label for="input_enabled" >Czy aktywny: <input name="input_enabled" type="checkbox"
-								 id="input_enabled" data-ng-model="updatedUser.enabled" required>
+							<label for="input_enabled">Czy aktywny: <input name="input_enabled" type="checkbox" id="input_enabled"
+								data-ng-model="updatedUser.enabled" required>
 							</label>
 						</div>
 					</div>
@@ -484,9 +519,11 @@
 				</div>
 			</div>
 		</div>
-		</div>
+	
 	</form>
 	<!-- =========================================================================== -->
+	<!-- <div data-ng-include="" src="edit_price_modal.html"></div> -->
+	<div data-ng-include="" src="'view/admin/edit_price_modal.html'"></div>
 
 </body>
 </html>

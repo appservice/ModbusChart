@@ -224,5 +224,12 @@ angular
 							}
 							
 							
+							$scope.updateCurrentPrice=function(currentPrice){
+								//currentPrice.put();
+								Restangular.one("rest/preferences",'currentPrice').customPUT(currentPrice).then(function(){
+									$rootScope.preferences.currentPrice=currentPrice;
+									
+								});
+							}
 			
 						} ]);

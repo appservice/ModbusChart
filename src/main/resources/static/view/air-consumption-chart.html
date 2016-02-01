@@ -13,12 +13,12 @@
 	<div>
 		<button class="btn btn-info" data-ng-click="onStartWebsocket();">{{closeButtonText}}</button>
 	</div>
-	<chart-dygraph data-ng-if="is_loaded" data="myData" chart-title="'Zmianowy wykres zużycia powietrza'" y-axis-title="Zużycie [m3]"
-		max-series-number="maxSeriesNumber" series-name="seriesName"></chart-dygraph>
+	<air-consumption-chart data-ng-if="is_loaded" data="myData" chart-title="'Zmianowy wykres zużycia powietrza i energii'" y-axis-title="Zużycie powietrza [m3]"
+		max-series-number="maxSeriesNumber" series-name="seriesName"></air-consumption-chart>
 
 	<br />
-	<div style="font-size: large;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}</div>
-	<div class="my_table">
+	<div style="font-size: large;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}<span style="float: right;">Energia zużyta: {{dataToShow.energyConsumption}} [kWh]</span></div>
+	<div class="my_table" style="margin-top: 15px">
 		<table class="table table-striped table-bordered">
 			<thead>
 
@@ -56,6 +56,7 @@
 			</tbody>
 		</table>
 	</div>
+	<div></div>
 
 </body>
 </html>

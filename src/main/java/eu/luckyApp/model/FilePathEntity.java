@@ -26,7 +26,24 @@ public class FilePathEntity {
  
  private String comment;
  
- @Temporal(TemporalType.TIMESTAMP)
+ 
+ private double priceOf1m3Air;
+ 
+ /**
+ * @return the priceOf1m3Air
+ */
+public double getPriceOf1m3Air() {
+	return priceOf1m3Air;
+}
+
+/**
+ * @param priceOf1m3Air the priceOf1m3Air to set
+ */
+public void setPriceOf1m3Air(double priceOf1m3Air) {
+	this.priceOf1m3Air = priceOf1m3Air;
+}
+
+@Temporal(TemporalType.TIMESTAMP)
  private Date creationDate;
 /**
  * @return the comment

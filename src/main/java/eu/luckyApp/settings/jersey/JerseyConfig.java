@@ -3,10 +3,9 @@ package eu.luckyApp.settings.jersey;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
-import eu.luckyApp.rest.ExcelRS;
 import eu.luckyApp.rest.FilePathRS;
 import eu.luckyApp.rest.LoggedUserRS;
-import eu.luckyApp.rest.MeasurementRS;
+import eu.luckyApp.rest.PrefsRS;
 import eu.luckyApp.rest.RegisterWriterRS;
 import eu.luckyApp.rest.ServerExecutorRS;
 import eu.luckyApp.rest.ServersService;
@@ -23,6 +22,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(LoggedUserRS.class);
 		register(RegisterWriterRS.class);
 		register(UsersRS.class);
+		register(PrefsRS.class);
 
 	
 	}

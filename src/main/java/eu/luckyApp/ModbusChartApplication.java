@@ -16,6 +16,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
+
 public class ModbusChartApplication extends SpringBootServletInitializer {
 
 	private static Class<ModbusChartApplication> applicationClass = ModbusChartApplication.class;

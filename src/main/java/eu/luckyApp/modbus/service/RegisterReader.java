@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
@@ -37,7 +36,7 @@ public class RegisterReader extends Observable implements Runnable {
 		return connected;
 	}
 
-	private static final double WSPOLCZYNNIK = 0.0027466659;
+	//private static final double WSPOLCZYNNIK = 0.0027466659;
 
 	public ServerEntity getServerEntity() {
 		return serverEntity;
@@ -136,7 +135,7 @@ public class RegisterReader extends Observable implements Runnable {
 	// ----------------------------------------------------------------
 	private void readIntegerData() throws ModbusException {
 		Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,
-				serverEntity.getFirstRegisterPos(), serverEntity.getSensorsName().size());
+				serverEntity.getFirstRegisterPos(), serverEntity.getSensorsName().size()+1);
 
 		List<Double> resultList = new ArrayList<>();
 
@@ -146,11 +145,12 @@ public class RegisterReader extends Observable implements Runnable {
 
 			int value = registers[i].getValue();
 
-			resultList.add(((double) value) * serverEntity.getScaleFactor());
+			resultList.add(((double) value)/* * serverEntity.getScaleFactor()*/);
 		}
 		// send data to observer
 		this.setChanged();
 		this.notifyObservers(resultList);
+		//LOG.warn(resultList);
 
 	}
 

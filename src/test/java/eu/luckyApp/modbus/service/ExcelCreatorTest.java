@@ -43,11 +43,13 @@ public class ExcelCreatorTest {
 		List<Measurement> myTestList = new ArrayList<>();				
 		Measurement m=new Measurement();
 		m.setDate(new Date());		
+		m.setEnergyConsumption(34.8);
 		List<Double>testValue1=DoubleStream.iterate(0, n->n+3).limit(1).boxed().collect(Collectors.toList());
 		m.setMeasuredValue(testValue1);
 		
 		Measurement m2=new Measurement();
 		long time=new Date().getTime();
+		m2.setEnergyConsumption(22.1);
 		m2.setDate(new Date(time+60000) );		
 		List<Double>testValue2=DoubleStream.iterate(0, n->n+5).limit(7).boxed().collect(Collectors.toList());
 		m2.setMeasuredValue(testValue2);

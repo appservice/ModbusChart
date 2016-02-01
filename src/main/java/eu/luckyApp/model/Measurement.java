@@ -40,13 +40,9 @@ public class Measurement implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
-	/*
-	 * @JsonIgnore
-	 * 
-	 * @ManyToOne()
-	 * 
-	 * @JoinColumn(name="server_id") private ServerEntity server;
-	 */
+	private Double energyConsumption;
+	
+	
 
 	@ElementCollection(fetch = javax.persistence.FetchType.EAGER)
 	@CollectionTable(name = "VALUE", joinColumns = { @JoinColumn(name = "ID", referencedColumnName = "id") })
@@ -77,6 +73,20 @@ public class Measurement implements Serializable {
 		this.date = date;
 	}
 
+	/**
+	 * @return the energyConsumption
+	 */
+	public Double getEnergyConsumption() {
+		return energyConsumption;
+	}
+
+	/**
+	 * @param energyConsumption the energyConsumption to set
+	 */
+	public void setEnergyConsumption(Double energyConsumption) {
+		this.energyConsumption = energyConsumption;
+	}
+	
 	public List<Double> getMeasuredValue() {
 		return measuredValue;
 	}
@@ -89,7 +99,7 @@ public class Measurement implements Serializable {
 	public String toString() {
 		return "id: " + id + " " + " |date: " + date.toString() + " "
 				+ /* " |server : "+server+ */
-				" |measured list: " + measuredValue;
+				" |measured list: " + measuredValue+ " |energyConsumtion: "+energyConsumption ;
 	}
 
 	/*
@@ -124,7 +134,7 @@ public class Measurement implements Serializable {
 			this.getMeasuredValue().set(i, value + m.getMeasuredValue().get(i));/// dyvisor
 			i++;
 		}
-
+		this.setEnergyConsumption(m.getEnergyConsumption());
 		this.setDate(m.getDate());
 	}
 
@@ -150,6 +160,7 @@ public class Measurement implements Serializable {
 		}
 
 		this.setDate(m.getDate());
+		this.setEnergyConsumption(m.energyConsumption);
 	}
 
 	/**

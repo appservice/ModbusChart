@@ -126,23 +126,22 @@ public class ServerExecutorRS implements Observer, ApplicationEventPublisherAwar
 
 		if (dataObject instanceof List) {
 
-			@SuppressWarnings("unchecked")
+			
 			List<Double> myData = (List<Double>) dataObject;
 			
 			Measurement  measurementOnline = new Measurement();
 			measurementOnline.setDate(new Date());
+			measurementOnline.setEnergyConsumption(myData.get(0)*server.getScaleFactorForElectricEnergy());
+			//LOG.warn(myData.get(0));
 
-			measurementOnline.getMeasuredValue().addAll(myData);
+			for(int i=1;i<myData.size();i++){
+				
+				measurementOnline.getMeasuredValue().add(myData.get(i)*server.getScaleFactor());
+			}
 
 			MeasureEvent<Measurement> measureEvent = new MeasureEvent<>(measurementOnline);
 			publisher.publishEvent(measureEvent);
 
-			/*
-			 * if (mCounter % server.getSavedMeasurementNumber() == 0) {
-			 * 
-			 * Measurement m = mRepository.save(measurementOnline); LOG.info(
-			 * "dodano: " + m); mCounter=0; } mCounter++;
-			 */
 			this.errorMessage = "";
 
 		}

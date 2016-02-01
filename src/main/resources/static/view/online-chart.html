@@ -18,10 +18,10 @@
 	</div>
 
 
-	<chart-dygraph data-ng-if="is_loaded" data="myData"
-		chart-title="'Wykres wartości chwilowych'"
+	<online-chart data-ng-if="is_loaded" data="myData"
+		chart-title="'Wykres chwilowy przepływu powietrza'"
 		y-axis-title="Przepływ [m3/h]" max-series-number="maxSeriesNumber"
-		series-name="seriesName"></chart-dygraph>
+		series-name="seriesName"></online-chart>
 	<br />
 
 
@@ -45,26 +45,7 @@
 						style="text-align: center">{{value|number:4}} [m<sup>3</sup>/h]
 					</td>
 				</tr>
-				<!-- 			<tr>
 
-					<td data-ng-repeat="squareColor in squaresTable  track by $index">
-						<div style="background-color: {{squareColor}}">
-							<br /> <br />
-						</div>
-							
-					</td>
-
-
-				</tr>
-			
-				<tr data-ng-if="currentUser.roles.indexOf('ROLE_ADMIN')>-1">
-
-					<td  data-ng-repeat="squareColor in squaresTable  track by $index" style="text-align: center;" >
-						<button class="btn btn-default" data-ng-click="onResetSensor($index)">Zeruj</button>
-					</td>
-
-
-				</tr> -->
 			</tbody>
 		</table>
 	</div>

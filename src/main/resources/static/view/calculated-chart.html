@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="page-header">
+		<h3>Koszt wytworzenia 1 m<sup>3</sup> powietrza</h3>
+	</div>
+	<br />
+	<div>
+		<button class="btn btn-info" data-ng-click="onStartWebsocket();">{{closeButtonText}}</button>
+	</div>
+<calculated-chart data-ng-if="is_loaded" data="myData" chart-title="'Koszt wytworzenia powietrza'" y-axis-title="Koszt wytworzenia powietrza  [PLN/m3]"
+		max-series-number="maxSeriesNumber" series-name="seriesName" price="currentPrice">
+
+		</calculated-chart>
+		
+			<div style="font-size: large;margin-top: 20px">
+			<span style="float: left;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}</span>
+			<span style="float: right;">Aktualny koszt: {{currentValue|number:4}} [PLN/m<sup>3</sup>]</span>
+		<!-- 	<span style="float: right;">Energia zużyta: {{dataToShow.energyConsumption}} [kWh]</span> -->
+			</div>
+			
+</body>
+</html>

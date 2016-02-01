@@ -1,10 +1,8 @@
-/**
- * =============websocket controller======================
- */
-angular.module('myApp.controllers').controller("WebsocketController", function($scope, Restangular) {
+"use strict";
+angular.module('myApp.controllers').controller("AirConsumptionController", function($scope, Restangular) {
 
 	var currentLocation = window.location;
-	console.log(currentLocation);
+	//console.log(currentLocation);
 	$scope.myData = [];
 	$scope.dataToShow = null;
 	$scope.closeButtonText = "Stop";
@@ -86,7 +84,12 @@ angular.module('myApp.controllers').controller("WebsocketController", function($
 					$scope.$apply('squaresTable');
 
 				}
-			} else if (returnedData.resetDate != null) {
+			}
+			
+			
+			
+			
+			else if (returnedData.resetDate != null) {
 
 				console.log(returnedData.resetDate);
 				console.log("clear");
@@ -106,6 +109,7 @@ angular.module('myApp.controllers').controller("WebsocketController", function($
 			{
 	
 				var obj = returnedData;
+				//console.log(obj);
 
 				$scope.dataToShow = obj;
 				$scope.myData.splice($scope.myData.length - 1, 0, obj);
@@ -156,15 +160,6 @@ angular.module('myApp.controllers').controller("WebsocketController", function($
 			}}
 		}
 		
-	//$scope.isAdminRole=function(){
-			//console.log($rootScope.currentUser.roles.indexOf('ROLE_ADMIN')>-1);
-		//if($rootScope.currentUser.roles.indexOf({autority:"ROLE_ADMIN"})>-1)
-		//return true
-	//	else{
-		//	return false;
-		//console.log("test");
-		//}
 
-	//}
 	});
 });

@@ -40,9 +40,26 @@ public class ServerEntity {
 	
 	private int savedMeasurementNumber;
 	
-	public double scaleFactor;
+	private double scaleFactor;
 	
 	
+	private double scaleFactorForElectricEnergy;
+	
+	
+	/**
+	 * @return the scaleFactorForElectricEnergy
+	 */
+	public double getScaleFactorForElectricEnergy() {
+		return scaleFactorForElectricEnergy;
+	}
+
+	/**
+	 * @param scaleFactorForElectricEnergy the scaleFactorForElectricEnergy to set
+	 */
+	public void setScaleFactorForElectricEnergy(double scaleFactorForElectricEnergy) {
+		this.scaleFactorForElectricEnergy = scaleFactorForElectricEnergy;
+	}
+
 	@ElementCollection(fetch=FetchType.EAGER)	
 	@CollectionTable(name="SENSOR_NAME",joinColumns={@JoinColumn(name="ID",referencedColumnName="id")})
 	private List<String>sensorsName=new ArrayList<>();

@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-ng-app="myApp">
+<html data-ng-app="myApp">
+<!-- xmlns:th="http://www.thymeleaf.org" -->
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -32,17 +33,15 @@
 				<ul class="nav navbar-nav navbar-right margin_right_10">
 
 					<li class="active"><a href="#/"><span class="glyphicon glyphicon-home"></span> Strona domowa</a></li>
-					<li><a href="#/websocket">Wykres zużycia</a></li>
-					<li><a href="#/chart-online">Wykres chwilowy</a></li>
+					<li><a href="#/air-consumption-chart">Wykres zużycia</a></li>
+					<li><a href="#/online-chart">Wykres chwilowy</a></li>
+					<!-- <li><a href="#/calculated-chart">Koszt</a></li> -->
 					<!-- 				<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 						aria-expanded="false">Wykresy <b class="caret"></b>
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<li><a href="#/2-hours-chart">Wykres ostatnie 2 godziny</a></li>
 							<li><a href="#/8-hours-chart">Wykres ostatnie 8 godzin</a></li>
-							<li><a href="#/1-day-chart">Wykres ostatnie 24 godziny</a></li>
-							<li><a href="#/7-days-chart">Wykres ostatnie 7 dni</a></li>
-							<li><a href="#/31-days-chart">Wykres ostatnie 31 dni</a></li>
 							<li class="divider"></li>
 							<li><a href="#/custom-period-chart">Wykres z dowolnego przedziału czasowego</a></li>
 						</ul></li> -->
@@ -126,10 +125,11 @@
 	<script type="text/javascript" src="js/angular_app/controllers.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/homeController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/settingsController.js"></script>
-	<script type="text/javascript" src="js/angular_app/controllers/websocketController.js"></script>
-		<script type="text/javascript" src="js/angular_app/controllers/websocketController2.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/AirConsumptionController.js"></script>
+		<script type="text/javascript" src="js/angular_app/controllers/OnlineChartController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/filePathController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/helpController.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/CalculatedChartController.js"></script>
 	
 
 
@@ -139,6 +139,10 @@
 
 	<!-- dyrectives  -->
 	<script type="text/javascript" src="js/angular_app/directives.js"></script>
+		<script type="text/javascript" src="js/angular_app/directives/CalculatedChartDirective.js"></script>
+		<script type="text/javascript" src="js/angular_app/directives/AirConsumptionChartDirective.js"></script>
+			<script type="text/javascript" src="js/angular_app/directives/OnlineChartDirective.js"></script>
+		
 
 
 

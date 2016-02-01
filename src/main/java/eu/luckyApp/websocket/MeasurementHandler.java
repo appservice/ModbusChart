@@ -1,11 +1,9 @@
 package eu.luckyApp.websocket;
 
 import java.io.IOException;
-import java.nio.DoubleBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
