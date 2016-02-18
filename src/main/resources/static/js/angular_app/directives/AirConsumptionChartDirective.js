@@ -60,7 +60,7 @@ angular.module('myApp.directives')
 				ylabel : scope.yAxisTitle,
 				y2label: 'Zużycie energii [kWh]',
 				yLabelWidth : 18,
-				digitsAfterDecimal : 4,
+				digitsAfterDecimal : 2,
 				drawGapEdgePoints : true,
 				 series: {
 		              'Zużycie energii': {
@@ -70,7 +70,8 @@ angular.module('myApp.directives')
 		                      // set axis-related properties here
 		                    //  labelsKMG2: true,
 		                      independentTicks: true,
-		                      strokeWidth : 3
+		                      strokeWidth : 2,
+		                      strokePattern:Dygraph.DASHED_LINE
 		                    }
 		                  }
 			//	zoomCallback : rangeSelectingCallback,

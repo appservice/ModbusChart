@@ -20,12 +20,13 @@
 
 		<!--   <header class="navbar navbar-default "> -->
 		<div class="navbar navbar-inverse navbar-static-top">
-			<!--           Przepływomierz              <div class = "container">
- -->
+
 			<span class="navbar-brand">Przepływomierz </span>
 
 			<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
-				<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
 			</button>
 
 			<div class="collapse navbar-collapse navHeaderCollapse">
@@ -40,10 +41,7 @@
 						aria-expanded="false">Wykresy <b class="caret"></b>
 					</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#/2-hours-chart">Wykres ostatnie 2 godziny</a></li>
-							<li><a href="#/8-hours-chart">Wykres ostatnie 8 godzin</a></li>
-							<li class="divider"></li>
-							<li><a href="#/custom-period-chart">Wykres z dowolnego przedziału czasowego</a></li>
+							<li><a href="#/2-hours-chart">Wykres ostatnie 2 godziny</a></li>		
 						</ul></li> -->
 					<!-- 	<li><a href="#/download">Pobierz dane</a></li> -->
 					<li><a href="#/filepath">Dane archiwalne</a></li>
@@ -51,7 +49,7 @@
 					<li><a href="#/settings">Ustawienia</a></li>
 					<!-- <li><a href="#/websocket">websocket</a></li> -->
 					<!--         <li><a href="#/help">Pomoc</a></li> -->
-					<li><a href="/ModbusChart/logout">Wyloguj: <strong>{{currentUser.name}}</strong></a></li>
+					<li><a href="/ModbusChart/logout">Wyloguj: <strong data-ng-cloak="">{{currentUser.name}}</strong></a></li>
 
 				</ul>
 
@@ -75,7 +73,8 @@
 			<p>
 				© Copyright by <b><img alt="" src="images/logo_small.png"></b>. All rights reserved. <br /> <small>Designed
 					& Developed by <b><a href="http://www.itemservice.eu/">ITEM Service</a></b> & <b>LuckyApp</b>
-				</small> <span class="glyphicon glyphicon-envelope" style="margin-left: 20px;"></span>
+				</small>
+				<span class="glyphicon glyphicon-envelope" style="margin-left: 20px;"></span>
 				<!-- <a class="btn btn-danger">Kliknij</a>  -->
 			</p>
 			<!--  </div> -->
@@ -103,11 +102,7 @@
 	<script type="text/javascript" src="js/vendors/loadash/lodash.min.js"></script>
 	<script type="text/javascript" src="js/vendors/restangular/restangular.min.js"></script>
 
-	<!-- poller 
-	<script type="text/javascript" src="js/vendors/angular-pooler/angular-poller.min.js"></script>-->
-	<!-- angular bootstrap  
-	<script type="text/javascript" src="js/vendors/angular-strap/angular-strap.min.js"></script>
-	<script type="text/javascript" src="js/vendors/angular-strap/angular-strap.tpl.min.js"></script>-->
+
 
 	<!-- chart engine -->
 	<script type="text/javascript" src="js/vendors/dygraph/dygraph-combined.js"></script>
@@ -126,23 +121,24 @@
 	<script type="text/javascript" src="js/angular_app/controllers/homeController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/settingsController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/AirConsumptionController.js"></script>
-		<script type="text/javascript" src="js/angular_app/controllers/OnlineChartController.js"></script>
+	<script type="text/javascript" src="js/angular_app/controllers/OnlineChartController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/filePathController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/helpController.js"></script>
 	<script type="text/javascript" src="js/angular_app/controllers/CalculatedChartController.js"></script>
-	
+
 
 
 
 	<!-- services  -->
 	<script type="text/javascript" src="js/angular_app/services.js"></script>
+	<script type="text/javascript" src="js/angular_app/services/RestFullResponseService.js"></script>
 
 	<!-- dyrectives  -->
 	<script type="text/javascript" src="js/angular_app/directives.js"></script>
-		<script type="text/javascript" src="js/angular_app/directives/CalculatedChartDirective.js"></script>
-		<script type="text/javascript" src="js/angular_app/directives/AirConsumptionChartDirective.js"></script>
-			<script type="text/javascript" src="js/angular_app/directives/OnlineChartDirective.js"></script>
-		
+	<script type="text/javascript" src="js/angular_app/directives/CalculatedChartDirective.js"></script>
+	<script type="text/javascript" src="js/angular_app/directives/AirConsumptionChartDirective.js"></script>
+	<script type="text/javascript" src="js/angular_app/directives/OnlineChartDirective.js"></script>
+
 
 
 

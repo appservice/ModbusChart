@@ -4,19 +4,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
@@ -29,51 +24,57 @@ import eu.luckyApp.events.MeasureEvent;
 import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.ServerEntity;
-import eu.luckyApp.model.ServerRunningChecker;
 import eu.luckyApp.repository.ServerRepository;
 
 @Component
 @Path("/")
-public class ServerExecutorRS implements Observer, ApplicationEventPublisherAware {
+public class ServerExecutorRS implements ApplicationEventPublisherAware {
 
 	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
 	private ApplicationEventPublisher publisher;
-	
+
 	@Autowired
 	private ServerRepository serverRepository;
-	 
 
 	@Autowired
 	private RegisterReader registerReader;
+	ServerEntity server = null;
+	
+	//private rx.Observable<List<Double>> obervable;
 
-	private String errorMessage;
+
 
 	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
 
 	@POST
 	public Response runServer(@PathParam("serverId") long id) {
 
-		ServerEntity server = serverRepository.findOne(id);
-		System.out.println(server.getSensorsName());
-		// registerReader=new RegisterReader();
+		this.server = serverRepository.findOne(id);
 		registerReader.setServerEntity(server);
 
 		if ((schedulersMap.get(id)) == null) {
-			registerReader.startConnection();
-			registerReader.addObserver(this);
+			LOG.warn("włączony");
+			try {
+				registerReader.startConnection();
+			} catch (Exception e) {
+				LOG.error(e);
+				return Response.serverError().entity("Nie można nawiązać połączenia!").header("error", e.getMessage())
+						.build();
+			}
 
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-
-			schedulersMap.put(id, scheduler);
-
+			
 			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
 
-			//LOG.info("schedulersMap after add:" + schedulersMap);
+			rx.Observable.create(registerReader).subscribe(new MyObserver());
 			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
+			schedulersMap.put(id, scheduler);
 
 			return Response.ok().build();
 		}
-		return Response.serverError().build();
+
+		return Response.serverError().entity("Połączenie już ustanowione!")
+				.header("error", "Połączenie już ustanowione!").build();
 
 	}
 
@@ -85,88 +86,79 @@ public class ServerExecutorRS implements Observer, ApplicationEventPublisherAwar
 		if (scheduler != null) {
 			scheduler.shutdown();
 			schedulersMap.remove(id);
-			// registerReader.setConnected(false);
-			registerReader.deleteObserver(this);
 			registerReader.stopConnection();
+			//obervable.unsubscribeOn(scheduler)
 			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
 			return Response.ok().build();
 		} else {
 
-			return Response.serverError().build();
+			return Response.serverError().entity("Połączenie nie było ustanowione!")
+					.header("error", "Połączenie nie było ustanowione!").build();
 		}
 	}
 
-	/**
-	 * 
-	 * @param id
-	 *            -it is server id
-	 * @return true if executor is scheduling task
-	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public ServerRunningChecker isConntectedToServer(@PathParam("serverId") Long id) {
-
-		ServerRunningChecker serverRunningChecker = new ServerRunningChecker();
-		serverRunningChecker.setServerId(id);
-
-		if ((schedulersMap.get(id)) != null) {
-			serverRunningChecker.setConnectedToServer(true);
-
-		} else {
-			serverRunningChecker.setConnectedToServer(false);
-			serverRunningChecker.setErrorMessage(this.errorMessage);
-		}
-		return serverRunningChecker;
-	}
-
-	@SuppressWarnings("unchecked")
+	/*	*//**
+			 * 
+			 * @param id
+			 *            -it is server id
+			 * @return true if executor is scheduling task
+			 *//*
+			 * @GET
+			 * 
+			 * @Produces(MediaType.APPLICATION_JSON) public ServerRunningChecker
+			 * isConntectedToServer(@PathParam("serverId") Long id) {
+			 * 
+			 * ServerRunningChecker serverRunningChecker = new
+			 * ServerRunningChecker(); serverRunningChecker.setServerId(id);
+			 * 
+			 * if ((schedulersMap.get(id)) != null) {
+			 * serverRunningChecker.setConnectedToServer(true);
+			 * 
+			 * } else { serverRunningChecker.setConnectedToServer(false);
+			 * serverRunningChecker.setErrorMessage(this.errorMessage); } return
+			 * serverRunningChecker; }
+			 */
 	@Override
-	public void update(Observable o, Object dataObject) {
-		ServerEntity server = ((RegisterReader) o).getServerEntity();
+	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+		this.publisher = publisher;
 
-		if (dataObject instanceof List) {
+	}
 
+	private class MyObserver implements rx.Observer<List<Double>> {
+
+		@Override
+		public void onCompleted() {
+
+			LOG.info("completed");
+		}
+
+		@Override
+		public void onError(Throwable e) {
 			
-			List<Double> myData = (List<Double>) dataObject;
+			LOG.info("error " + e);
+			schedulersMap.clear();
 			
-			Measurement  measurementOnline = new Measurement();
+
+		}
+
+		@Override
+		public void onNext(List<Double> myData) {
+			LOG.debug("myData: from on next" + myData);
+			Measurement measurementOnline = new Measurement();
 			measurementOnline.setDate(new Date());
-			measurementOnline.setEnergyConsumption(myData.get(0)*server.getScaleFactorForElectricEnergy());
-			//LOG.warn(myData.get(0));
+			measurementOnline.setEnergyConsumption(myData.get(0) * server.getScaleFactorForElectricEnergy());
+			// LOG.warn(myData.get(0));
 
-			for(int i=1;i<myData.size();i++){
-				
-				measurementOnline.getMeasuredValue().add(myData.get(i)*server.getScaleFactor());
+			for (int i = 1; i < myData.size(); i++) {
+
+				measurementOnline.getMeasuredValue().add(myData.get(i) * server.getScaleFactor());
 			}
 
 			MeasureEvent<Measurement> measureEvent = new MeasureEvent<>(measurementOnline);
 			publisher.publishEvent(measureEvent);
 
-			this.errorMessage = "";
-
-		}
-
-		if (dataObject instanceof Exception) {
-			Exception ex = (Exception) dataObject;
-			LOG.error("Error Uwaga błąd połączenia/odczytu z: " + server.getIp() + ":" + server.getPort() + " |"
-					+ ex.getMessage());
-			this.errorMessage = ex.getMessage();
-			Long id = server.getId();
-
-			ScheduledExecutorService scheduler = schedulersMap.get(id);
-
-			scheduler.shutdown();
-			schedulersMap.remove(id);
-			registerReader.deleteObserver(this);
 		}
 
 	}
-
-	@Override
-	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
-		this.publisher=publisher;
-		
-	}
-	
 
 }

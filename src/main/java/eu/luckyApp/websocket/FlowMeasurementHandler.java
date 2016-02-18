@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.luckyApp.events.MeasureEvent;
 import eu.luckyApp.events.ServerUpdatedEvent;
 import eu.luckyApp.modbus.service.ExcelCreator;
+import eu.luckyApp.modbus.service.RegisterReader;
 import eu.luckyApp.model.FilePathEntity;
 import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.ServerEntity;
@@ -37,6 +38,7 @@ import eu.luckyApp.repository.FilePathRepository;
 import eu.luckyApp.repository.ServerRepository;
 import eu.luckyApp.websocket.utils.Square;
 import eu.luckyApp.websocket.utils.SquareManager;
+import net.wimpi.modbus.ModbusException;
 
 //@Component
 public class FlowMeasurementHandler extends TextWebSocketHandler implements ApplicationListener {
@@ -55,6 +57,9 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 	@Autowired
 	private FilePathRepository filePathRepository;
+	
+	@Autowired
+	RegisterReader rr;
 
 	private Double dyvider;
 
@@ -202,6 +207,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 			sm.clear();
 			this.tempMes = null;
 			sendSingleMessage(new DateObject(new Date()));
+			writeZeroToEnergyCounter();
 
 			try {
 
@@ -214,6 +220,21 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 			es.shutdown();
 		}
 
+	}
+
+
+
+	/**
+	 * 
+	 */
+	private void writeZeroToEnergyCounter() {
+		if(rr.isConnected()){
+			try {
+				rr.writeIntToRegister(0, 0);
+			} catch (ModbusException e) {
+				LOG.error(e);
+			}
+		}
 	}
 
 	/**

@@ -25,12 +25,18 @@ public class RegisterWriterRS {
 
 	@PUT
 	@Path("/{registerId}")
-	public Response updateRegister(@PathParam("serverId") Long serverId, @PathParam("registerId") int registerId, int value) {
+	public Response updateRegister(@PathParam("serverId") Long serverId, @PathParam("registerId") int registerId,
+			int value) {
 		ServerEntity se = sr.findOne(serverId);
 
 		rr.setServerEntity(se);
 		if (!rr.isConnected()) {
-			rr.startConnection();
+			try {
+				rr.startConnection();
+			} catch (Exception e) {
+
+				Response.serverError().header("error", e.getMessage()).build();
+			}
 			Response myResponse = writeData(registerId, value);
 			rr.stopConnection();
 			return myResponse;

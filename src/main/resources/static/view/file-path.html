@@ -35,7 +35,7 @@
 					<td>{{$index+1+filepathes.size*filepathes.number}}</td>
 					<td>{{file.comment}}</td>
 					<td>{{file.fileName}}</td>
-					<td>{{file.priceOf1m3Air|number:4}} PLN</td>
+					<td>{{file.priceOf1m3Air|currency:"PLN"}}</td>
 					<td><a class="btn btn-primary" data-ng-href="rest/filepathes/{{file.id}}/file">Pobierz <i
 							class="glyphicon glyphicon-save-file"></i>
 					</a></td>

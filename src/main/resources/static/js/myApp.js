@@ -104,7 +104,7 @@ app.run(function($rootScope,$state,Restangular,$window) {
 	Restangular.one('rest/loggedUser', 1).get().then(function(currentUser) {
 	
 	$rootScope.currentUser = currentUser.plain();
-	console.log($rootScope.currentUser);
+	//console.log($rootScope.currentUser);
 	
 
 	

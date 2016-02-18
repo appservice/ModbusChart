@@ -17,7 +17,7 @@
 		max-series-number="maxSeriesNumber" series-name="seriesName"></air-consumption-chart>
 
 	<br />
-	<div style="font-size: large;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}<span style="float: right;">Energia zużyta: {{dataToShow.energyConsumption}} [kWh]</span></div>
+	<div style="font-size: large;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}<span style="float: right;">Energia zużyta: {{dataToShow.energyConsumption|number:2}} [kWh]</span></div>
 	<div class="my_table" style="margin-top: 15px">
 		<table class="table table-striped table-bordered">
 			<thead>
@@ -30,7 +30,7 @@
 				<tr>
 					<td data-ng-repeat="value in dataToShow.values track by $index"
 						style="text-align: center">
-						{{value|number:4}} [m<sup>3</sup>]
+						{{value|number:2}} [m<sup>3</sup>]
 					</td>
 				</tr>
 				<tr>

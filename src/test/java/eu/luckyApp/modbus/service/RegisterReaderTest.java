@@ -33,5 +33,12 @@ public class RegisterReaderTest {
 		//System.out.println();
 		rr.writeIntToRegister(2, 44);
 	}
+	
+	
+	@Test
+	public void resetFlagTest() throws ModbusException{
+		rr.resetFlag(0);
+		
+	}
 
 }

@@ -178,7 +178,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 			// 0.0);
 			double sum = sumOfAirConsumption();
 
-			return sum * price / lastMeasurement.getEnergyConsumption();
+			return  lastMeasurement.getEnergyConsumption() * price /sum;
 
 		} else
 			return 0.0;

@@ -6,15 +6,14 @@ angular
 		.module('myApp.controllers')
 		.controller(
 				'SettingsController',
-				['$rootScope',
+				[
+						'$rootScope',
 						'$scope',
 						'Restangular',
-						'$timeout',
-						function($rootScope,$scope, Restangular, $timeout) {
+						function($rootScope, $scope, Restangular) {
 							$scope.isButtonShowed = false;
-							$scope.isButtonDisabled=false;
-							
-							
+							$scope.isButtonDisabled = false;
+
 							$scope.serversList = [];
 							$scope.readedDataTypes = [ {
 								"type" : "FLOAT",
@@ -31,13 +30,17 @@ angular
 								"type" : "ROLE_ADMIN",
 								"name" : "Administrator"
 							} ];
-							
+
 							$scope.users = [];
 
 							var errorResponseFunctoin = function(response) {
-								console.log(response.status);
+								console.log(response);
 								if (response.status == 405)
 									alert("Do tej operacji ma uprawnienia tylko administrator!");
+								else if (response.status == 500) {
+									console.log(response);
+									alert("Problem połączenia ze sterownikiem! \n" + response.data)
+								}
 
 							}
 							// ---------get all servers-------------------
@@ -49,11 +52,9 @@ angular
 									$scope.isButtonShowed = true;
 								}
 
-							},$rootScope.errorView);
+							}, $rootScope.errorView);
 
-							/*
-							 * $scope.getOneServer=function(){ }
-							 */
+
 
 							// ----------remove server----------------
 							$scope.removeServer = function(server) {
@@ -117,38 +118,14 @@ angular
 
 							// ---------run server (run excecutor)----
 							$scope.runServer = function(server) {
-								
-								
+
 								var id = server.id;
-								server.post('executor').then(
-										function() {
-											console.log("started");
-											$scope.isButtonDisabled=true;
+								server.post('executor').then(function() {
+									console.log("started");
+									$scope.isButtonDisabled = true;
+									alert("Połączono ze sterownikiem!");
 
-											// -----------checking if the server is running or occurred error
-											var executeGet = function() {
-
-												baseServers.customGET(id + "/executor").then(
-														function(response) {
-															// console.log(response);
-															if (response.connectedToServer) {
-																alert("Zapis do bazy danych z serwera: " + server.name + " włączony!");
-
-															} else {
-																// console.log(response);
-																$scope.isButtonDisabled=false;
-																alert("Wystąpił błąd podczas połączenia z serwerem: " + server.name + "\n"
-																		+ response.errorMessage + "!");
-																
-
-															}
-
-														});
-
-											}
-											$timeout(executeGet, 2000);
-
-										}, errorResponseFunctoin
+								}, errorResponseFunctoin
 
 								);
 
@@ -160,7 +137,7 @@ angular
 								if (doStop == true) {
 									var id = server.id;
 									baseServers.customDELETE(id + "/executor").then(function() {
-										alert("Nasłuchiwanie i zapis danych do bazy wyłączony!")
+										alert("Połączenie ze sterownikiem i zapis danych wyłączony!")
 
 									}, errorResponseFunctoin);
 								}
@@ -197,15 +174,15 @@ angular
 									});
 								}
 							}
-							
+
 							$scope.addUser = function(user) {
-								
-								//user.roles = [ "ROLE_USER" ];
+
+								// user.roles = [ "ROLE_USER" ];
 								user.enabled = true;
 								usersBase.post(user).then(function(response) {
 									console.log(response);
 									$scope.users.push(response);
-									$scope.newUser={};
+									$scope.newUser = {};
 								}, errorResponseFunctoin);
 							}
 
@@ -215,21 +192,18 @@ angular
 								console.log(user);
 							}
 							$scope.updateUser = function(user) {
-								// user.roles = [ "ROLE_USER" ];
-								// user.enabled = true;
+	
 								user.put().then(function(response) {
 									console.log(response);
-									// $scope.users.push(response);
 								}, errorResponseFunctoin);
 							}
-							
-							
-							$scope.updateCurrentPrice=function(currentPrice){
-								//currentPrice.put();
-								Restangular.one("rest/preferences",'currentPrice').customPUT(currentPrice).then(function(){
-									$rootScope.preferences.currentPrice=currentPrice;
-									
+
+							$scope.updateCurrentPrice = function(currentPrice) {
+								// currentPrice.put();
+								Restangular.one("rest/preferences", 'currentPrice').customPUT(currentPrice).then(function() {
+									$rootScope.preferences.currentPrice = currentPrice;
+
 								});
 							}
-			
+
 						} ]);

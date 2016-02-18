@@ -1,5 +1,8 @@
 package eu.luckyApp.modbus.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +40,7 @@ public class DeletingDataService {
 	int dayNumbers;
 	
 	@Value(value="${deleteservice.deletefiles}")
-	boolean dalateFiles;
+	boolean deleteFiles;
 	
 	
 
@@ -56,12 +59,12 @@ public class DeletingDataService {
 	}
 	
 
-	@Scheduled(cron="0 0 23 * * ?")
+	@Scheduled(cron="${deleteservice.cronstetment}")
 	@Transactional
 	public void deleteOlderThanYear(){
 		Date nDaysAgoDate = calculateDateOlderThan(dayNumbers);
 		//deleteMeasurementsOlderThan(nDaysAgoDate);
-		if(dalateFiles){
+		if(deleteFiles){
 		deleteFilePathsOlderThan(nDaysAgoDate);
 		}
 		
@@ -69,13 +72,27 @@ public class DeletingDataService {
 
 
 	private void deleteFilePathsOlderThan(Date nDaysAgoDate) {
+		LOG.info("delete file service run");
 		Iterable<FilePathEntity> filePathes=fRepository.findOlderThan(nDaysAgoDate);
-		int count=0;
+		/*int count=0;
 		if(filePathes instanceof Collection){
 			count =((Collection)filePathes).size();
+		}*/
+		for(FilePathEntity fpe:filePathes){
+			java.nio.file.Path file=Paths.get(fpe.getAbsolutePath());
+			try {
+				Files.deleteIfExists(file);
+				fRepository.delete(fpe);
+				LOG.info("REMOVED FILE : "+fpe.getAbsolutePath() );
+			} catch (IOException e) {
+				
+				LOG.error(e);
+			}
+			
 		}
-		fRepository.delete(filePathes);
-		LOG.info("REMOVED FILE OLDER THAN "+nDaysAgoDate+" :"+count );
+		
+		// fRepository.delete(filePathes);
+		
 		
 	}
 

@@ -12,7 +12,7 @@ angular
 				function($scope, Restangular) {
 
 					var currentLocation = window.location;
-					console.log(currentLocation);
+					//console.log(currentLocation);
 					$scope.myData = [];
 					$scope.dataToShow = null;
 					$scope.closeButtonText = "Stop";
@@ -40,7 +40,7 @@ angular
 										$scope.is_loaded = true;
 										$scope.seriesName = myServer.sensorsName;
 
-										console.log("start is starting!");
+										//console.log("Websocket open!");
 										testWebsocket();
 
 										// }
@@ -65,8 +65,8 @@ angular
 											// { onError(evt) };
 										}
 										function onOpen(evt) {
-											console.log("on open is on");
-											console.log(evt);
+											console.log("Websocket opend");
+											//console.log(evt);
 
 										}
 										function onMessage(message) {
@@ -120,7 +120,7 @@ angular
 												}
 											}else
 												{
-												console.log(returnedData);
+												//console.log(returnedData);
 												}
 										}
 										// console.log(message);
@@ -128,7 +128,7 @@ angular
 										// }
 
 										function onClose(evt) {
-											console.log("Websocket Closed");
+											console.log("Websocket closed");
 
 											// websocket=null;
 										}

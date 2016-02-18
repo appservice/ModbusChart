@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
 import eu.luckyApp.model.ServerEntity;
@@ -15,19 +15,28 @@ import net.wimpi.modbus.ModbusException;
 import net.wimpi.modbus.procimg.Register;
 import net.wimpi.modbus.procimg.SimpleRegister;
 import net.wimpi.modbus.util.ModbusUtil;
+import rx.Subscriber;
 
 /**
  * @author LMochel
  *
  */
-@Component
+@Service
 // @Scope("prototype")
-public class RegisterReader extends Observable implements Runnable {
+public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<Double>> {
 
 	private MyModbusTCPMaster modbusMaster;
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
 	private boolean connected;
+
+	private Subscriber<? super List<Double>> subscriber;
+
+	@Override
+	public void call(Subscriber<? super List<Double>> t) {
+
+		this.subscriber = t;
+	}
 
 	/**
 	 * @return the connected
@@ -36,7 +45,7 @@ public class RegisterReader extends Observable implements Runnable {
 		return connected;
 	}
 
-	//private static final double WSPOLCZYNNIK = 0.0027466659;
+	// private static final double WSPOLCZYNNIK = 0.0027466659;
 
 	public ServerEntity getServerEntity() {
 		return serverEntity;
@@ -46,18 +55,11 @@ public class RegisterReader extends Observable implements Runnable {
 		this.serverEntity = serverEntity;
 	}
 
-	public void startConnection() {
+	public void startConnection() throws Exception {
 		modbusMaster = new MyModbusTCPMaster(serverEntity.getIp(), serverEntity.getPort());
-		try {
-			modbusMaster.connect();
-			connected = true;
-		} catch (Exception e) {
 
-			// send exception to observer
-			LOG.error(e.getMessage());
-			this.setChanged();
-			this.notifyObservers(e);
-		}
+		modbusMaster.connect();
+		connected = true;
 
 	}
 
@@ -91,20 +93,20 @@ public class RegisterReader extends Observable implements Runnable {
 				}
 
 			} catch (Exception e) {
+				LOG.error(e);
+				if (this.subscriber != null) {
+					subscriber.onError(e);
+				}
 
-				// send exception to observer
-
-				e.printStackTrace();
-				LOG.error(e.getMessage() + " error in run function");
 				stopConnection();
-				this.setChanged();
-				this.notifyObservers(e);
 
 			}
 
-		}else{
-			this.setChanged();
-			this.notifyObservers(new Exception("Błąd połączenia!"));
+		} else {
+
+			if (this.subscriber != null) {
+				this.subscriber.onError(new Exception("Błąd połączenia!"));
+			}
 		}
 
 	}
@@ -127,15 +129,15 @@ public class RegisterReader extends Observable implements Runnable {
 			resultList.add(parsedToDobuleData * serverEntity.getScaleFactor());
 
 		}
-		// send data to observer
-		this.setChanged();
-		this.notifyObservers(resultList);
+		if (subscriber != null) {
+			this.subscriber.onNext(resultList);
+		}
 	}
 
 	// ----------------------------------------------------------------
 	private void readIntegerData() throws ModbusException {
 		Register[] registers = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,
-				serverEntity.getFirstRegisterPos(), serverEntity.getSensorsName().size()+1);
+				serverEntity.getFirstRegisterPos(), serverEntity.getSensorsName().size() + 1);
 
 		List<Double> resultList = new ArrayList<>();
 
@@ -145,22 +147,32 @@ public class RegisterReader extends Observable implements Runnable {
 
 			int value = registers[i].getValue();
 
-			resultList.add(((double) value)/* * serverEntity.getScaleFactor()*/);
+			resultList.add(((double) value)/* * serverEntity.getScaleFactor() */);
 		}
-		// send data to observer
-		this.setChanged();
-		this.notifyObservers(resultList);
-		//LOG.warn(resultList);
+
+		LOG.debug("Readed data from PLC: " + resultList);
+		// LOG.info(subscriber.isUnsubscribed());
+		if (subscriber != null) {
+			subscriber.onNext(resultList);
+		}
 
 	}
 
 	public void writeIntToRegister(int ref, int value) throws ModbusException {
-	
+
 		Register r = new SimpleRegister();
 		r.setValue(value);
 		modbusMaster.writeSingleRegister(ref, r);
 
+	}
 	
+	public void writeFlag(int ref, boolean state)throws ModbusException{
+		modbusMaster.writeCoil(0, ref, state);
+	}
+	
+	public void resetFlag(int ref) throws ModbusException{
+		writeFlag(ref, true);
+		writeFlag(ref,false);
 	}
 
 }
