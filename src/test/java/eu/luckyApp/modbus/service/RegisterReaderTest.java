@@ -36,7 +36,7 @@ public class RegisterReaderTest {
 	
 	
 	@Test
-	public void resetFlagTest() throws ModbusException{
+	public void resetFlagTest() throws ModbusException, InterruptedException{
 		rr.resetFlag(0);
 		
 	}

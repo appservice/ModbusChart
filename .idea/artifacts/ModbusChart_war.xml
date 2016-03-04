@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ModbusChart:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="ModbusChart-0.1.7.war">
+      <element id="artifact" artifact-name="ModbusChart:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -6,7 +6,7 @@
 	<groupId>eu.luckyApp</groupId>
 	<artifactId>ModbusChart</artifactId>
 	<version>0.1.7</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>ModbusChart</name>
 	<description>Application for Item Service</description>
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-undertow</artifactId>
-			<scope>provided</scope>
+			<!--<scope>provided</scope>-->
 		</dependency>
 
 		<dependency>
@@ -134,11 +134,11 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-		<dependency>
+<!--		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
 			<version>4.0</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>io.reactivex</groupId>

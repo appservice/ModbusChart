@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
@@ -57,6 +58,9 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 
 	@Autowired
 	private FilePathRepository filePathRepository;
+	
+	@Value(value="${flowmeasurementhandler.resetbit}")
+	private int resetBit;
 	
 	@Autowired
 	RegisterReader rr;
@@ -126,6 +130,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	private void prepareTemporaryMeasurement(Measurement m) {
 		if (this.tempMes == null) {
 			m.clearValuesList();
+			//this.tempMes=m;
 			m.setEnergyConsumption(0.0);
 			this.tempMes = calculatePerHour(m, dyvider);
 
@@ -230,8 +235,9 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	private void writeZeroToEnergyCounter() {
 		if(rr.isConnected()){
 			try {
-				rr.writeIntToRegister(0, 0);
-			} catch (ModbusException e) {
+				rr.resetFlag(0);
+			//	rr.writeIntToRegister(0, 0);
+			} catch (ModbusException | InterruptedException e) {
 				LOG.error(e);
 			}
 		}

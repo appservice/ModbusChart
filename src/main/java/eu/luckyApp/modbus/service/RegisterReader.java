@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -165,14 +168,21 @@ public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<
 		modbusMaster.writeSingleRegister(ref, r);
 
 	}
-	
-	public void writeFlag(int ref, boolean state)throws ModbusException{
+
+	public void writeFlag(int ref, boolean state) throws ModbusException {
 		modbusMaster.writeCoil(0, ref, state);
 	}
-	
-	public void resetFlag(int ref) throws ModbusException{
-		writeFlag(ref, true);
-		writeFlag(ref,false);
+
+	public void resetFlag(int ref) throws ModbusException, InterruptedException {
+
+
+				writeFlag(ref, true);
+					Thread.sleep(100);
+					writeFlag(ref, false);
+			
+
+
+
 	}
 
 }
