@@ -5,7 +5,7 @@
 
 	<groupId>eu.luckyApp</groupId>
 	<artifactId>ModbusChart</artifactId>
-	<version>0.1.7</version>
+	<version>0.1.8</version>
 	<packaging>jar</packaging>
 
 	<name>ModbusChart</name>
@@ -140,7 +140,7 @@
 			<version>4.0</version>
 		</dependency>-->
 
-		<dependency>
+<!-- 	<dependency>
 			<groupId>io.reactivex</groupId>
 			<artifactId>rxjava</artifactId>
 			<version>1.1.0</version>
@@ -152,7 +152,7 @@
 			<groupId>net.minidev</groupId>
 			<artifactId>json-smart</artifactId>
 			<version>2.1.1</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 	<build>

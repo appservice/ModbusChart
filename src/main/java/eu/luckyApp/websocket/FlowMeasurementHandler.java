@@ -124,6 +124,11 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 			sm.setTimeInterval(s.getTimeInterval()*s.getSavedMeasurementNumber());
 			LOG.info("server updated: " + s);
 		}
+		
+	/*	if(evt instanceof RegisterReaderExceptionEvent){
+			RegisterReaderExceptionEvent registerReaderExceptionEvent=(RegisterReaderExceptionEvent) evt;
+			
+		}*/
 
 	}
 
@@ -150,7 +155,7 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
 		this.mySessions.put(session.getId(), session);
-		LOG.info("connection established with session id: " + session.getId());
+		LOG.debug("connection established with session id: " + session.getId());
 
 		synchronized (session) {
 			session.sendMessage(new TextMessage(convertToJsonObject(serverRepository.findOne(1L))));
@@ -190,14 +195,14 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
 		synchronized (session) {
 
 			mySessions.remove(session);
-			LOG.info("session is closed");
+			LOG.debug("session is closed");
 		}
 	}
 
 	/**
 	 * 
 	 */
-	@Scheduled(cron = "${flowmeasurementhandler.cronstetment}") // // ?"
+	@Scheduled(cron = "${flowmeasurementhandler.cronstetment}") 
 	@Async
 	public void saveDataAndClearList() {
 		LOG.info("Created file xls " + new Date());

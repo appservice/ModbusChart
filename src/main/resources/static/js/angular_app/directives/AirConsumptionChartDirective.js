@@ -162,18 +162,29 @@ angular.module('myApp.directives')
 			 * watchCollection event -is executing when data collection is changed
 			 * ===================================================================================
 			 */
+			
+			var dataCollection=[];
 			scope.$watchCollection("data", function(newData, oldData) {
-
+				
 				if (newData != oldData) {
-	
+
 					if (firstData == null) {
 						firstData = newData;
+						console.log(firstData.length);
+						dataCollection=adaptedData(newData,scope.seriesName.length);
+
+
+					}else{
+
+						var signelData=adaptedSingleData(newData[newData.length-2],scope.seriesName.length);
+						dataCollection.splice(newData.length-2,0,signelData);
+						
 					}
 
 					g.updateOptions({
-						'labels' : labelsTable,
-						'file' : adaptedData(newData,scope.seriesName.length),
-						title : scope.chartTitle
+					//	'labels' : labelsTable,
+						'file' :dataCollection// adaptedData(newData,scope.seriesName.length),
+					//	title : scope.chartTitle
 					});
 
 				}
@@ -216,6 +227,7 @@ angular.module('myApp.directives')
 	 * function which adapted my data to Dygraph
 	 * ====================================================================
 	 */
+	
 	function adaptedData(data,seriesCount) {
 
 		// var sTime=new Date().getTime();
@@ -229,6 +241,7 @@ angular.module('myApp.directives')
 			myData.push(new Date(data[k].date));
 			for (var ll = 0; ll < seriesCount; ll++) {
 				myData.push(data[k].values[ll]);
+			//	console.log('g');
 				//console.log(myData);
 			}
 			myData.push(data[k].energyConsumption);
@@ -239,6 +252,18 @@ angular.module('myApp.directives')
 		return pushData;
 
 	}
-	;
+	
+	function adaptedSingleData(data,seriesCount){
+		//var pushData=[];
+		var myData = [];
+		myData.push(new Date(data.date));
+		for (var ll = 0; ll < seriesCount; ll++) {
+			myData.push(data.values[ll]);
+		//	console.log('g');
+			//console.log(myData);
+		}
+		myData.push(data.energyConsumption);
+		return myData;
+	}
 
 });

@@ -3,43 +3,36 @@ package eu.luckyApp.modbus.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 
+import eu.luckyApp.events.MeasureEvent;
+import eu.luckyApp.events.RegisterReaderExceptionEvent;
+import eu.luckyApp.modbus.exeptions.RegisterReaderException;
 import eu.luckyApp.modbus.facade.MyModbusTCPMaster;
+import eu.luckyApp.model.Measurement;
 import eu.luckyApp.model.ServerEntity;
 import net.wimpi.modbus.Modbus;
 import net.wimpi.modbus.ModbusException;
 import net.wimpi.modbus.procimg.Register;
 import net.wimpi.modbus.procimg.SimpleRegister;
 import net.wimpi.modbus.util.ModbusUtil;
-import rx.Subscriber;
 
 /**
  * @author LMochel
  *
  */
 @Service
-// @Scope("prototype")
-public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<Double>> {
+public class RegisterReader implements Runnable, ApplicationEventPublisherAware {
 
 	private MyModbusTCPMaster modbusMaster;
 	private static final Logger LOG = Logger.getLogger(RegisterReader.class);
 	private ServerEntity serverEntity;
 	private boolean connected;
-
-	private Subscriber<? super List<Double>> subscriber;
-
-	@Override
-	public void call(Subscriber<? super List<Double>> t) {
-
-		this.subscriber = t;
-	}
+	ApplicationEventPublisher applicationEventPublisher;
 
 	/**
 	 * @return the connected
@@ -97,19 +90,20 @@ public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<
 
 			} catch (Exception e) {
 				LOG.error(e);
-				if (this.subscriber != null) {
-					subscriber.onError(e);
-				}
 
+				RegisterReaderExceptionEvent<RegisterReaderException> event = new RegisterReaderExceptionEvent<>(
+						new RegisterReaderException("Błąd serwisu odczytu z PLC!"));
+				applicationEventPublisher.publishEvent(event);
 				stopConnection();
 
 			}
 
 		} else {
 
-			if (this.subscriber != null) {
-				this.subscriber.onError(new Exception("Błąd połączenia!"));
-			}
+			RegisterReaderExceptionEvent<RegisterReaderException> event = new RegisterReaderExceptionEvent<>(
+					new RegisterReaderException("Błąd połączenia!"));
+			applicationEventPublisher.publishEvent(event);
+
 		}
 
 	}
@@ -132,9 +126,10 @@ public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<
 			resultList.add(parsedToDobuleData * serverEntity.getScaleFactor());
 
 		}
-		if (subscriber != null) {
-			this.subscriber.onNext(resultList);
-		}
+
+		MeasureEvent<Measurement> mEvent = prepareMeasurementEvent(resultList);
+		applicationEventPublisher.publishEvent(mEvent);
+
 	}
 
 	// ----------------------------------------------------------------
@@ -147,17 +142,14 @@ public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<
 		int len = registers.length;
 
 		for (int i = 0; i < len; i++) {
-
 			int value = registers[i].getValue();
-
 			resultList.add(((double) value)/* * serverEntity.getScaleFactor() */);
 		}
 
 		LOG.debug("Readed data from PLC: " + resultList);
-		// LOG.info(subscriber.isUnsubscribed());
-		if (subscriber != null) {
-			subscriber.onNext(resultList);
-		}
+
+		MeasureEvent<Measurement> mEvent = prepareMeasurementEvent(resultList);
+		applicationEventPublisher.publishEvent(mEvent);
 
 	}
 
@@ -175,14 +167,30 @@ public class RegisterReader implements Runnable, rx.Observable.OnSubscribe<List<
 
 	public void resetFlag(int ref) throws ModbusException, InterruptedException {
 
+		writeFlag(ref, true);
+		Thread.sleep(100);
+		writeFlag(ref, false);
 
-				writeFlag(ref, true);
-					Thread.sleep(100);
-					writeFlag(ref, false);
-			
+	}
 
+	private MeasureEvent<Measurement> prepareMeasurementEvent(List<Double> myData) {
+		LOG.debug("myData: from on next" + myData);
+		Measurement measurementOnline = new Measurement();
+		measurementOnline.setDate(new Date());
+		measurementOnline
+				.setEnergyConsumption(myData.get(0) * this.getServerEntity().getScaleFactorForElectricEnergy());
 
+		for (int i = 1; i < myData.size(); i++) {
+			measurementOnline.getMeasuredValue().add(myData.get(i) * this.getServerEntity().getScaleFactor());
+		}
 
+		return new MeasureEvent<>(measurementOnline);
+
+	}
+
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 }
