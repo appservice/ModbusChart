@@ -8,6 +8,7 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 	$scope.closeButtonText = "Stop";
 	$scope.is_loaded = false;
 	$scope.squaresTable = [];
+	$scope.isFirstData=true;
 	var websocket = null;
 	var isFirstMessage = true;
 	
@@ -51,7 +52,9 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 
 		}
 		function onOpen(evt) {
+			$scope.isFirstData=true;
 			console.log("on open is on");
+			
 
 		}
 		function onMessage(message) {
@@ -84,6 +87,7 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 					$scope.$apply('squaresTable');
 
 				}
+				$scope.isFirstData=false;
 			}
 			
 			

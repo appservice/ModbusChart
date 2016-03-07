@@ -14,7 +14,7 @@
 		<button class="btn btn-info" data-ng-click="onStartWebsocket();">{{closeButtonText}}</button>
 	</div>
 	<air-consumption-chart data-ng-if="is_loaded" data="myData" chart-title="'Zmianowy wykres zużycia powietrza i energii'" y-axis-title="Zużycie powietrza [m3]"
-		max-series-number="maxSeriesNumber" series-name="seriesName"></air-consumption-chart>
+		max-series-number="maxSeriesNumber" series-name="seriesName" is-first-data="isFirstData"></air-consumption-chart>
 
 	<br />
 	<div style="font-size: large;">{{dataToShow.date|date:'dd MMMM yyyy | HH:mm:ss'}}<span style="float: right;">Energia zużyta: {{dataToShow.energyConsumption|number:2}} [kWh]</span></div>

@@ -11,6 +11,7 @@ angular.module('myApp.directives')
 			//maxSeriesNumber : '=',
 			seriesName:'=',
 			yAxisTitle : '@?' || '',
+			isFirstData:'='
 
 		},
 		templateUrl : 'js/angular_app/templates/chart-dygraph-template.html',
@@ -168,7 +169,7 @@ angular.module('myApp.directives')
 				
 				if (newData != oldData) {
 
-					if (firstData == null) {
+					if (scope.isFirstData) {
 						firstData = newData;
 						console.log(firstData.length);
 						dataCollection=adaptedData(newData,scope.seriesName.length);
