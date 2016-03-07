@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(measurementHandler(), "/measurementHandler");
-		registry.addHandler(flowMeasurementHandler(), "/flowMeasurementHandler");
+		registry.addHandler(flowMeasurementHandler(), "/flowMeasurementHandler").withSockJS();
 		
 
 	}

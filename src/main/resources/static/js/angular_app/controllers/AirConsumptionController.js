@@ -9,13 +9,16 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 	$scope.is_loaded = false;
 	$scope.squaresTable = [];
 	var websocket = null;
-	var isFirstMessage = true;
+	//var isFirstMessage = true;
+	var isWebsocketOpen=false;
 	
 	var wsUrl;
 	if (window.location.protocol == 'http:') {
-	    wsUrl = 'ws://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
+	   // wsUrl = 'ws://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
+		 wsUrl = 'http://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
 	} else {
-	    wsUrl = 'wss://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
+	  //  wsUrl = 'wss://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
+		wsUrl = 'https://' + currentLocation.host + '/ModbusChart/flowMeasurementHandler';
 	}
 	
 
@@ -36,16 +39,19 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 		// }
 
 		function testWebsocket() {
-			websocket = new WebSocket(wsUrl);
+		//	websocket = new WebSocket(wsUrl);
+			websocket = new SockJS(wsUrl);
 
 			websocket.onopen = function(evt) {
 				onOpen(evt)
+				isWebsocketOpen=true;
 			};
 			websocket.onmessage = function(message) {
 				onMessage(message)
 			};
 			websocket.onclose = function(evt) {
 				onClose(evt)
+				isWebsocketOpen=false;
 				
 			};
 
@@ -130,20 +136,21 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 		// -----------switch off when destroy controller-----------
 		$scope.$on("$destroy", function(event) {
 			console.log("destroyed");
-			if (websocket.readyState == websocket.OPEN) {
+		//	if (websocket.readyState == websocket.OPEN) {
 				websocket.close();
 				$scope.closeButtonText = "Start";
-			}
+		//	}
 		})
 		// -------toggle button on/off-------------------
 		$scope.onStartWebsocket = function() {
-			if (websocket.readyState != websocket.CLOSED) {
+		//	if (websocket.readyState != websocket.CLOSED) {\
+			if(isWebsocketOpen){
 
 				websocket.close();
 				$scope.closeButtonText = "Start"; //
 			} else {
 
-				isFirstMessage = true;
+			//	isFirstMessage = true;
 				testWebsocket();
 				$scope.closeButtonText = "Stop"
 			}
@@ -154,7 +161,8 @@ angular.module('myApp.controllers').controller("AirConsumptionController", funct
 		$scope.onResetSensor=function(sensorNumber){
 			var doRest=confirm("Czy wyzerować dane sensora?")
 			if(doRest){
-			if(websocket.readyState==websocket.OPEN){
+			//if(websocket.readyState==websocket.OPEN){
+				if(isWebsocketOpen){
 				websocket.send("reset:"+sensorNumber);
 				console.log('reset sensror'+sensorNumber);
 			}}

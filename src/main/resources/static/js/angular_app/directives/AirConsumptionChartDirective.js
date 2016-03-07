@@ -37,7 +37,7 @@ angular.module('myApp.directives')
 			// create array of series colors
 			var colorsArray = [ "#FF0000", "#00AA00", "#0000FF", "#FF00FF", "#800080", "#FFCC00", "#808080", "#000080", "#FFA500", "#0AE200" ];
 
-			var firstData;
+			var firstData=null;
 
 			// ---create dygraph----------
 			var g = new Dygraph(divGraph, pushData, {
@@ -181,6 +181,7 @@ angular.module('myApp.directives')
 						
 					}
 
+					console.log(dataCollection);
 					g.updateOptions({
 					//	'labels' : labelsTable,
 						'file' :dataCollection// adaptedData(newData,scope.seriesName.length),
