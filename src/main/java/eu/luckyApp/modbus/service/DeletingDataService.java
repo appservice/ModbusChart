@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -15,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.luckyApp.model.FilePathEntity;
-import eu.luckyApp.model.Measurement;
 import eu.luckyApp.repository.FilePathRepository;
-import eu.luckyApp.repository.MeasurementRepository;
 
 
 /**
@@ -30,9 +27,7 @@ import eu.luckyApp.repository.MeasurementRepository;
 public class DeletingDataService {
 	private static final Logger LOG=Logger.getLogger(DeletingDataService.class);
 	
-	//@Autowired
-	MeasurementRepository mRepository;
-	
+
 	@Autowired
 	FilePathRepository fRepository;
 	
@@ -41,23 +36,7 @@ public class DeletingDataService {
 	
 	@Value(value="${deleteservice.deletefiles}")
 	boolean deleteFiles;
-	
-	
 
-	@SuppressWarnings("rawtypes")
-	public void deleteMeasurementsOlderThan(Date date){		
-	Iterable<Measurement> measurements=mRepository.findOlderThan(date);
-		//LOG.info();
-		int count=0;
-		if(measurements instanceof Collection){
-			count =((Collection)measurements).size();
-		}
-	
-		mRepository.delete(measurements);
-		LOG.info("Deleted older than year: "+count+" items");
-		
-	}
-	
 
 	@Scheduled(cron="${deleteservice.cronstetment}")
 	@Transactional
@@ -74,10 +53,7 @@ public class DeletingDataService {
 	private void deleteFilePathsOlderThan(Date nDaysAgoDate) {
 		LOG.info("delete file service run");
 		Iterable<FilePathEntity> filePathes=fRepository.findOlderThan(nDaysAgoDate);
-		/*int count=0;
-		if(filePathes instanceof Collection){
-			count =((Collection)filePathes).size();
-		}*/
+
 		for(FilePathEntity fpe:filePathes){
 			java.nio.file.Path file=Paths.get(fpe.getAbsolutePath());
 			try {
@@ -100,9 +76,8 @@ public class DeletingDataService {
 	private Date calculateDateOlderThan(int dayNumbers) {
 		Calendar today=Calendar.getInstance();
 		//one year later
-		today.add(Calendar.DAY_OF_YEAR, -dayNumbers);		
-		Date calculatedDate=today.getTime();
-		return calculatedDate;
+		today.add(Calendar.DAY_OF_YEAR, -dayNumbers);
+		return today.getTime();
 	}
 	
 }

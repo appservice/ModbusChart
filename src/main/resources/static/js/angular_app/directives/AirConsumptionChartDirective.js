@@ -176,9 +176,17 @@ angular.module('myApp.directives')
 
 
 					}else{
+						
+						if(newData.length>2){
 
 						var signelData=adaptedSingleData(newData[newData.length-2],scope.seriesName.length);
 						dataCollection.splice(newData.length-2,0,signelData);
+						}else{
+							firstData = newData;
+							console.log(firstData.length);
+							dataCollection=adaptedData(newData,scope.seriesName.length);
+						}
+						
 						
 					}
 

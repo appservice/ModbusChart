@@ -2,6 +2,8 @@ package eu.luckyApp.rest;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -31,9 +33,7 @@ public class LoggedUserRS {
 		myUser.setName(auth.getName());
 		
 		Collection<String> myRole=new ArrayList<>(auth.getAuthorities().size());
-		for(GrantedAuthority ga:auth.getAuthorities()){
-			myRole.add(ga.getAuthority());			
-		}
+		myRole.addAll(auth.getAuthorities().stream().map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority).collect(Collectors.toList()));
 		myUser.setRoles(myRole);
        
 

@@ -35,7 +35,7 @@ public class PrefsRS {
 			
 			if(!Preferences.userRoot().nodeExists("modbuschart")){	
 				prefs=	Preferences.userRoot().node("modbuschart");
-				LOG.warn("CREATING DEFAULT PREFERENCE");
+				LOG.info("CREATING DEFAULT PREFERENCE");
 				prefs.putDouble("currentPrice", 0.5);
 			}else{
 				prefs=	Preferences.userRoot().node("modbuschart");

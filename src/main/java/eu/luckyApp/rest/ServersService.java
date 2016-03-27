@@ -60,9 +60,7 @@ public class ServersService {
 	// @Secured("ROLE_ADMIN")
 	public ServerEntity getServer(@PathParam("serverId") long id) {
 
-		ServerEntity server = serverRepository.findOne(id);
-
-		return server;
+		return serverRepository.findOne(id);
 	}
 
 	@POST
@@ -72,7 +70,7 @@ public class ServersService {
 		ServerEntity s=serverRepository.save(server);
 		Long serverId = s.getId();
 		URI createdUri = uriInfo.getAbsolutePathBuilder().path("/" + serverId).build();
-		publisher.publishEvent(new ServerUpdatedEvent<ServerEntity>(s));
+		publisher.publishEvent(new ServerUpdatedEvent<>(s));
 		
 		return Response.created(createdUri).entity(server).build();
 	}
@@ -84,7 +82,7 @@ public class ServersService {
 
 		ServerEntity s=serverRepository.save(server);
 		LOG.info("zmieniono server" + server);
-		publisher.publishEvent(new ServerUpdatedEvent<ServerEntity>(s));
+		publisher.publishEvent(new ServerUpdatedEvent<>(s));
 
 		return Response.noContent().build();
 
@@ -94,9 +92,6 @@ public class ServersService {
 	@Path("/{serverId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deleteServer(ServerEntity server) {
-		// mesasurementRepo.findAll();
-		// mRepository.deleteAllValues();
-		// mRepository.deleteAllInBatch();
 		serverRepository.delete(server);
 		return Response.noContent().build();
 	}
@@ -105,22 +100,16 @@ public class ServersService {
 	@Path("/{serverId}")
 	public Response deleteServerById(@PathParam("serverId") long id) {
 		LOG.info(id);
-		// mRepository.deleteAllValues();
-		// mRepository.deleteAllInBatch();
 		serverRepository.delete(id);
 		return Response.noContent().build();
 	}
 
 	@Path("/{serverId}/executor")
 	public ServerExecutorRS getServerExecutor() {
-		LOG.warn("ServerServiceRS funciton start");
 		return serverExecutorRs;
 	}
 
-/*	@Path("/{serverId}/flow")
-	public FlowMeasurementRS getFlowMeasurementRS() {
-		return flowMeasurementRS;
-	}*/
+
 
 	@Path("/{serverId}/registers")
 	public RegisterWriterRS showRegisterRs() {

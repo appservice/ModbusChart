@@ -59,8 +59,6 @@ public class SquareManager {
 	 */
 
 	/**
-	 * @param measurement
-	 *            the measurement to set
 	 */
 
 	public List<Square> calculateSquare(Measurement m) {
@@ -118,17 +116,17 @@ public class SquareManager {
 	 *            the measurement to set
 	 */
 
-	public List<ActualValue> calculateActualValue(Measurement m) {
+	public List<ActualValue> calculateActualValue(Measurement measurement) {
 
-		int squaresNumber = m.getMeasuredValue().size();
-		List<ActualValue> actualValueList = new ArrayList<>(m.getMeasuredValue().size());
+		int squaresNumber = measurement.getMeasuredValue().size();
+		List<ActualValue> actualValueList = new ArrayList<>(measurement.getMeasuredValue().size());
 		while (wasGreenSquare.size() < squaresNumber) {
 			wasGreenSquare.add(false);
 			tempTime.add(0L);
 		}
 
 		int i = 0;
-		for (double value : m.getMeasuredValue()) {
+		for (double value : measurement.getMeasuredValue()) {
 
 			actualValueList.add(calculateActualValue(value, i));
 			i++;
@@ -187,7 +185,7 @@ public class SquareManager {
 	public void clear() {
 		for (int i = 0; i < this.wasGreenSquare.size(); i++) {
 			this.wasGreenSquare.set(i, false);
-			this.tempTime.set(i, 0l);
+			this.tempTime.set(i, 0L);
 
 		}
 

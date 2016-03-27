@@ -1,30 +1,14 @@
 package eu.luckyApp.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@Entity
-@Table(name = "MEASUREMENT")
+//@Entity
+//@Table(name = "MEASUREMENT")
 public class Measurement implements Serializable {
 
 	/**
@@ -32,21 +16,21 @@ public class Measurement implements Serializable {
 	 */
 	private static final long serialVersionUID = -6923668406252775414L;
 
-	@Id
+/*	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@JsonIgnore
+	@JsonIgnore*/
 	private Long id;
 
-	@Temporal(TemporalType.TIMESTAMP)
+/*	@Temporal(TemporalType.TIMESTAMP)*/
 	private Date date;
 
 	private Double energyConsumption;
 	
 	
 
-	@ElementCollection(fetch = javax.persistence.FetchType.EAGER)
+/*	@ElementCollection(fetch = javax.persistence.FetchType.EAGER)
 	@CollectionTable(name = "VALUE", joinColumns = { @JoinColumn(name = "ID", referencedColumnName = "id") })
-	// @OneToMany(fetch=FetchType.EAGER)
+	// @OneToMany(fetch=FetchType.EAGER)*/
 	// @JoinTable(name="VALUE",joinColumns{@JoinColumn(name="MES_ID",referencedColumnName="id")})
 	@JsonProperty("values")
 	private List<Double> measuredValue = new ArrayList<>();
@@ -102,18 +86,6 @@ public class Measurement implements Serializable {
 				" |measured list: " + measuredValue+ " |energyConsumtion: "+energyConsumption ;
 	}
 
-	/*
-	 * public Measurement add(Measurement m){ Measurement mes=new Measurement();
-	 * List<Double> values=m.getMeasuredValue(); //List<Double> newValues;
-	 * 
-	 * 
-	 * int i=0; for(Double val:values){ values.set(i,
-	 * val+this.getMeasuredValue().get(i)); }
-	 * 
-	 * mes.setDate(m.getDate());
-	 * 
-	 * return mes; }
-	 */
 
 	public void add(Measurement m) {
 		int i = 0;
@@ -150,9 +122,7 @@ public class Measurement implements Serializable {
 		while (this.measuredValue.size() > m.measuredValue.size()) {
 			this.measuredValue.remove(this.measuredValue.size() - 1);
 		}
-		// while(m.measuredValue.size()<this.measuredValue.size()){
-		// m.measuredValue.add(0.0);
-		// }
+
 
 		for (Double value : this.measuredValue) {
 			this.getMeasuredValue().set(i, value + m.getMeasuredValue().get(i)/dyvider);/// dyvisor
@@ -163,23 +133,6 @@ public class Measurement implements Serializable {
 		this.setEnergyConsumption(m.energyConsumption);
 	}
 
-	/**
-	 * 
-	 * /** This method makes a "deep clone" of any Java object it is given.
-	 */
-	public Measurement deepClone() {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(this);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			ObjectInputStream ois = new ObjectInputStream(bais);
-			return (Measurement) ois.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 
 	public void clearValuesList() {
 

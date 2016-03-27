@@ -184,11 +184,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 			return 0.0;
 	}
 
-	/**
-	 * @param sheet
-	 * @param sheet2
-	 * @param NUM_OF_ROWS
-	 */
+
 	private void generateAirChart(Sheet sheet, Sheet sheet2, final int NUM_OF_ROWS) {
 		Drawing drawing = sheet2.createDrawingPatriarch();
 		ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 0, 24, 30);
@@ -234,11 +230,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		chart.plot(data, bottomAxis, leftAxis);
 	}
 
-	/**
-	 * @param sheet
-	 * @param sheet2
-	 * @param NUM_OF_ROWS
-	 */
+
 	private void generateEnergyChart(Sheet sheet, Sheet sheet2, final int NUM_OF_ROWS) {
 		Drawing drawing = sheet2.createDrawingPatriarch();
 		ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 31, 24, 41);
@@ -282,11 +274,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		chart.plot(data, bottomAxis, leftAxis);
 	}
 
-	/**
-	 * @param sheet
-	 * @param sheet2
-	 * @param NUM_OF_ROWS
-	 */
+
 	@SuppressWarnings("unused")
 	private void generatePriceCalculatedChart(Sheet sheet, Sheet sheet3, final int NUM_OF_ROWS) {
 		Drawing drawing = sheet3.createDrawingPatriarch();
@@ -331,9 +319,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		chart.plot(data, bottomAxis, leftAxis);
 	}
 
-	/**
-	 * @param chart
-	 */
+
 	private void createAirChartTitle(Chart chart) {
 		if (chart instanceof XSSFChart) {
 			XSSFChart xchart = (XSSFChart) chart;
@@ -348,9 +334,7 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		}
 	}
 
-	/**
-	 * @param chart
-	 */
+
 	private void createEnergyChartTitle(Chart chart) {
 		if (chart instanceof XSSFChart) {
 			XSSFChart xchart = (XSSFChart) chart;
@@ -365,16 +349,12 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		}
 	}
 
-	/**
-	 * @return
-	 */
+
 	private String plotShiftData() {
 		return createTitleName(getNowDate());
 	}
 
-	/**
-	 * @return
-	 */
+
 	private Date getNowDate() {
 		Date nowDate;
 		if (list.isEmpty()) {
@@ -388,31 +368,21 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 		return nowDate;
 	}
 
-	/**
-	 * @param nowDate
-	 * @return
-	 */
+
 	private String createFileName(Date nowDate) {
 		SimpleDateFormat formatter = new SimpleDateFormat("MM-dd");
 		String dateString = formatter.format(nowDate);
-		String s = dateString + "-" + shiftChecker(nowDate);
-		return s;
+		return dateString + "-" + shiftChecker(nowDate);
 	}
 
-	/**
-	 * @param nowDate
-	 * @return
-	 */
+
 	private String createTitleName(Date nowDate) {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-YYYY");
 		String dateString = formatter.format(nowDate);
-		String s = dateString + " zmiana " + shiftChecker(nowDate);
-		return s;
+		return dateString + " zmiana " + shiftChecker(nowDate);
 	}
 
-	/**
-	 * @param sheet
-	 */
+
 	private void initFirstRow(Sheet sheet) {
 		Font headerFont = sheet.getWorkbook().createFont();
 		headerFont.setBold(true);
@@ -473,8 +443,6 @@ public class ExcelCreator implements Callable<FilePathEntity> {
 	}
 
 	/**
-	 * @param sheet3
-	 * @param priceOf1m3Air
 	 */
 	private void generateRaportData(Sheet sheet) {
 

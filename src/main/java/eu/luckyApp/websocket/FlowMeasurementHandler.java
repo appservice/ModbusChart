@@ -1,33 +1,8 @@
 package eu.luckyApp.websocket;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.rits.cloning.Cloner;
 import eu.luckyApp.events.MeasureEvent;
 import eu.luckyApp.events.ServerUpdatedEvent;
 import eu.luckyApp.modbus.service.ExcelCreator;
@@ -40,290 +15,324 @@ import eu.luckyApp.repository.ServerRepository;
 import eu.luckyApp.websocket.utils.Square;
 import eu.luckyApp.websocket.utils.SquareManager;
 import net.wimpi.modbus.ModbusException;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
 
 //@Component
 public class FlowMeasurementHandler extends TextWebSocketHandler implements ApplicationListener {
 
-	private static final Logger LOG = Logger.getLogger(FlowMeasurementHandler.class);
+    private static final Logger LOG = Logger.getLogger(FlowMeasurementHandler.class);
 
-	private final Map<String, WebSocketSession> mySessions = new ConcurrentHashMap<>();
+    private final Map<String, WebSocketSession> mySessions = new ConcurrentHashMap<>();
 
-	private List<Measurement> mesList = new ArrayList<>();
+    private List<Measurement> mesList = new ArrayList<>();
 
-	private Measurement tempMes;
-	private SquareManager sm = new SquareManager();
+    private Measurement tempMes;
+    private SquareManager sm = new SquareManager();
 
-	@Autowired
-	private ServerRepository serverRepository;
+    @Autowired
+    private ServerRepository serverRepository;
 
-	@Autowired
-	private FilePathRepository filePathRepository;
-	
-	@Value(value="${flowmeasurementhandler.resetbit}")
-	private int resetBit;
-	
-	@Autowired
-	RegisterReader rr;
+    @Autowired
+    private FilePathRepository filePathRepository;
 
-	private Double dyvider;
+    @Autowired
+    Cloner cloner;
 
-	private boolean makeReset;
+    @Value(value = "${flowmeasurementhandler.resetbit}")
+    private int resetBit;
+    @Value(value = "${flowmeasurementhandler.resetregister}")
+    private int resetRegister;
 
-	private int numberOfValue;
+    @Autowired
+    RegisterReader registerReader;
 
-	private int mCounter=0;
+    private Double divider;
 
-	private ServerEntity server;
+    private boolean makeReset;
 
-	@PostConstruct
-	public void initialize() {
-		server = serverRepository.findOne(1L);
-		if (server == null) {
-			server=new ServerEntity();
-			server.setSavedMeasurementNumber(1);
-			server.setTimeInterval(2000);  //default 2 s
-			
-		}						
-		dyvider = 3600000 / (double) (server.getTimeInterval());
-		sm.setTimeInterval(server.getTimeInterval()*server.getSavedMeasurementNumber());
-	}
+    private int numberOfValue;
 
-	
-	
-	@Override
-	public void onApplicationEvent(ApplicationEvent evt) {
+    private int mCounter = 0;
 
-		// -------------MEASUREMENT EVENT-----------------------
-		if (evt instanceof MeasureEvent) {
-
-			Measurement m = (Measurement) evt.getSource();
-			//LOG.warn(m);
-			prepareTemporaryMeasurement(m);
-
-			if (mCounter % server.getSavedMeasurementNumber() == 0) {
-				mesList.add(tempMes.deepClone());
-				sendSingleMessage(tempMes);
-			//	LOG.warn(tempMes);
-				
-				List<Square> sl = sm.calculateSquare(m);
-				sendSingleMessage(sl);
-				mCounter = 0;
-			}
-			mCounter++;
-			// sm.setSquareAmount(serverRepository.findOne(1l).getSensorsName().size());
+    private ServerEntity server;
 
 
-		}
+    @PostConstruct
+    public void initialize() {
+        server = serverRepository.findOne(1L);
+        if (server == null) {
+            prepareDefaultServer();
+        }
+        updateDivider(server);
+        updateSquareManager(server);
+    }
 
-		// -------------SERVER UPDATE EVENT-----------------------
-		if (evt instanceof ServerUpdatedEvent) {
-			
-			ServerEntity s = (ServerEntity) evt.getSource();
-			this.server=s;
-			dyvider = 3600000 / (double) (s.getTimeInterval());
-			sm.setTimeInterval(s.getTimeInterval()*s.getSavedMeasurementNumber());
-			LOG.info("server updated: " + s);
-		}
-		
-	/*	if(evt instanceof RegisterReaderExceptionEvent){
-			RegisterReaderExceptionEvent registerReaderExceptionEvent=(RegisterReaderExceptionEvent) evt;
-			
-		}*/
+    @Override
+    public void onApplicationEvent(ApplicationEvent evt) {
 
-	}
+        // -------------MEASUREMENT EVENT-----------------------
+        if (evt instanceof MeasureEvent) {
 
-	private void prepareTemporaryMeasurement(Measurement m) {
-		if (this.tempMes == null) {
-			m.clearValuesList();
-			//this.tempMes=m;
-			m.setEnergyConsumption(0.0);
-			this.tempMes = calculatePerHour(m, dyvider);
+            Measurement m = (Measurement) evt.getSource();
+            //LOG.warn(m);
+            prepareTemporaryMeasurement(m);
 
-		} else {
+            if (mCounter % server.getSavedMeasurementNumber() == 0) {
+             /*   try {
+                    mesList.add(
+                            tempMes.deepClone()
+                    );
+                } catch (DeepCloneException e) {
+                   LOG.error(e);
 
-			tempMes.addAndCalculatePerHour(m, dyvider);
+                }*/
+                mesList.add(cloner.deepClone(tempMes));
+                sendSingleMessage(tempMes);
+                //	LOG.warn(tempMes);
 
-			if (makeReset) {
-				tempMes.getMeasuredValue().set(numberOfValue, 0.0);
-				makeReset = false;
-			}
+                List<Square> sl = sm.calculateSquare(m);
+                sendSingleMessage(sl);
+                mCounter = 0;
+            }
+            mCounter++;
+            // sm.setSquareAmount(serverRepository.findOne(1l).getSensorsName().size());
 
-		}
-	}
 
-	@Override
-	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        }
 
-		this.mySessions.put(session.getId(), session);
-		LOG.debug("connection established with session id: " + session.getId());
+        // -------------SERVER UPDATE EVENT-----------------------
+        if (evt instanceof ServerUpdatedEvent) {
 
-		synchronized (session) {
-			session.sendMessage(new TextMessage(convertToJsonObject(serverRepository.findOne(1L))));
-			session.sendMessage(new TextMessage(convertToJsonObject(mesList)));
-			// LOG.warn(this.tempMes);
-		}
-	}
-
-	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		synchronized (session) {
-			super.handleTextMessage(session, message);
-			resetSensor(message);
-		}
-	}
-
-	/**
-	 * @param message
-	 */
-	private void resetSensor(TextMessage message) {
-
-		String[] messageReceived = message.getPayload().split(":");
-
-		if (messageReceived[0].equals("reset")) {
-			numberOfValue = Integer.parseInt(messageReceived[1]);
-			makeReset = true;
-			// sendSingleMessage(tempMes);
-		}
-	}
-
-	/**
-	 * Function is done after connection of websocket is closed.
-	 */
-	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-
-		synchronized (session) {
-
-			mySessions.remove(session);
-			LOG.debug("session is closed");
-		}
-	}
-
-	/**
-	 * 
-	 */
-	@Scheduled(cron = "${flowmeasurementhandler.cronstetment}") 
-	@Async
-	public void saveDataAndClearList() {
-		LOG.info("Created file xls " + new Date());
-
-		if (serverRepository.findOne(1L) != null) {
-			ExecutorService es = Executors.newSingleThreadExecutor();
-
-			List<String> seriesNames = serverRepository.findOne(1L).getSensorsName();
-			Future<FilePathEntity> fpe = es.submit(new ExcelCreator(mesList, seriesNames));
-
-			mesList = new ArrayList<>();
-			sm.clear();
-			this.tempMes = null;
-			sendSingleMessage(new DateObject(new Date()));
-			writeZeroToEnergyCounter();
-
-			try {
-
-				filePathRepository.saveAndFlush(fpe.get());
-
-				LOG.info("file created: " + fpe.get().getAbsolutePath());
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-			es.shutdown();
-		}
-
-	}
+            ServerEntity s = (ServerEntity) evt.getSource();
+            this.server = s;
+            updateDivider(s);
+            updateSquareManager(s);
+            LOG.info("server updated: " + s);
+        }
 
 
 
-	/**
-	 * 
-	 */
-	private void writeZeroToEnergyCounter() {
-		if(rr.isConnected()){
-			try {
-				rr.resetFlag(0);
-			//	rr.writeIntToRegister(0, 0);
-			} catch (ModbusException | InterruptedException e) {
-				LOG.error(e);
-			}
-		}
-	}
+    }
 
-	/**
-	 * 
-	 * @param object
-	 *            -Measurement
-	 * @return String JSON representation of measurement object
-	 */
+    private void prepareDefaultServer() {
+        server = new ServerEntity();
+        server.setSavedMeasurementNumber(1);
+        server.setTimeInterval(2000);  //default 2 s
+    }
 
-	private String convertToJsonObject(Object object) {
-		ObjectMapper mapper = new ObjectMapper();
+    private void updateSquareManager(ServerEntity server) {
+        long timeInterval = server.getTimeInterval() * server.getSavedMeasurementNumber();
+        sm.setTimeInterval(timeInterval);
+    }
 
-		try {
 
-			return mapper.writeValueAsString(object);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    private void updateDivider(ServerEntity server) {
+        divider = 3600000 / (double) (server.getTimeInterval());
+    }
 
-	/**
-	 * Function is sending object by single text message to websocket clients
-	 * 
-	 * @param message
-	 */
-	@Async
-	private void sendSingleMessage(Object message) {
+    private void prepareTemporaryMeasurement(Measurement m) {
+        if (this.tempMes == null) {
+            m.clearValuesList();
+            //this.tempMes=m;
+            m.setEnergyConsumption(0.0);
+            this.tempMes = calculatePerHour(m, divider);
 
-		TextMessage returnedMessage = new TextMessage(convertToJsonObject(message));
-		for (WebSocketSession session : mySessions.values()) {
-			if (session != null && session.isOpen()) {
-				synchronized (session) {
+        } else {
 
-					try {
+            tempMes.addAndCalculatePerHour(m, divider);
 
-						session.sendMessage(returnedMessage);
+            if (makeReset) {
+                tempMes.getMeasuredValue().set(numberOfValue, 0.0);
+                makeReset = false;
+            }
 
-					} catch (IOException e) {
-						LOG.error(e);
-					}
-				}
+        }
+    }
 
-			}
-		}
-	}
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-	/**
-	 * Function calculate ...
-	 * 
-	 * @param measurement
-	 * @param divisor
-	 * @return devided measurement
-	 */
-	private Measurement calculatePerHour(Measurement measurement, Double divisor) {
-		Measurement returnedMeasurement = new Measurement();
-		returnedMeasurement.setDate(measurement.getDate());
-		returnedMeasurement.setEnergyConsumption(measurement.getEnergyConsumption());
+        this.mySessions.put(session.getId(), session);
+        LOG.debug("connection established with session id: " + session.getId());
 
-		for (Double value : measurement.getMeasuredValue()) {
-			returnedMeasurement.getMeasuredValue().add(value / divisor);
-		}
-		return returnedMeasurement;
-	}
+        synchronized (session) {
+            session.sendMessage(new TextMessage(convertToJsonObject(server)));
+            session.sendMessage(new TextMessage(convertToJsonObject(mesList)));
+            // LOG.warn(this.tempMes);
+        }
+    }
 
-	private class DateObject {
-		private Date resetDate;
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        synchronized (this.mySessions) {
+            super.handleTextMessage(session, message);
+            resetSensor(message);
+        }
+    }
 
-		public DateObject(Date resetDate) {
-			super();
-			this.resetDate = resetDate;
-		}
 
-		@SuppressWarnings("unused")
-		public Date getResetDate() {
-			return resetDate;
-		}
+    private void resetSensor(TextMessage message) {
 
-	}
+        String[] messageReceived = message.getPayload().split(":");
+
+        if (messageReceived[0].equals("reset")) {
+            numberOfValue = Integer.parseInt(messageReceived[1]);
+            makeReset = true;
+            // sendSingleMessage(tempMes);
+        }
+    }
+
+    /**
+     * Function is done after connection of websocket is closed.
+     */
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+
+        synchronized (session) {
+
+            mySessions.remove(session);
+            LOG.debug("session is closed");
+        }
+    }
+
+    /**
+     *
+     */
+    @Scheduled(cron = "${flowmeasurementhandler.cronstetment}")
+    @Async
+    public void saveDataAndClearList() {
+        LOG.info("Created file xls " + new Date());
+
+        if (serverRepository.findOne(1L) != null) {
+            ExecutorService es = Executors.newSingleThreadExecutor();
+
+            List<String> seriesNames = serverRepository.findOne(1L).getSensorsName();
+            Future<FilePathEntity> fpe = es.submit(new ExcelCreator(mesList, seriesNames));
+
+            mesList = new ArrayList<>();
+            sm.clear();
+            this.tempMes = null;
+            sendSingleMessage(new DateObject(new Date()));
+            writeZeroToEnergyCounter();
+
+            try {
+
+                filePathRepository.saveAndFlush(fpe.get());
+
+                LOG.info("file created: " + fpe.get().getAbsolutePath());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+            es.shutdown();
+        }
+
+    }
+
+
+    /**
+     *
+     */
+    private void writeZeroToEnergyCounter() {
+        if (registerReader.isConnected()) {
+            try {
+                //	registerReader.resetFlag(resetBit);
+                registerReader.registerResetFlag(resetRegister);
+                //	registerReader.writeIntToRegister(0, 0);
+            } catch (ModbusException | InterruptedException e) {
+                LOG.error(e);
+            }
+        }
+    }
+
+    /**
+     * @param object -Measurement
+     * @return String JSON representation of measurement object
+     */
+
+    private String convertToJsonObject(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Function is sending object by single text message to websocket clients
+     *
+     */
+    @Async
+    private void sendSingleMessage(Object message) {
+
+        TextMessage returnedMessage = new TextMessage(convertToJsonObject(message));
+        mySessions.values().stream().filter(session -> session != null && session.isOpen()).forEach(session -> {
+            synchronized (session) {
+
+                try {
+
+                    session.sendMessage(returnedMessage);
+
+                } catch (IOException e) {
+                    LOG.error(e);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * Function calculate ...
+     *
+     */
+    private Measurement calculatePerHour(Measurement measurement, Double divisor) {
+        Measurement returnedMeasurement = new Measurement();
+        returnedMeasurement.setDate(measurement.getDate());
+        returnedMeasurement.setEnergyConsumption(measurement.getEnergyConsumption());
+
+        for (Double value : measurement.getMeasuredValue()) {
+            returnedMeasurement.getMeasuredValue().add(value / divisor);
+        }
+        return returnedMeasurement;
+    }
+
+    private class DateObject {
+        private Date resetDate;
+
+        public DateObject(Date resetDate) {
+            super();
+            this.resetDate = resetDate;
+        }
+
+
+        public Date getResetDate() {
+            return resetDate;
+        }
+
+        public void setResetDate(Date resetDate) {
+            this.resetDate = resetDate;
+        }
+    }
 
 }

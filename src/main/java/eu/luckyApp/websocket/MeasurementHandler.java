@@ -33,7 +33,7 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		LOG.info("connection established with session id: " + session.getId());
+		LOG.debug("connection established with session id: " + session.getId());
 
 		this.mySessions.add(session);
 
@@ -44,20 +44,11 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 		}
 	}
 
-	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-		// session.sendMessage(message);
-
-		if (message.getPayload().equalsIgnoreCase("start")) {
-
-		}
-		// session.sendMessage(new TextMessage("to jest test"));
-	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		LOG.info("connection  with session id: " + session.getId() + " closed");
+		LOG.debug("connection  with session id: " + session.getId() + " closed");
 		mySessions.remove(session);
 
 	}
@@ -95,20 +86,18 @@ public class MeasurementHandler extends TextWebSocketHandler implements Applicat
 	private void sendSingleMessage(Object message) {
 
 		TextMessage returnedMessage = new TextMessage(convertToJsonObject(message));
-		for (WebSocketSession session : mySessions) {
-			if (session != null && session.isOpen()) {
-				synchronized (session) {
+		mySessions.stream().filter(session -> session != null && session.isOpen()).forEach(session -> {
+			synchronized (session) {
 
-					try {
+				try {
 
-						session.sendMessage(returnedMessage);
+					session.sendMessage(returnedMessage);
 
-					} catch (IOException e) {
-						LOG.error(e);
-					}
+				} catch (IOException e) {
+					LOG.error(e);
 				}
-
 			}
-		}
+
+		});
 	}
 }

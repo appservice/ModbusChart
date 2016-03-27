@@ -22,72 +22,67 @@ import eu.luckyApp.repository.ServerRepository;
 
 @Component
 @Path("/")
-public class ServerExecutorRS  {
+public class ServerExecutorRS {
 
-	private static final Logger LOG = Logger.getLogger(ServersService.class.getName());
+    private static final Logger LOG = Logger.getLogger(ServerExecutorRS.class.getName());
 
-	@Autowired
-	private ServerRepository serverRepository;
+    @Autowired
+    private ServerRepository serverRepository;
 
-	@Autowired
-	private RegisterReader registerReader;
-	ServerEntity server = null;
-	
+    @Autowired
+    private RegisterReader registerReader;
 
 
+    private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
 
-	private Map<Long, ScheduledExecutorService> schedulersMap = new HashMap<>();
+    @POST
+    public Response runServer(@PathParam("serverId") long id) {
 
-	@POST
-	public Response runServer(@PathParam("serverId") long id) {
+        ServerEntity server = serverRepository.findOne(id);
+        registerReader.setServerEntity(server);
 
-		this.server = serverRepository.findOne(id);
-		registerReader.setServerEntity(server);
+        if ((schedulersMap.get(id)) == null) {
+            try {
+                registerReader.startConnection();
+            } catch (Exception e) {
+                LOG.error(e);
+                return Response.serverError().entity("Nie można nawiązać połączenia!").header("error", e.getMessage())
+                        .build();
+            }
 
-		if ((schedulersMap.get(id)) == null) {
-			LOG.warn("włączony");
-			try {
-				registerReader.startConnection();
-			} catch (Exception e) {
-				LOG.error(e);
-				return Response.serverError().entity("Nie można nawiązać połączenia!").header("error", e.getMessage())
-						.build();
-			}
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
 
-			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
-			
-			scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(registerReader, 0, server.getTimeInterval(), TimeUnit.MILLISECONDS);
 
-			//rx.Observable.create(registerReader).subscribe(new MyObserver());
-			LOG.warn("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
-			schedulersMap.put(id, scheduler);
+            //rx.Observable.create(registerReader).subscribe(new MyObserver());
+            LOG.info("Odczyt włączony. " + server.getIp() + ":" + server.getPort());
+            schedulersMap.put(id, scheduler);
 
-			return Response.ok().build();
-		}
+            return Response.ok().build();
+        }
 
-		return Response.serverError().entity("Połączenie już ustanowione!")
-				.header("error", "Połączenie już ustanowione!").build();
+        return Response.serverError().entity("Połączenie już ustanowione!")
+                .header("error", "Połączenie już ustanowione!").build();
 
-	}
+    }
 
-	@DELETE
-	public Response stopServer(@PathParam("serverId") Long id) {
-		ServerEntity server = serverRepository.findOne(id);
-		ScheduledExecutorService scheduler = schedulersMap.get(id);
+    @DELETE
+    public Response stopServer(@PathParam("serverId") Long id) {
+        ServerEntity server = serverRepository.findOne(id);
+        ScheduledExecutorService scheduler = schedulersMap.get(id);
 
-		if (scheduler != null) {
-			scheduler.shutdown();
-			schedulersMap.remove(id);
-			registerReader.stopConnection();
-			LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
-			return Response.ok().build();
-		} else {
+        if (scheduler != null) {
+            scheduler.shutdown();
+            schedulersMap.remove(id);
+            registerReader.stopConnection();
+            LOG.warn("Odczyt z servera zatrzymany! " + server.getIp() + ":" + server.getPort());
+            return Response.ok().build();
+        } else {
 
-			return Response.serverError().entity("Połączenie nie było ustanowione!")
-					.header("error", "Połączenie nie było ustanowione!").build();
-		}
-	}
-
+            return Response.serverError().entity("Połączenie nie było ustanowione!")
+                    .header("error", "Połączenie nie było ustanowione!").build();
+        }
+    }
 
 
 }

@@ -88,7 +88,7 @@ angular.module('myApp.directives')
 			 * grab screen function
 			 * ===============================================================
 			 */
-			var imgExport = element.append('<img style="visibility:hidden"></img>');
+			var imgExport = element.append('<img style="visibility:hidden"/>');
 			scope.downloadGraph = function() {
 				// console.log("download as file");
 				var myNav = navigator.userAgent.toLowerCase();

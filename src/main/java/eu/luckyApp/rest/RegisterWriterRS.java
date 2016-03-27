@@ -16,29 +16,31 @@ import net.wimpi.modbus.ModbusException;
 @Component
 @Path("/")
 // @Consumes(MediaType.APPLICATION_JSON)
+
 public class RegisterWriterRS {
 	@Autowired
-	RegisterReader rr;
+	RegisterReader registerReader;
 
 	@Autowired
-	ServerRepository sr;
+	ServerRepository serverRepository;
 
 	@PUT
 	@Path("/{registerId}")
 	public Response updateRegister(@PathParam("serverId") Long serverId, @PathParam("registerId") int registerId,
 			int value) {
-		ServerEntity se = sr.findOne(serverId);
+		ServerEntity serverEntity = serverRepository.findOne(serverId);
 
-		rr.setServerEntity(se);
-		if (!rr.isConnected()) {
+		registerReader.setServerEntity(serverEntity);
+		if (!registerReader.isConnected()) {
 			try {
-				rr.startConnection();
+				registerReader.startConnection();
 			} catch (Exception e) {
 
 				Response.serverError().header("error", e.getMessage()).build();
 			}
+
 			Response myResponse = writeData(registerId, value);
-			rr.stopConnection();
+			registerReader.stopConnection();
 			return myResponse;
 		} else {
 			return writeData(registerId, value);
@@ -53,7 +55,7 @@ public class RegisterWriterRS {
 	 */
 	private Response writeData(int id, int value) {
 		try {
-			rr.writeIntToRegister(id, value);
+			registerReader.writeIntToRegister(id, value);
 			return Response.noContent().build();
 		} catch (ModbusException e) {
 			return Response.serverError().header("error", e.getMessage()).build();

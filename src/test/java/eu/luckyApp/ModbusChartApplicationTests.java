@@ -7,27 +7,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import eu.luckyApp.model.Measurement;
-import eu.luckyApp.repository.MeasurementRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModbusChartApplication.class)
 public class ModbusChartApplicationTests {
 
-	@Autowired
-	MeasurementRepository measurementRepository;
+
 
 	@Test
 	public void contextLoads() {
 	}
 
 	@Test
+	@Ignore
 	public void addToDatabaseTest() throws ParseException {
 
 		long startDate = generateStartData();
@@ -43,7 +42,7 @@ public class ModbusChartApplicationTests {
 			m.setMeasuredValue(valueList);
 			m.setDate(myDate);
 			System.out.println(i + " " + myDate);
-			measurementRepository.save(m);
+
 
 		}
 	}

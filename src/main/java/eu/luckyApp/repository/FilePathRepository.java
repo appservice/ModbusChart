@@ -12,7 +12,7 @@ import eu.luckyApp.model.FilePathEntity;
 @Repository
 public interface FilePathRepository extends JpaRepository<FilePathEntity, Long> {
 
-	@Query("SELECT f FROM FilePathEntity f WHERE   f.creationDate <:date")
-	public Iterable<FilePathEntity> findOlderThan(@Param("date") Date date);
+	@Query(value = "SELECT f FROM FilePathEntity f WHERE   f.creationDate <:date")
+	Iterable<FilePathEntity> findOlderThan(@Param("date") Date date);
 	
 }

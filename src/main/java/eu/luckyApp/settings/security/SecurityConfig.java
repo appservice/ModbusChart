@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = false, jsr250Enabled = true, proxyTargetClass = true, securedEnabled = false)
+@EnableGlobalMethodSecurity(jsr250Enabled = true, proxyTargetClass = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Value(value = "${user.login}")
