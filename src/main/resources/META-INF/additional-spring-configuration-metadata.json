@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "registerreader.reset_time",
+      "type": "java.lang.String",
+      "description": "Description for registerreader.reset_time."
+    },
+    {
+      "name": "deleteservice.cronstetment",
+      "type": "java.lang.String",
+      "description": "Description for deleteservice.cronstetment."
+    },
+    {
+      "name": "application.title",
+      "type": "java.lang.String",
+      "description": "Description for application.title."
+    }
+  ]
+}

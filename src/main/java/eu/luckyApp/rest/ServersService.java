@@ -53,6 +53,10 @@ public class ServersService {
 		return serverRepository.findAll();
 	}
 
+	public void setServerRepository(ServerRepository serverRepository) {
+		this.serverRepository = serverRepository;
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{serverId}")

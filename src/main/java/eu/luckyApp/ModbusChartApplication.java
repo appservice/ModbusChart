@@ -8,8 +8,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ErrorPage;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,7 +22,8 @@ import javax.ws.rs.BeanParam;
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
-
+@PropertySource(value = "classpath:application.properties")
+@EnableConfigurationProperties
 public class ModbusChartApplication extends SpringBootServletInitializer {
 
 	private static Class<ModbusChartApplication> applicationClass = ModbusChartApplication.class;

@@ -1,9 +1,10 @@
- _                 _        
+ ${AnsiColor.BRIGHT_RED}
+ _                 _
 | |      _|| __   / \  _  _ 
 | |_ |U|//|/7\ V7| o |/o\/o\
 |___|\_/\\L|\ )/ |_n_||_/|_/
-             //       L| L|  Łukasz Mochel
-   
+             //       L| L| ${AnsiColor.BLUE} Łukasz Mochel
+${AnsiColor.BLACK}
 dla
   ___  _                     ____                      _            
  |_ _|| |_  ___  _ __ ___   / ___|   ___  _ __ __   __(_)  ___  ___ 
@@ -11,6 +12,8 @@ dla
   | | | |_|  __/| | | | | |  ___) ||  __/| |    \ V / | || (__|  __/
  |___| \__|\___||_| |_| |_| |____/  \___||_|     \_/  |_| \___|\___|
                                                                     
-   Łukasz Ciesielski
+ ${AnsiColor.BLUE}  Łukasz Ciesielski
    Kacper Ciesielski                                                                                                           
-                                                                                                             
+${AnsiColor.BLACK}
+Welcome to ${application.title}    ${application.version}!
+
