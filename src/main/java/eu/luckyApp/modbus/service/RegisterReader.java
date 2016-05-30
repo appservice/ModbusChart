@@ -158,7 +158,7 @@ public class RegisterReader implements Runnable, ApplicationEventPublisherAware 
     private int getEnergyValue() throws ModbusException {
         Register[] energyRegister = modbusMaster.readMultipleRegisters(Modbus.DEFAULT_UNIT_ID,
                 powerEnergyRegister, 2);
-        return convertRegistersToInt(energyRegister[0], energyRegister[1]);
+        return convertRegistersToInt( energyRegister[1],energyRegister[0]);
     }
 
     private void getAirConsumptionSensorsValues(List<Double> resultList) throws ModbusException {

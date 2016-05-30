@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.luckyApp.model.Measurement;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ModbusChartApplication.class)
+@SpringApplicationConfiguration(classes = {ModbusChartApplication.class})
 public class ModbusChartApplicationTests {
 
 

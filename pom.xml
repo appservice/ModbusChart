@@ -5,7 +5,7 @@
 
     <groupId>eu.luckyApp</groupId>
     <artifactId>ModbusChart</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <packaging>war</packaging>
 
     <name>ModbusChart</name>
@@ -161,12 +161,23 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.6.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.6.5</version>
+        </dependency>
 
-<!--        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-            <version>3.1.6</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-transports-http</artifactId>
+                    <version>3.1.6</version>
+                </dependency>-->
   <!--      <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>

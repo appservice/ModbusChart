@@ -56,8 +56,8 @@ public class FlowMeasurementHandler extends TextWebSocketHandler implements Appl
     @Autowired
     Cloner cloner;
 
-    @Value(value = "${flow-measurement-handler.reset-bit}")
-    private int resetBit;
+    //@Value(value = "${flow-measurement-handler.reset-bit}")
+   // private int resetBit;
     @Value(value = "${flow-measurement-handler.reset-register}")
     private int resetRegister;
 
